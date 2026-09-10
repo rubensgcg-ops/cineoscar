@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Executar script de download inteligente
+      - name: Executar script com retentativas e delay
         run: |
           python -c "
           import os, json, time, urllib.request, urllib.parse
@@ -27,160 +27,167 @@ jobs:
           os.makedirs(OUTPUT_DIR, exist_ok=True)
 
           MOVIES = [
-              {'id': 1, 'query': 'Wings 1927 film', 'title': 'Wings (1927 film)'},
-              {'id': 2, 'query': 'The Broadway Melody', 'title': 'The Broadway Melody'},
-              {'id': 3, 'query': 'All Quiet on the Western Front 1930 film', 'title': 'All Quiet on the Western Front (1930 film)'},
-              {'id': 4, 'query': 'Cimarron 1931 film', 'title': 'Cimarron (1931 film)'},
-              {'id': 5, 'query': 'Grand Hotel 1932 film', 'title': 'Grand Hotel (1932 film)'},
-              {'id': 6, 'query': 'Cavalcade 1933 film', 'title': 'Cavalcade (1933 film)'},
-              {'id': 7, 'query': 'It Happened One Night', 'title': 'It Happened One Night (film)'},
-              {'id': 8, 'query': 'Mutiny on the Bounty 1935 film', 'title': 'Mutiny on the Bounty (1935 film)'},
-              {'id': 9, 'query': 'The Great Ziegfeld', 'title': 'The Great Ziegfeld'},
-              {'id': 10, 'query': 'The Life of Emile Zola', 'title': 'The Life of Emile Zola'},
-              {'id': 11, 'query': 'You Can\'t Take It with You film', 'title': 'You Can\'t Take It with You (film)'},
-              {'id': 12, 'query': 'Gone with the Wind film', 'title': 'Gone with the Wind (film)'},
-              {'id': 13, 'query': 'Rebecca 1940 film', 'title': 'Rebecca (1940 film)'},
-              {'id': 14, 'query': 'How Green Was My Valley film', 'title': 'How Green Was My Valley (film)'},
-              {'id': 15, 'query': 'Mrs. Miniver film', 'title': 'Mrs. Miniver (film)'},
-              {'id': 16, 'query': 'Casablanca film', 'title': 'Casablanca (film)'},
-              {'id': 17, 'query': 'Going My Way', 'title': 'Going My Way'},
-              {'id': 18, 'query': 'The Lost Weekend film', 'title': 'The Lost Weekend (film)'},
-              {'id': 19, 'query': 'The Best Years of Our Lives', 'title': 'The Best Years of Our Lives'},
-              {'id': 20, 'query': 'Gentleman\'s Agreement film', 'title': 'Gentleman\'s Agreement (film)'},
-              {'id': 21, 'query': 'Hamlet 1948 film', 'title': 'Hamlet (1948 film)'},
-              {'id': 22, 'query': 'All the King\'s Men 1949 film', 'title': 'All the King\'s Men (1949 film)'},
-              {'id': 23, 'query': 'All About Eve', 'title': 'All About Eve'},
-              {'id': 24, 'query': 'An American in Paris film', 'title': 'An American in Paris (film)'},
-              {'id': 25, 'query': 'The Greatest Show on Earth film', 'title': 'The Greatest Show on Earth (film)'},
-              {'id': 26, 'query': 'From Here to Eternity film', 'title': 'From Here to Eternity (film)'},
-              {'id': 27, 'query': 'On the Waterfront', 'title': 'On the Waterfront'},
-              {'id': 28, 'query': 'Marty film', 'title': 'Marty (film)'},
-              {'id': 29, 'query': 'Around the World in 80 Days 1956 film', 'title': 'Around the World in 80 Days (1956 film)'},
-              {'id': 30, 'query': 'The Bridge on the River Kwai', 'title': 'The Bridge on the River Kwai'},
-              {'id': 31, 'query': 'Gigi 1958 film', 'title': 'Gigi (1958 film)'},
-              {'id': 32, 'query': 'Ben-Hur 1959 film', 'title': 'Ben-Hur (1959 film)'},
-              {'id': 33, 'query': 'The Apartment', 'title': 'The Apartment'},
-              {'id': 34, 'query': 'West Side Story 1961 film', 'title': 'West Side Story (1961 film)'},
-              {'id': 35, 'query': 'Lawrence of Arabia film', 'title': 'Lawrence of Arabia (film)'},
-              {'id': 36, 'query': 'Tom Jones 1963 film', 'title': 'Tom Jones (1963 film)'},
-              {'id': 37, 'query': 'My Fair Lady film', 'title': 'My Fair Lady (film)'},
-              {'id': 38, 'query': 'The Sound of Music film', 'title': 'The Sound of Music (film)'},
-              {'id': 39, 'query': 'A Man for All Seasons 1966 film', 'title': 'A Man for All Seasons (1966 film)'},
-              {'id': 40, 'query': 'In the Heat of the Night film', 'title': 'In the Heat of the Night (film)'},
-              {'id': 41, 'query': 'Oliver! film', 'title': 'Oliver! (film)'},
-              {'id': 42, 'query': 'Midnight Cowboy', 'title': 'Midnight Cowboy'},
-              {'id': 43, 'query': 'Patton film', 'title': 'Patton (film)'},
-              {'id': 44, 'query': 'The French Connection film', 'title': 'The French Connection (film)'},
-              {'id': 45, 'query': 'The Godfather', 'title': 'The Godfather'},
-              {'id': 46, 'query': 'The Sting', 'title': 'The Sting'},
-              {'id': 47, 'query': 'The Godfather Part II', 'title': 'The Godfather Part II'},
-              {'id': 48, 'query': 'One Flew Over the Cuckoo\'s Nest film', 'title': 'One Flew Over the Cuckoo\'s Nest (film)'},
-              {'id': 49, 'query': 'Rocky film', 'title': 'Rocky'},
-              {'id': 50, 'query': 'Annie Hall', 'title': 'Annie Hall'},
-              {'id': 51, 'query': 'The Deer Hunter', 'title': 'The Deer Hunter'},
-              {'id': 52, 'query': 'Kramer vs. Kramer', 'title': 'Kramer vs. Kramer'},
-              {'id': 53, 'query': 'Ordinary People film', 'title': 'Ordinary People (film)'},
-              {'id': 54, 'query': 'Chariots of Fire', 'title': 'Chariots of Fire'},
-              {'id': 55, 'query': 'Gandhi film', 'title': 'Gandhi (film)'},
-              {'id': 56, 'query': 'Terms of Endearment film', 'title': 'Terms of Endearment (film)'},
-              {'id': 57, 'query': 'Amadeus film', 'title': 'Amadeus (film)'},
-              {'id': 58, 'query': 'Out of Africa film', 'title': 'Out of Africa (film)'},
-              {'id': 59, 'query': 'Platoon film', 'title': 'Platoon (film)'},
-              {'id': 60, 'query': 'The Last Emperor', 'title': 'The Last Emperor'},
-              {'id': 61, 'query': 'Rain Man', 'title': 'Rain Man'},
-              {'id': 62, 'query': 'Driving Miss Daisy film', 'title': 'Driving Miss Daisy (film)'},
-              {'id': 63, 'query': 'Dances with Wolves', 'title': 'Dances with Wolves'},
-              {'id': 64, 'query': 'The Silence of the Lambs film', 'title': 'The Silence of the Lambs (film)'},
-              {'id': 65, 'query': 'Unforgiven', 'title': 'Unforgiven'},
-              {'id': 66, 'query': 'Schindler\'s List', 'title': 'Schindler\'s List'},
-              {'id': 67, 'query': 'Forrest Gump', 'title': 'Forrest Gump'},
-              {'id': 68, 'query': 'Braveheart', 'title': 'Braveheart'},
-              {'id': 69, 'query': 'The English Patient film', 'title': 'The English Patient (film)'},
-              {'id': 70, 'query': 'Titanic 1997 film', 'title': 'Titanic (1997 film)'},
-              {'id': 71, 'query': 'Shakespeare in Love', 'title': 'Shakespeare in Love'},
-              {'id': 72, 'query': 'American Beauty 1999 film', 'title': 'American Beauty (1999 film)'},
-              {'id': 73, 'query': 'Gladiator 2000 film', 'title': 'Gladiator (2000 film)'},
-              {'id': 74, 'query': 'A Beautiful Mind film', 'title': 'A Beautiful Mind (film)'},
-              {'id': 75, 'query': 'Chicago 2002 film', 'title': 'Chicago (2002 film)'},
-              {'id': 76, 'query': 'The Lord of the Rings: The Return of the King', 'title': 'The Lord of the Rings: The Return of the King'},
-              {'id': 77, 'query': 'Million Dollar Baby', 'title': 'Million Dollar Baby'},
-              {'id': 78, 'query': 'Crash 2004 film', 'title': 'Crash (2004 film)'},
-              {'id': 79, 'query': 'The Departed', 'title': 'The Departed'},
-              {'id': 80, 'query': 'No Country for Old Men film', 'title': 'No Country for Old Men (film)'},
-              {'id': 81, 'query': 'Slumdog Millionaire', 'title': 'Slumdog Millionaire'},
-              {'id': 82, 'query': 'The Hurt Locker', 'title': 'The Hurt Locker'},
-              {'id': 83, 'query': 'The King\'s Speech', 'title': 'The King\'s Speech'},
-              {'id': 84, 'query': 'The Artist film', 'title': 'The Artist (film)'},
-              {'id': 85, 'query': 'Argo film', 'title': 'Argo (film)'},
-              {'id': 86, 'query': '12 Years a Slave film', 'title': '12 Years a Slave (film)'},
-              {'id': 87, 'query': 'Birdman film', 'title': 'Birdman (film)'},
-              {'id': 88, 'query': 'Spotlight film', 'title': 'Spotlight (film)'},
-              {'id': 89, 'query': 'Moonlight 2016 film', 'title': 'Moonlight (2016 film)'},
-              {'id': 90, 'query': 'The Shape of Water film', 'title': 'The Shape of Water (film)'},
-              {'id': 91, 'query': 'Green Book film', 'title': 'Green Book (film)'},
-              {'id': 92, 'query': 'Parasite 2019 film', 'title': 'Parasite (2019 film)'},
-              {'id': 93, 'query': 'Nomadland film', 'title': 'Nomadland (film)'},
-              {'id': 94, 'query': 'CODA 2021 film', 'title': 'CODA (2021 film)'},
-              {'id': 95, 'query': 'Everything Everywhere All at Once', 'title': 'Everything Everywhere All at Once'},
-              {'id': 96, 'query': 'Oppenheimer film', 'title': 'Oppenheimer (film)'},
-              {'id': 97, 'query': 'Anora film', 'title': 'Anora (film)'}
+              {'id': 1, 'wiki': 'Wings_(1927_film)'},
+              {'id': 2, 'wiki': 'The_Broadway_Melody'},
+              {'id': 3, 'wiki': 'All_Quiet_on_the_Western_Front_(1930_film)'},
+              {'id': 4, 'wiki': 'Cimarron_(1931_film)'},
+              {'id': 5, 'wiki': 'Grand_Hotel_(film)'},
+              {'id': 6, 'wiki': 'Cavalcade_(1933_film)'},
+              {'id': 7, 'wiki': 'It_Happened_One_Night'},
+              {'id': 8, 'wiki': 'Mutiny_on_the_Bounty_(1935_film)'},
+              {'id': 9, 'wiki': 'The_Great_Ziegfeld'},
+              {'id': 10, 'wiki': 'The_Life_of_Emile_Zola'},
+              {'id': 11, 'wiki': 'You_Can%27t_Take_It_with_You_(film)'},
+              {'id': 12, 'wiki': 'Gone_with_the_Wind_(film)'},
+              {'id': 13, 'wiki': 'Rebecca_(1940_film)'},
+              {'id': 14, 'wiki': 'How_Green_Was_My_Valley_(film)'},
+              {'id': 15, 'wiki': 'Mrs._Miniver_(film)'},
+              {'id': 16, 'wiki': 'Casablanca_(film)'},
+              {'id': 17, 'wiki': 'Going_My_Way'},
+              {'id': 18, 'wiki': 'The_Lost_Weekend_(film)'},
+              {'id': 19, 'wiki': 'The_Best_Years_of_Our_Lives'},
+              {'id': 20, 'wiki': 'Gentleman%27s_Agreement_(film)'},
+              {'id': 21, 'wiki': 'Hamlet_(1948_film)'},
+              {'id': 22, 'wiki': 'All_the_King%27s_Men_(1949_film)'},
+              {'id': 23, 'wiki': 'All_About_Eve'},
+              {'id': 24, 'wiki': 'An_American_in_Paris_(film)'},
+              {'id': 25, 'wiki': 'The_Greatest_Show_on_Earth_(film)'},
+              {'id': 26, 'wiki': 'From_Here_to_Eternity_(film)'},
+              {'id': 27, 'wiki': 'On_the_Waterfront'},
+              {'id': 28, 'wiki': 'Marty_(film)'},
+              {'id': 29, 'wiki': 'Around_the_World_in_80_Days_(1956_film)'},
+              {'id': 30, 'wiki': 'The_Bridge_on_the_River_Kwai'},
+              {'id': 31, 'wiki': 'Gigi_(1958_film)'},
+              {'id': 32, 'wiki': 'Ben-Hur_(1959_film)'},
+              {'id': 33, 'wiki': 'The_Apartment'},
+              {'id': 34, 'wiki': 'West_Side_Story_(1961_film)'},
+              {'id': 35, 'wiki': 'Lawrence_of_Arabia_(film)'},
+              {'id': 36, 'wiki': 'Tom_Jones_(1963_film)'},
+              {'id': 37, 'wiki': 'My_Fair_Lady_(film)'},
+              {'id': 38, 'wiki': 'The_Sound_of_Music_(film)'},
+              {'id': 39, 'wiki': 'A_Man_for_All_Seasons_(1966_film)'},
+              {'id': 40, 'wiki': 'In_the_Heat_of_the_Night_(film)'},
+              {'id': 41, 'wiki': 'Oliver!_(film)'},
+              {'id': 42, 'wiki': 'Midnight_Cowboy'},
+              {'id': 43, 'wiki': 'Patton_(film)'},
+              {'id': 44, 'wiki': 'The_French_Connection_(film)'},
+              {'id': 45, 'wiki': 'The_Godfather'},
+              {'id': 46, 'wiki': 'The_Sting'},
+              {'id': 47, 'wiki': 'The_Godfather_Part_II'},
+              {'id': 48, 'wiki': 'One_Flew_Over_the_Cuckoo%27s_Nest_(film)'},
+              {'id': 49, 'wiki': 'Rocky'},
+              {'id': 50, 'wiki': 'Annie_Hall'},
+              {'id': 51, 'wiki': 'The_Deer_Hunter'},
+              {'id': 52, 'wiki': 'Kramer_vs._Kramer'},
+              {'id': 53, 'wiki': 'Ordinary_People_(1980_film)'},
+              {'id': 54, 'wiki': 'Chariots_of_Fire'},
+              {'id': 55, 'wiki': 'Gandhi_(film)'},
+              {'id': 56, 'wiki': 'Terms_of_Endearment_(film)'},
+              {'id': 57, 'wiki': 'Amadeus_(film)'},
+              {'id': 58, 'wiki': 'Out_of_Africa_(film)'},
+              {'id': 59, 'wiki': 'Platoon_(film)'},
+              {'id': 60, 'wiki': 'The_Last_Emperor'},
+              {'id': 61, 'wiki': 'Rain_Man'},
+              {'id': 62, 'wiki': 'Driving_Miss_Daisy_(film)'},
+              {'id': 63, 'wiki': 'Dances_with_Wolves'},
+              {'id': 64, 'wiki': 'The_Silence_of_the_Lambs_(film)'},
+              {'id': 65, 'wiki': 'Unforgiven'},
+              {'id': 66, 'wiki': 'Schindler%27s_List'},
+              {'id': 67, 'wiki': 'Forrest_Gump'},
+              {'id': 68, 'wiki': 'Braveheart'},
+              {'id': 69, 'wiki': 'The_English_Patient_(film)'},
+              {'id': 70, 'wiki': 'Titanic_(1997_film)'},
+              {'id': 71, 'wiki': 'Shakespeare_in_Love'},
+              {'id': 72, 'wiki': 'American_Beauty_(1999_film)'},
+              {'id': 73, 'wiki': 'Gladiator_(2000_film)'},
+              {'id': 74, 'wiki': 'A_Beautiful_Mind_(film)'},
+              {'id': 75, 'wiki': 'Chicago_(2002_film)'},
+              {'id': 76, 'wiki': 'The_Lord_of_the_Rings:_The_Return_of_the_King'},
+              {'id': 77, 'wiki': 'Million_Dollar_Baby'},
+              {'id': 78, 'wiki': 'Crash_(2004_film)'},
+              {'id': 79, 'wiki': 'The_Departed'},
+              {'id': 80, 'wiki': 'No_Country_for_Old_Men_(film)'},
+              {'id': 81, 'wiki': 'Slumdog_Millionaire'},
+              {'id': 82, 'wiki': 'The_Hurt_Locker'},
+              {'id': 83, 'wiki': 'The_King%27s_Speech'},
+              {'id': 84, 'wiki': 'The_Artist_(film)'},
+              {'id': 85, 'wiki': 'Argo_(film)'},
+              {'id': 86, 'wiki': '12_Years_a_Slave_(film)'},
+              {'id': 87, 'wiki': 'Birdman_(film)'},
+              {'id': 88, 'wiki': 'Spotlight_(film)'},
+              {'id': 89, 'wiki': 'Moonlight_(2016_film)'},
+              {'id': 90, 'wiki': 'The_Shape_of_Water_(film)'},
+              {'id': 91, 'wiki': 'Green_Book_(film)'},
+              {'id': 92, 'wiki': 'Parasite_(2019_film)'},
+              {'id': 93, 'wiki': 'Nomadland_(film)'},
+              {'id': 94, 'wiki': 'CODA_(2021_film)'},
+              {'id': 95, 'wiki': 'Everything_Everywhere_All_at_Once'},
+              {'id': 96, 'wiki': 'Oppenheimer_(film)'},
+              {'id': 97, 'wiki': 'Anora_(film)'}
           ]
 
-          def get_image_from_wiki_search(query_str):
-              url = f'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(query_str)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=600'
-              req = urllib.request.Request(url, headers={'User-Agent': 'CineOscar/2.0 (github.com/cineoscar)'})
+          def get_image_url(wiki_title):
+              # Ttentativa 1: Wikipedia REST Summary API
               try:
+                  url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{wiki_title}'
+                  req = urllib.request.Request(url, headers={'User-Agent': 'CineOscarApp/3.0 (contact@cineoscar.app)'})
+                  with urllib.request.urlopen(req) as resp:
+                      data = json.loads(resp.read().decode())
+                      if 'thumbnail' in data and 'source' in data['thumbnail']:
+                          return data['thumbnail']['source']
+              except Exception:
+                  pass
+
+              # Tentativa 2: Wikipedia Query API
+              try:
+                  clean_title = urllib.parse.unquote(wiki_title).replace('_', ' ')
+                  url = f'https://en.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote(clean_title)}&prop=pageimages&format=json&pithumbsize=600'
+                  req = urllib.request.Request(url, headers={'User-Agent': 'CineOscarApp/3.0 (contact@cineoscar.app)'})
                   with urllib.request.urlopen(req) as resp:
                       data = json.loads(resp.read().decode())
                       pages = data.get('query', {}).get('pages', {})
                       for pid in pages:
                           if 'thumbnail' in pages[pid]:
                               return pages[pid]['thumbnail']['source']
-              except Exception as e:
+              except Exception:
                   pass
+
               return None
 
-          def get_image_from_exact_title(title_str):
-              url = f'https://en.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote(title_str)}&prop=pageimages&format=json&pithumbsize=600'
-              req = urllib.request.Request(url, headers={'User-Agent': 'CineOscar/2.0 (github.com/cineoscar)'})
-              try:
-                  with urllib.request.urlopen(req) as resp:
-                      data = json.loads(resp.read().decode())
-                      pages = data.get('query', {}).get('pages', {})
-                      for pid in pages:
-                          if 'thumbnail' in pages[pid]:
-                              return pages[pid]['thumbnail']['source']
-              except Exception as e:
-                  pass
-              return None
-
-          print('Iniciando o download de todos os posters...')
-          downloaded = 0
-
-          for m in MOVIES:
-              path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
+          # Loop de ate 4 rodadas de retentativa
+          for pass_num in range(1, 5):
+              missing = [m for m in MOVIES if not (os.path.exists(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') and os.path.getsize(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') > 3000)]
               
-              if os.path.exists(path) and os.path.getsize(path) > 5000:
-                  print(f'[{m[\"id\"]}/97] Ja existe no repositorio: {path}')
-                  continue
+              print(f'=== RODADA {pass_num}/4 === (Faltam {len(missing)} de {len(MOVIES)})')
+              if not missing:
+                  print('Todos os 97 posters ja foram baixados com sucesso!')
+                  break
 
-              img_url = get_image_from_wiki_search(m['query']) or get_image_from_exact_title(m['title']) or get_image_from_exact_title(m['query'])
+              for m in missing:
+                  path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
+                  img_url = get_image_url(m['wiki'])
 
-              if img_url:
-                  try:
-                      req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
-                      with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
-                          f.write(resp.read())
-                      print(f'[{m[\"id\"]}/97] Salvo com sucesso -> {path}')
-                      downloaded += 1
-                  except Exception as e:
-                      print(f'[{m[\"id\"]}/97] Erro ao salvar imagem: {e}')
-              else:
-                  print(f'[{m[\"id\"]}/97] Poster nao encontrado para: {m[\"query\"]}')
-              
-              time.sleep(0.3)
+                  if img_url:
+                      try:
+                          req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+                          with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
+                              f.write(resp.read())
+                          print(f'[{m[\"id\"]}/97] Baixado com sucesso!')
+                      except Exception as e:
+                          print(f'[{m[\"id\"]}/97] Erro ao salvar imagem: {e}')
+                  else:
+                      print(f'[{m[\"id\"]}/97] URL da foto nao encontrada nesta tentativa.')
 
-          print(f'Processo concluido! Novas imagens baixadas: {downloaded}')
+                  # Timer para evitar Rate Limit
+                  time.sleep(1.2)
+
+              # Pausa maior entre rodadas
+              if pass_num < 4 and len(missing) > 0:
+                  print('Aguardando 5 segundos antes da proxima rodada...')
+                  time.sleep(5)
+
+          total_existentes = len([m for m in MOVIES if os.path.exists(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') and os.path.getsize(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') > 3000])
+          print(f'STATUS FINAL: {total_existentes} de 97 posters estao salvos no repositorio!')
           "
 
       - name: Salvar posters no repositorio
@@ -190,4 +197,3 @@ jobs:
           git add posters/
           git commit -m "Salva todos os 97 posters na pasta local /posters" || exit 0
           git push
-          
