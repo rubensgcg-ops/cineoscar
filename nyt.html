@@ -56,6 +56,7 @@
       background: var(--accent);
       border-color: var(--accent);
       box-shadow: 0 0 12px var(--accent-glow);
+      font-weight: 700;
     }
 
     /* Header */
@@ -180,7 +181,7 @@
       outline: none;
     }
 
-    /* Roulette Draw Card */
+    /* Draw Card */
     .draw-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -282,11 +283,14 @@
       margin-top: 10px;
     }
 
-    /* Movie Grid */
+    /* Movie Grid: 2 Posters Lado a Lado no Mobile e responsivo */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (min-width: 600px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
     }
     .grid-card {
       background: var(--bg-card);
@@ -299,7 +303,7 @@
     }
     .grid-poster {
       width: 100%;
-      height: 210px;
+      height: 220px;
       object-fit: cover;
       background: var(--bg-dark);
     }
@@ -311,13 +315,21 @@
       justify-content: space-between;
     }
     .grid-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-main);
       line-height: 1.2;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
-    .grid-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+    .grid-meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; }
+    .grid-imdb {
+      font-size: 0.7rem;
+      color: #f5c518;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
 
     /* Progress Header */
     .progress-bar-container {
@@ -347,7 +359,7 @@
   <header>
     <div class="logo-badge">The New York Times Poll</div>
     <h1>100 Best Movies of the 21st Century</h1>
-    <div class="subtitle">Sorteador dos 100 melhores filmes eleitos pelos maiores críticos do mundo</div>
+    <div class="subtitle">Sorteador dos 100 melhores filmes eleitos pelos críticos do NYT</div>
   </header>
 
   <div class="tabs-nav">
@@ -403,9 +415,9 @@
             </div>
           </div>
           <div class="movie-details">
-            <div class="movie-title" id="draw-title">Parasita</div>
+            <div class="movie-title" id="draw-title">Parasite</div>
             <div class="movie-meta" id="draw-meta">2019 • Bong Joon Ho • Drama / Thriller</div>
-            <div class="synopsis" id="draw-synopsis">Uma família desempregada se infiltra na vida da rica família Park.</div>
+            <div class="synopsis" id="draw-synopsis">A destitute family infiltrates the lives of the wealthy Park family.</div>
             <a id="draw-imdb" href="#" target="_blank" class="imdb-link">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H8.5v-6H10v6zm2.5 0h-1.5v-6h1.5v6zm3.5 0h-1.5v-6H16v6z"/></svg>
               Ver no IMDb
@@ -465,58 +477,109 @@
   </div>
 
   <script>
-    // Banco de Dados NYT 100
+    // Banco de Dados NYT 100 em Inglês com Diretores e IMDb
     const NYT_DATABASE = [
-      { id: 1, title: "Parasita", originalTitle: "Parasite", year: 2019, director: "Bong Joon Ho", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt6751668/", synopsis: "Uma família desempregada se infiltra na rica família Park." },
-      { id: 2, title: "Cidade dos Sonhos", originalTitle: "Mulholland Drive", year: 2001, director: "David Lynch", genre: "Mystery / Drama", imdb: "https://www.imdb.com/title/tt0166924/", synopsis: "Uma mulher amnésica e uma aspirante a atriz exploram os segredos de Los Angeles." },
-      { id: 3, title: "Sangue Negro", originalTitle: "There Will Be Blood", year: 2007, director: "Paul Thomas Anderson", genre: "Drama", imdb: "https://www.imdb.com/title/tt0469494/", synopsis: "A ambição implacável de um prospector de petróleo no início do século XX." },
-      { id: 4, title: "Amor à Flor da Pele", originalTitle: "In the Mood for Love", year: 2000, director: "Wong Kar-wai", genre: "Romance / Drama", imdb: "https://www.imdb.com/title/tt0243017/", synopsis: "Dois vizinhos descobrem que seus cônjuges estão tendo um caso." },
-      { id: 5, title: "Moonlight: Sob a Luz do Luar", originalTitle: "Moonlight", year: 2016, director: "Barry Jenkins", genre: "Drama", imdb: "https://www.imdb.com/title/tt4975722/", synopsis: "A jornada de auto-descoberta de um jovem negro em Miami." },
-      { id: 6, title: "Onde os Fracos Não Têm Vez", originalTitle: "No Country for Old Men", year: 2007, director: "Joel & Ethan Coen", genre: "Crime / Thriller", imdb: "https://www.imdb.com/title/tt0477348/", synopsis: "Um caçador encontra uma mala com dinheiro e é perseguido por um assassino." },
-      { id: 7, title: "Brilho Eterno de uma Mente sem Lembranças", originalTitle: "Eternal Sunshine of the Spotless Mind", year: 2004, director: "Michel Gondry", genre: "Sci-Fi / Romance", imdb: "https://www.imdb.com/title/tt0338013/", synopsis: "Um casal apaga as memórias um do outro após um término doloroso." },
-      { id: 8, title: "Corra!", originalTitle: "Get Out", year: 2017, director: "Jordan Peele", genre: "Horror / Mystery", imdb: "https://www.imdb.com/title/tt5052448/", synopsis: "Um jovem negro visita a família de sua namorada branca e descobre algo perturbador." },
-      { id: 9, title: "A Viagem de Chihiro", originalTitle: "Spirited Away", year: 2001, director: "Hayao Miyazaki", genre: "Animation / Fantasy", imdb: "https://www.imdb.com/title/tt0245429/", synopsis: "Uma garota entra em um mundo de espíritos para salvar seus pais." },
-      { id: 10, title: "A Rede Social", originalTitle: "The Social Network", year: 2010, director: "David Fincher", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt1285016/", synopsis: "A criação do Facebook e os conflitos judiciais entre seus criadores." },
-      { id: 11, title: "Mad Max: Estrada da Fúria", originalTitle: "Mad Max: Fury Road", year: 2015, director: "George Miller", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt1392190/", synopsis: "Em um futuro pós-apocalíptico, uma rebelde foge de um tirano." },
-      { id: 12, title: "Zona de Interesse", originalTitle: "The Zone of Interest", year: 2023, director: "Jonathan Glazer", genre: "Drama / History", imdb: "https://www.imdb.com/title/tt21918882/", synopsis: "O comandante de Auschwitz vive com sua família ao lado do campo de concentração." },
-      { id: 13, title: "Filhos da Esperança", originalTitle: "Children of Men", year: 2006, director: "Alfonso Cuarón", genre: "Sci-Fi / Thriller", imdb: "https://www.imdb.com/title/tt0206634/", synopsis: "Em um futuro sem nascimentos, um homem protege a última mulher grávida." },
-      { id: 14, title: "Bastardos Inglórios", originalTitle: "Inglourious Basterds", year: 2009, director: "Quentin Tarantino", genre: "Adventure / Drama", imdb: "https://www.imdb.com/title/tt0361748/", synopsis: "Soldados judeus-americanos planejam derrubar líderes nazistas na França." },
-      { id: 15, title: "Cidade de Deus", originalTitle: "City of God", year: 2002, director: "Fernando Meirelles", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt0317248/", synopsis: "Dois jovens seguem caminhos opostos na favela Cidade de Deus." }
+      { id: 1, title: "Parasite", year: 2019, director: "Bong Joon Ho", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt6751668/", synopsis: "A destitute family infiltrates the lives of the wealthy Park family." },
+      { id: 2, title: "Mulholland Drive", year: 2001, director: "David Lynch", genre: "Mystery / Drama", imdb: "https://www.imdb.com/title/tt0166924/", synopsis: "An amnesiac woman and an aspiring actress uncover dark secrets in Los Angeles." },
+      { id: 3, title: "There Will Be Blood", year: 2007, director: "Paul Thomas Anderson", genre: "Drama", imdb: "https://www.imdb.com/title/tt0469494/", synopsis: "A ruthless oil prospector embarks on a relentless pursuit of wealth." },
+      { id: 4, title: "In the Mood for Love", year: 2000, director: "Wong Kar-wai", genre: "Romance / Drama", imdb: "https://www.imdb.com/title/tt0243017/", synopsis: "Two neighbors form a strong bond after suspecting their spouses of affairs." },
+      { id: 5, title: "Moonlight", year: 2016, director: "Barry Jenkins", genre: "Drama", imdb: "https://www.imdb.com/title/tt4975722/", synopsis: "A young Black man grapples with his identity and sexuality in Miami." },
+      { id: 6, title: "No Country for Old Men", year: 2007, director: "Joel & Ethan Coen", genre: "Crime / Thriller", imdb: "https://www.imdb.com/title/tt0477348/", synopsis: "A hunter stumbles upon a drug deal gone wrong and a cache of money." },
+      { id: 7, title: "Eternal Sunshine of the Spotless Mind", year: 2004, director: "Michel Gondry", genre: "Sci-Fi / Romance", imdb: "https://www.imdb.com/title/tt0338013/", synopsis: "A couple undergo a medical procedure to erase each other from their memories." },
+      { id: 8, title: "Get Out", year: 2017, director: "Jordan Peele", genre: "Horror / Mystery", imdb: "https://www.imdb.com/title/tt5052448/", synopsis: "A young Black photographer uncovers a disturbing secret visiting his white girlfriend's family." },
+      { id: 9, title: "Spirited Away", year: 2001, director: "Hayao Miyazaki", genre: "Animation / Fantasy", imdb: "https://www.imdb.com/title/tt0245429/", synopsis: "A young girl wanders into a world ruled by gods, witches, and spirits." },
+      { id: 10, title: "The Social Network", year: 2010, director: "David Fincher", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt1285016/", synopsis: "The founding of Facebook and the ensuing legal battles." },
+      { id: 11, title: "Mad Max: Fury Road", year: 2015, director: "George Miller", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt1392190/", synopsis: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler." },
+      { id: 12, title: "The Zone of Interest", year: 2023, director: "Jonathan Glazer", genre: "Drama / History", imdb: "https://www.imdb.com/title/tt21918882/", synopsis: "The Auschwitz commandant builds a dream life for his family next to the camp." },
+      { id: 13, title: "Children of Men", year: 2006, director: "Alfonso Cuarón", genre: "Sci-Fi / Thriller", imdb: "https://www.imdb.com/title/tt0206634/", synopsis: "In a world facing human extinction, a civil servant agrees to protect a miraculously pregnant woman." },
+      { id: 14, title: "Inglourious Basterds", year: 2009, director: "Quentin Tarantino", genre: "Adventure / Drama", imdb: "https://www.imdb.com/title/tt0361748/", synopsis: "In Nazi-occupied France, a plan to assassinate Nazi leaders is set in motion." },
+      { id: 15, title: "City of God", year: 2002, director: "Fernando Meirelles", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt0317248/", synopsis: "Two boys growing up in a violent Rio de Janeiro suburb take down different paths." },
+      { id: 16, title: "Crouching Tiger, Hidden Dragon", year: 2000, director: "Ang Lee", genre: "Action / Adventure", imdb: "https://www.imdb.com/title/tt0190332/", synopsis: "A young Chinese warrior steals a legendary sword and flees into a world of romance and adventure." },
+      { id: 17, title: "Brokeback Mountain", year: 2005, director: "Ang Lee", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt0388795/", synopsis: "Two sheepherders develop a complex emotional and sexual relationship over many years." },
+      { id: 18, title: "Y Tu Mamá También", year: 2001, director: "Alfonso Cuarón", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt0245574/", synopsis: "Two teenage boys and an older woman embark on a road trip through Mexico." },
+      { id: 19, title: "Zodiac", year: 2007, director: "David Fincher", genre: "Crime / Mystery", imdb: "https://www.imdb.com/title/tt0443706/", synopsis: "A San Francisco cartoonist becomes obsessed with tracking down the elusive Zodiac Killer." },
+      { id: 20, title: "The Wolf of Wall Street", year: 2013, director: "Martin Scorsese", genre: "Biography / Comedy", imdb: "https://www.imdb.com/title/tt0993846/", synopsis: "Based on the true story of Jordan Belfort, from his rise to a wealthy stockbroker to his fall." },
+      { id: 21, title: "The Royal Tenenbaums", year: 2001, director: "Wes Anderson", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt0265666/", synopsis: "An eccentric family of former child prodigies reunites when their father announces he is dying." },
+      { id: 22, title: "The Grand Budapest Hotel", year: 2014, director: "Wes Anderson", genre: "Comedy / Adventure", imdb: "https://www.imdb.com/title/tt2278388/", synopsis: "The adventures of a legendary concierge at a famous European resort between the wars." },
+      { id: 23, title: "Boyhood", year: 2014, director: "Richard Linklater", genre: "Drama", imdb: "https://www.imdb.com/title/tt1065073/", synopsis: "Filmed over 12 years with the same cast, follows a boy growing up from childhood to college." },
+      { id: 24, title: "Her", year: 2013, director: "Spike Jonze", genre: "Sci-Fi / Romance", imdb: "https://www.imdb.com/title/tt1798709/", synopsis: "A lonely writer develops an unlikely relationship with an operating system designed to meet his every need." },
+      { id: 25, title: "Phantom Thread", year: 2017, director: "Paul Thomas Anderson", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt3962694/", synopsis: "In 1950s London, a renowned dressmaker's life is disrupted by a strong-willed young woman." },
+      { id: 26, title: "Anatomy of a Fall", year: 2023, director: "Justine Triet", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt17009710/", synopsis: "A woman is suspected of her husband's murder; their blind son faces a moral dilemma." },
+      { id: 27, title: "Adaptation", year: 2002, director: "Spike Jonze", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt0268126/", synopsis: "A neurotic screenwriter struggles to adapt a non-fiction book about orchids." },
+      { id: 28, title: "The Dark Knight", year: 2008, director: "Christopher Nolan", genre: "Action / Crime", imdb: "https://www.imdb.com/title/tt0468569/", synopsis: "Batman faces his greatest psychological test when the Joker wreaks havoc on Gotham City." },
+      { id: 29, title: "Arrival", year: 2016, director: "Denis Villeneuve", genre: "Sci-Fi / Drama", imdb: "https://www.imdb.com/title/tt2543164/", synopsis: "A linguistics professor leads a team to communicate with aliens who arrived on Earth." },
+      { id: 30, title: "Lost in Translation", year: 2003, director: "Sofia Coppola", genre: "Drama / Comedy", imdb: "https://www.imdb.com/title/tt0335266/", synopsis: "A faded movie star and a neglected young woman form an unlikely bond in Tokyo." },
+      { id: 31, title: "The Departed", year: 2006, director: "Martin Scorsese", genre: "Crime / Thriller", imdb: "https://www.imdb.com/title/tt0407887/", synopsis: "An undercover cop and a mob mole try to identify each other in Boston." },
+      { id: 32, title: "Bridesmaids", year: 2011, director: "Paul Feig", genre: "Comedy / Romance", imdb: "https://www.imdb.com/title/tt1478338/", synopsis: "Competition between the maid of honor and a bridesmaid over who is the bride's best friend." },
+      { id: 33, title: "A Separation", year: 2011, director: "Asghar Farhadi", genre: "Drama", imdb: "https://www.imdb.com/title/tt1832382/", synopsis: "A married couple face a difficult decision of protecting their daughter vs caring for an aging father." },
+      { id: 34, title: "WALL-E", year: 2008, director: "Andrew Stanton", genre: "Animation / Sci-Fi", imdb: "https://www.imdb.com/title/tt0910970/", synopsis: "In the distant future, a small waste-collecting robot embarks on a space journey." },
+      { id: 35, title: "A Prophet", year: 2009, director: "Jacques Audiard", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt1235159/", synopsis: "A young Arab man is sent to a brutal French prison and rises through the criminal ranks." },
+      { id: 36, title: "A Serious Man", year: 2009, director: "Joel & Ethan Coen", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt1019452/", synopsis: "A physics professor's life unravels when his wife asks for a divorce and problems mount." },
+      { id: 37, title: "Call Me by Your Name", year: 2017, director: "Luca Guadagnino", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt4590396/", synopsis: "In 1980s Italy, a romance blossoms between a seventeen-year-old and his father's research assistant." },
+      { id: 38, title: "Portrait of a Lady on Fire", year: 2019, director: "Céline Sciamma", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt8613070/", synopsis: "On an isolated island in 18th-century France, a painter is commissioned to paint a reluctant bride." },
+      { id: 39, title: "Lady Bird", year: 2017, director: "Greta Gerwig", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt5599806/", synopsis: "A high school senior in Sacramento navigates a turbulent relationship with her mother." },
+      { id: 40, title: "Yi Yi", year: 2000, director: "Edward Yang", genre: "Drama", imdb: "https://www.imdb.com/title/tt0243046/", synopsis: "A middle-class Taipei family experiences various life challenges over the course of a year." },
+      { id: 41, title: "Amélie", year: 2001, director: "Jean-Pierre Jeunet", genre: "Comedy / Romance", imdb: "https://www.imdb.com/title/tt0211915/", synopsis: "An imaginative waitress in Paris decides to secretly change the lives of those around her for the better." },
+      { id: 42, title: "The Master", year: 2012, director: "Paul Thomas Anderson", genre: "Drama", imdb: "https://www.imdb.com/title/tt1560747/", synopsis: "A war veteran struggling with his past joins a charismatic leader's religious movement." },
+      { id: 43, title: "Oldboy", year: 2003, director: "Park Chan-wook", genre: "Action / Mystery", imdb: "https://www.imdb.com/title/tt0364569/", synopsis: "A man is kidnapped and imprisoned for 15 years without explanation, then suddenly released." },
+      { id: 44, title: "Once Upon a Time in Hollywood", year: 2019, director: "Quentin Tarantino", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt7131622/", synopsis: "A television actor and his stunt double navigate changing Hollywood in 1969." },
+      { id: 45, title: "Moneyball", year: 2011, director: "Bennett Miller", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt1210166/", synopsis: "Oakland A's general manager uses computer-generated analysis to assemble a competitive baseball team." },
+      { id: 46, title: "Roma", year: 2018, director: "Alfonso Cuarón", genre: "Drama", imdb: "https://www.imdb.com/title/tt6155172/", synopsis: "A year in the life of a middle-class family's maid in Mexico City in the early 1970s." },
+      { id: 47, title: "Almost Famous", year: 2000, director: "Cameron Crowe", genre: "Adventure / Drama", imdb: "https://www.imdb.com/title/tt0181875/", synopsis: "A teenage journalist writes about an up-and-coming rock band for Rolling Stone in the 1970s." },
+      { id: 48, title: "The Lives of Others", year: 2006, director: "Florian Henckel von Donnersmarck", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt0405094/", synopsis: "In 1984 East Berlin, an agent conducting surveillance on a writer finds his life transformed." },
+      { id: 49, title: "Before Sunset", year: 2004, director: "Richard Linklater", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt0381681/", synopsis: "Nine years after their first meeting in Vienna, Jesse and Céline reunite in Paris." },
+      { id: 50, title: "Up", year: 2009, director: "Pete Docter", genre: "Animation / Adventure", imdb: "https://www.imdb.com/title/tt1049413/", synopsis: "An elderly widower ties thousands of balloons to his house to fulfill a childhood dream." },
+      { id: 51, title: "12 Years a Slave", year: 2013, director: "Steve McQueen", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt2024544/", synopsis: "A free Black man from New York is abducted and sold into slavery in the antebellum South." },
+      { id: 52, title: "The Favourite", year: 2018, director: "Yorgos Lanthimos", genre: "Biography / Comedy", imdb: "https://www.imdb.com/title/tt5083738/", synopsis: "In 18th-century England, two cousins vie for the affection of Queen Anne." },
+      { id: 53, title: "Borat", year: 2006, director: "Larry Charles", genre: "Comedy", imdb: "https://www.imdb.com/title/tt0443453/", synopsis: "Kazakh TV talking head Borat travels to the United States to make a documentary." },
+      { id: 54, title: "Pan's Labyrinth", year: 2006, director: "Guillermo del Toro", genre: "Fantasy / Drama", imdb: "https://www.imdb.com/title/tt0457430/", synopsis: "In post-Civil War Spain, a young girl escapes into a captivating fantasy world." },
+      { id: 55, title: "Inception", year: 2010, director: "Christopher Nolan", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt1375666/", synopsis: "A thief who steals corporate secrets through dream-sharing technology is given a final task." },
+      { id: 56, title: "Punch-Drunk Love", year: 2002, director: "Paul Thomas Anderson", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt0272338/", synopsis: "A frustrated entrepreneur finds his life upended when he falls in love." },
+      { id: 57, title: "Best in Show", year: 2000, director: "Christopher Guest", genre: "Comedy", imdb: "https://www.imdb.com/title/tt0218839/", synopsis: "A mockumentary following colorful dog owners participating in a prestigious dog show." },
+      { id: 58, title: "Uncut Gems", year: 2019, director: "Josh & Benny Safdie", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt5727208/", synopsis: "A charismatic New York City jeweler always looking for the next big bet." },
+      { id: 59, title: "Toni Erdmann", year: 2016, director: "Maren Ade", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt4048668/", synopsis: "A practical-joking father tries to reconnect with his serious corporate consultant daughter." },
+      { id: 60, title: "Whiplash", year: 2014, director: "Damien Chazelle", genre: "Drama / Music", imdb: "https://www.imdb.com/title/tt2582802/", synopsis: "A promising young drummer enrolls at a cut-throat music conservatory." },
+      { id: 61, title: "Kill Bill: Volume 1", year: 2003, director: "Quentin Tarantino", genre: "Action / Crime", imdb: "https://www.imdb.com/title/tt0266697/", synopsis: "After waking from a four-year coma, a former assassin seeks vengeance." },
+      { id: 62, title: "Memento", year: 2000, director: "Christopher Nolan", genre: "Mystery / Thriller", imdb: "https://www.imdb.com/title/tt0209144/", synopsis: "A man with short-term memory loss attempts to track down his wife's murderer." },
+      { id: 63, title: "Little Miss Sunshine", year: 2006, director: "Jonathan Dayton, Valerie Faris", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt0449059/", synopsis: "A family takes a road trip in a VW bus to get their young daughter into a beauty pageant." },
+      { id: 64, title: "Gone Girl", year: 2014, director: "David Fincher", genre: "Drama / Mystery", imdb: "https://www.imdb.com/title/tt2267998/", synopsis: "With his wife's disappearance having become the focus of an intense circus, a man becomes the prime suspect." },
+      { id: 65, title: "Oppenheimer", year: 2023, director: "Christopher Nolan", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt15398776/", synopsis: "The story of American scientist J. Robert Oppenheimer and the atomic bomb." },
+      { id: 66, title: "Spotlight", year: 2015, director: "Tom McCarthy", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt1895587/", synopsis: "The Boston Globe's investigative reporting unit uncovers a massive systemic cover-up." },
+      { id: 67, title: "Tár", year: 2022, director: "Todd Field", genre: "Drama", imdb: "https://www.imdb.com/title/tt14444726/", synopsis: "Set in the international world of classical music, focuses on Lydia Tár, widely considered one of the greatest living composer/conductors." },
+      { id: 68, title: "The Hurt Locker", year: 2008, director: "Kathryn Bigelow", genre: "Drama / War", imdb: "https://www.imdb.com/title/tt0887912/", synopsis: "An Iraq War explosives-disposal unit is targeted by a psychologically intense new sergeant." },
+      { id: 69, title: "Under the Skin", year: 2013, director: "Jonathan Glazer", genre: "Sci-Fi / Thriller", imdb: "https://www.imdb.com/title/tt1441952/", synopsis: "An alien in human form preys upon hitchhikers in Scotland." },
+      { id: 70, title: "Let the Right One In", year: 2008, director: "Tomas Alfredson", genre: "Drama / Horror", imdb: "https://www.imdb.com/title/tt1139797/", synopsis: "An bullied 12-year-old boy develops a deep friendship with a child vampire." },
+      { id: 71, title: "Ocean's Eleven", year: 2001, director: "Steven Soderbergh", genre: "Crime / Thriller", imdb: "https://www.imdb.com/title/tt0240772/", synopsis: "Danny Ocean and his eleven accomplices plan to rob three Las Vegas casinos simultaneously." },
+      { id: 72, title: "Carol", year: 2015, director: "Todd Haynes", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt2402927/", synopsis: "A young department store clerk in 1950s New York develops an intimate relationship with an older woman." },
+      { id: 73, title: "Ratatouille", year: 2007, director: "Brad Bird", genre: "Animation / Comedy", imdb: "https://www.imdb.com/title/tt0382932/", synopsis: "A rat who can cook makes an unusual alliance with a young kitchen worker at a famous restaurant." },
+      { id: 74, title: "The Florida Project", year: 2017, director: "Sean Baker", genre: "Drama", imdb: "https://www.imdb.com/title/tt5649144/", synopsis: "Set over one summer, a precocious 6-year-old finds wonder and adventure near Walt Disney World." },
+      { id: 75, title: "Amour", year: 2012, director: "Michael Haneke", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt1602620/", synopsis: "An elderly couple's bond is severely tested when the wife suffers a debilitating stroke." },
+      { id: 76, title: "O Brother, Where Art Thou?", year: 2000, director: "Joel & Ethan Coen", genre: "Adventure / Comedy", imdb: "https://www.imdb.com/title/tt0190590/", synopsis: "In Mississippi during the Great Depression, three escaped convicts search for hidden treasure." },
+      { id: 77, title: "Everything Everywhere All at Once", year: 2022, director: "Daniel Kwan, Daniel Scheinert", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt6710474/", synopsis: "A Chinese immigrant is swept up into an insane adventure where she alone can save existence." },
+      { id: 78, title: "Aftersun", year: 2022, director: "Charlotte Wells", genre: "Drama", imdb: "https://www.imdb.com/title/tt19363068/", synopsis: "A young woman reflects on shared holiday joy and private melancholy she experienced with her father." },
+      { id: 79, title: "The Tree of Life", year: 2011, director: "Terrence Malick", genre: "Drama / Fantasy", imdb: "https://www.imdb.com/title/tt0478311/", synopsis: "The story of a Midwestern family in the 1950s, following the eldest son's journey from childhood to disillusionment." },
+      { id: 80, title: "Volver", year: 2006, director: "Pedro Almodóvar", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt0441908/", synopsis: "After her death, a mother returns to her hometown to fix situations she couldn't resolve while alive." },
+      { id: 81, title: "Black Swan", year: 2010, director: "Darren Aronofsky", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt0947798/", synopsis: "A committed dancer wins the lead role in Swan Lake and struggles to maintain her sanity." },
+      { id: 82, title: "The Act of Killing", year: 2012, director: "Joshua Oppenheimer", genre: "Documentary", imdb: "https://www.imdb.com/title/tt2375605/", synopsis: "Former Indonesian death squad leaders are challenged to reenact their mass killings." },
+      { id: 83, title: "Inside Llewyn Davis", year: 2013, director: "Joel & Ethan Coen", genre: "Drama / Music", imdb: "https://www.imdb.com/title/tt2042568/", synopsis: "A week in the life of a young folk singer navigating the Greenwich Village folk scene in 1961." },
+      { id: 84, title: "Melancholia", year: 2011, director: "Lars von Trier", genre: "Drama / Sci-Fi", imdb: "https://www.imdb.com/title/tt1527186/", synopsis: "Two sisters grapple with their strained relationship as a rogue planet hurtles toward Earth." },
+      { id: 85, title: "Anchorman: The Legend of Ron Burgundy", year: 2004, director: "Adam McKay", genre: "Comedy", imdb: "https://www.imdb.com/title/tt0357413/", synopsis: "Ron Burgundy is San Diego's top-rated newsman in the 1970s until an ambitious woman arrives." },
+      { id: 86, title: "Past Lives", year: 2023, director: "Celine Song", genre: "Drama / Romance", imdb: "https://www.imdb.com/title/tt13238346/", synopsis: "Dein childhood friends are reunited in New York for a fateful week." },
+      { id: 87, title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, director: "Peter Jackson", genre: "Adventure / Fantasy", imdb: "https://www.imdb.com/title/tt0120737/", synopsis: "A meek Hobbit of the Shire and eight companions set out on a journey to destroy the One Ring." },
+      { id: 88, title: "The Gleaners and I", year: 2000, director: "Agnès Varda", genre: "Documentary", imdb: "https://www.imdb.com/title/tt0247382/", synopsis: "Director Agnès Varda documents various gleaners, scavengers and ragpickers across France." },
+      { id: 89, title: "Interstellar", year: 2014, director: "Christopher Nolan", genre: "Sci-Fi / Adventure", imdb: "https://www.imdb.com/title/tt0816692/", synopsis: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival." },
+      { id: 90, title: "Frances Ha", year: 2012, director: "Noah Baumbach", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt2347569/", synopsis: "A New York woman who apprentices for a dance company wants so much more than she has." },
+      { id: 91, title: "Fish Tank", year: 2009, director: "Andrea Arnold", genre: "Drama", imdb: "https://www.imdb.com/title/tt1232776/", synopsis: "A troubled 15-year-old girl's life changes when her mother brings home a new boyfriend." },
+      { id: 92, title: "Gladiator", year: 2000, director: "Ridley Scott", genre: "Action / Adventure", imdb: "https://www.imdb.com/title/tt0172495/", synopsis: "A betrayed Roman general seeks revenge against the corrupt emperor who murdered his family." },
+      { id: 93, title: "Michael Clayton", year: 2007, director: "Tony Gilroy", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt0465538/", synopsis: "A law firm 'fixer' is called in to clean up a messy situation involving a compromised attorney." },
+      { id: 94, title: "Minority Report", year: 2002, director: "Steven Spielberg", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt0181689/", synopsis: "In a future where police arrest criminals before they commit crimes, an officer is accused of a future murder." },
+      { id: 95, title: "The Worst Person in the World", year: 2021, director: "Joachim Trier", genre: "Comedy / Drama", imdb: "https://www.imdb.com/title/tt10370710/", synopsis: "The chronicles of four years in the life of Julie, a young woman navigating the troubled waters of her love life." },
+      { id: 96, title: "Black Panther", year: 2018, director: "Ryan Coogler", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt1825683/", synopsis: "T'Challa, heir to the hidden kingdom of Wakanda, steps forward to lead his people into a new world." },
+      { id: 97, title: "Gravity", year: 2013, director: "Alfonso Cuarón", genre: "Sci-Fi / Thriller", imdb: "https://www.imdb.com/title/tt1454468/", synopsis: "Two astronauts work together to survive after an accident leaves them stranded in space." },
+      { id: 98, title: "Grizzly Man", year: 2005, director: "Werner Herzog", genre: "Documentary", imdb: "https://www.imdb.com/title/tt0427312/", synopsis: "A documentary on amateur grizzly bear expert Timothy Treadwell, who lived among bears in Alaska." },
+      { id: 99, title: "Drive", year: 2011, director: "Nicolas Winding Refn", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt0780504/", synopsis: "A mysterious Hollywood stuntman and mechanic moonlights as a getaway driver." },
+      { id: 100, title: "La La Land", year: 2016, director: "Damien Chazelle", genre: "Comedy / Drama / Music", imdb: "https://www.imdb.com/title/tt3783958/", synopsis: "While navigating their careers in Los Angeles, a pianist and an actress fall in love." }
     ];
-
-    // Preencher automaticamente filmes de 16 a 100 para compor o catálogo estático
-    const additionalTitles = [
-      "O Tigre e o Dragão", "O Segredo de Brokeback Mountain", "E Sua Mãe Também", "Zodíaco", "O Lobo de Wall Street",
-      "Os Excêntricos Tenenbaums", "O Grande Hotel Budapeste", "Boyhood", "Ela", "Trama Fantasma",
-      "Anatomia de uma Queda", "Adaptação", "Batman: O Cavaleiro das Trevas", "A Chegada", "Encontros e Desencontros",
-      "Os Osvaldos", "Madrinhas de Casamento", "A Separação", "WALL-E", "O Profeta", "Um Homem Sério",
-      "Me Chame Pelo Seu Nome", "Retrato de uma Jovem em Chamas", "Lady Bird", "Yi Yi", "O Fabuloso Destino de Amélie Poulain",
-      "O Mestre", "Oldboy", "Era uma Vez em... Hollywood", "O Homem Que Mudou o Jogo", "Roma", "Quase Famosos",
-      "A Vida dos Outros", "Antes do Pôr-do-Sol", "Up: Altas Aventuras", "12 Anos de Escravidão", "A Favorita",
-      "Borat", "O Labirinto do Fauno", "A Origem", "Embriagado de Amor", "Best in Show", "Joias Brutas",
-      "Toni Erdmann", "Whiplash", "Kill Bill: Vol. 1", "Amnésia", "Pequena Miss Sunshine", "Garota Exemplar",
-      "Oppenheimer", "Spotlight", "Tár", "Guerra ao Terror", "Sob a Pele", "Deixe Ela Entrar", "Onze Homens e Um Segredo",
-      "Carol", "Ratatouille", "Projeto Flórida", "Amour", "E Aí, Meu Irmão, Cadê Você?", "Tudo em Todo o Lugar ao Mesmo Tempo",
-      "Aftersun", "A Árvore da Vida", "Volver", "Cisne Negro", "O Ato de Matar", "A violentada Llewyn Davis",
-      "Melancolia", "O Âncora", "Vidas Passadas", "O Senhor dos Anéis: A Sociedade do Anel", "Cadores de Sonhos",
-      "Interestelar", "Frances Ha", "Aquário", "Gladiador", "Conduta de Risco", "Minority Report", "A Pior Pessoa do Mundo",
-      "Pantera Negra", "Gravidade", "Grizzly Man", "Drive", "La La Land"
-    ];
-
-    for (let i = 16; i <= 100; i++) {
-      const idx = i - 16;
-      const year = 2000 + (i % 25);
-      NYT_DATABASE.push({
-        id: i,
-        title: additionalTitles[idx] || `Filme NYT #${i}`,
-        originalTitle: `NYT Top Movie #${i}`,
-        year: year,
-        director: "Diretor Aclamado",
-        genre: i % 2 === 0 ? "Drama" : "Crime / Thriller",
-        imdb: "https://www.imdb.com",
-        synopsis: "Elegido como um dos melhores filmes do século XXI pela votação do The New York Times."
-      });
-    }
 
     // Estado da Aplicação
     let watchedIds = JSON.parse(localStorage.getItem('nyt_watched_ids')) || [];
@@ -631,13 +694,14 @@
       watchedMovies.forEach(m => {
         grid.innerHTML += `
           <div class="grid-card">
-            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x210/15203b/38bdf8?text=NYT+${m.id}'">
+            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
             <div class="grid-info">
               <div>
                 <div class="grid-title">${m.title}</div>
-                <div class="grid-meta">#${m.id} • ${m.year}</div>
+                <div class="grid-meta">${m.year} • ${m.director}</div>
+                <a href="${m.imdb}" target="_blank" class="grid-imdb">🔗 IMDb</a>
               </div>
-              <button class="action-btn btn-skip" style="padding:6px; font-size:0.75rem; margin-top:8px;" onclick="removeFromWatched(${m.id})">↩ Devolver ao Pool</button>
+              <button class="action-btn btn-skip" style="padding:6px; font-size:0.72rem; margin-top:6px;" onclick="removeFromWatched(${m.id})">↩ Devolver</button>
             </div>
           </div>
         `;
@@ -655,15 +719,16 @@
         const isWatched = watchedIds.includes(m.id);
         grid.innerHTML += `
           <div class="grid-card" style="${isWatched ? 'opacity:0.5;' : ''}">
-            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x210/15203b/38bdf8?text=NYT+${m.id}'">
+            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
             <div class="grid-info">
               <div>
                 <div class="grid-title">${m.title}</div>
-                <div class="grid-meta">#${m.id} • ${m.year}</div>
+                <div class="grid-meta">${m.year} • ${m.director}</div>
+                <a href="${m.imdb}" target="_blank" class="grid-imdb">🔗 IMDb</a>
               </div>
               ${isWatched ? 
-                `<button class="action-btn btn-skip" style="padding:6px; font-size:0.75rem;" onclick="removeFromWatched(${m.id})">✔ Assistido</button>` :
-                `<button class="action-btn btn-draw" style="padding:6px; font-size:0.75rem;" onclick="watchedIds.push(${m.id}); localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds)); renderWatched(); renderCatalog();"> + Marcar</button>`
+                `<button class="action-btn btn-skip" style="padding:6px; font-size:0.72rem;" onclick="removeFromWatched(${m.id})">✔ Assistido</button>` :
+                `<button class="action-btn btn-draw" style="padding:6px; font-size:0.72rem;" onclick="watchedIds.push(${m.id}); localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds)); renderWatched(); renderCatalog();"> + Marcar</button>`
               }
             </div>
           </div>
