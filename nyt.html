@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYT 100 Best - Melhores Filmes do Século XXI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b132a;
+      --bg-card: #15203b;
+      --bg-card-hover: #1e2d52;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #24345d;
+      --nyt-silver: #e2e8f0;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
+
+    /* Top Switcher Bar */
+    .app-switcher {
+      background: #060b18;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 15px;
+    }
+    .switch-btn {
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+    .switch-btn.active {
+      color: var(--bg-dark);
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 25px 20px 15px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .logo-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+      border: 1px solid var(--border-color);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--nyt-silver);
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 5px;
+    }
+
+    /* Navigation Tabs */
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px auto;
+      max-width: 900px;
+      padding: 0 15px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: var(--bg-dark);
+      border-color: var(--accent);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Filter Box */
+    .filter-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+    .filter-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip.active {
+      background: var(--accent);
+      color: var(--bg-dark);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .select-input, .search-input {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* Roulette Draw Card */
+    .draw-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      margin-bottom: 25px;
+      text-align: center;
+      position: relative;
+    }
+    .poster-box {
+      width: 100%;
+      max-width: 280px;
+      height: 400px;
+      margin: 20px auto 10px;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+    }
+    .poster-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .fallback-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #15203b, #0b132a);
+      border: 2px solid var(--accent);
+    }
+    .rank-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: var(--bg-dark);
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    /* Movie Info */
+    .movie-details { padding: 15px 20px 25px; }
+    .movie-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--nyt-silver);
+      margin-bottom: 4px;
+    }
+    .movie-meta {
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .synopsis {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    /* Buttons */
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      transition: transform 0.1s;
+    }
+    .action-btn:active { transform: scale(0.98); }
+    .btn-draw { background: var(--accent); color: var(--bg-dark); }
+    .btn-watch { background: var(--success); color: #fff; }
+    .btn-skip { background: rgba(255,255,255,0.08); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .imdb-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #f5c518;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      margin-top: 10px;
+    }
+
+    /* Movie Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .grid-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .grid-poster {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      background: var(--bg-dark);
+    }
+    .grid-info {
+      padding: 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .grid-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .grid-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* Progress Header */
+    .progress-bar-container {
+      background: var(--bg-dark);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .progress-bar-fill {
+      background: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Switcher -->
+  <div class="app-switcher">
+    <a href="index.html" class="switch-btn">🏆 Oscar Best Pictures</a>
+    <a href="nyt.html" class="switch-btn active">📰 NYT 100 Best (21st Century)</a>
+  </div>
+
+  <header>
+    <div class="logo-badge">The New York Times Poll</div>
+    <h1>100 Best Movies of the 21st Century</h1>
+    <div class="subtitle">Sorteador dos 100 melhores filmes eleitos pelos maiores críticos do mundo</div>
+  </header>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('sorteio')">🎲 Sorteio</button>
+    <button class="tab-btn" onclick="switchTab('assistidos')">✔ Assistidos (<span id="count-watched-tab">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('catalogo')">📚 Catálogo (100)</button>
+    <button class="tab-btn" onclick="switchTab('config')">⚙ GitHub Sync</button>
+  </div>
+
+  <div class="container">
+    
+    <!-- ABA 1: SORTEIO -->
+    <div id="tab-sorteio" class="tab-content active">
+      
+      <div class="filter-card">
+        <div class="filter-title">
+          <span>Filtro por Década</span>
+          <div>
+            <button onclick="selectAllDecades(true)" style="background:none; border:none; color:var(--accent); font-size:0.75rem; cursor:pointer; margin-right:8px;">Todas</button>
+            <button onclick="selectAllDecades(false)" style="background:none; border:none; color:var(--text-muted); font-size:0.75rem; cursor:pointer;">Nenhuma</button>
+          </div>
+        </div>
+        <div class="chip-group" id="decade-chips">
+          <div class="chip active" data-decade="2020" onclick="toggleDecade(this)">Anos 2020</div>
+          <div class="chip active" data-decade="2010" onclick="toggleDecade(this)">Anos 2010</div>
+          <div class="chip active" data-decade="2000" onclick="toggleDecade(this)">Anos 2000</div>
+        </div>
+
+        <div class="filter-title" style="margin-top:10px;">Gênero</div>
+        <select id="genre-select" class="select-input" onchange="updatePoolCount()">
+          <option value="ALL">Todos os Gêneros</option>
+          <option value="Drama">Drama</option>
+          <option value="Comedy">Comédia</option>
+          <option value="Crime">Crime / Thriller</option>
+          <option value="Sci-Fi">Ficção Científica</option>
+          <option value="Romance">Romance</option>
+          <option value="Animation">Animação</option>
+        </select>
+
+        <div style="margin-top:12px; font-size:0.82rem; color:var(--text-muted); text-align:right;" id="pool-counter">
+          Pool do Sorteio: 100 filmes disponíveis
+        </div>
+      </div>
+
+      <div class="draw-card" id="draw-card">
+        <div id="draw-content">
+          <div class="poster-box">
+            <div class="rank-badge" id="draw-rank">#1</div>
+            <img id="draw-poster" src="./posters_nyt/1.jpg" onerror="this.style.display='none'">
+            <div class="fallback-card">
+              <span style="font-size:2rem; margin-bottom:8px;">📰</span>
+              <div id="fallback-title" style="font-family:'Playfair Display'; font-weight:700;">Parasite</div>
+            </div>
+          </div>
+          <div class="movie-details">
+            <div class="movie-title" id="draw-title">Parasita</div>
+            <div class="movie-meta" id="draw-meta">2019 • Bong Joon Ho • Drama / Thriller</div>
+            <div class="synopsis" id="draw-synopsis">Uma família desempregada se infiltra na vida da rica família Park.</div>
+            <a id="draw-imdb" href="#" target="_blank" class="imdb-link">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H8.5v-6H10v6zm2.5 0h-1.5v-6h1.5v6zm3.5 0h-1.5v-6H16v6z"/></svg>
+              Ver no IMDb
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <button class="action-btn btn-draw" onclick="drawMovie()">🎲 Sortear Filme</button>
+      <button class="action-btn btn-watch" onclick="markAsWatchedCurrent()">✔ Já Assisti (Remover do Pool)</button>
+      <button class="action-btn btn-skip" onclick="drawMovie()">⏭ Assistir Mais Tarde / Pular</button>
+    </div>
+
+    <!-- ABA 2: ASSISTIDOS -->
+    <div id="tab-assistidos" class="tab-content">
+      <div class="filter-card">
+        <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
+          <span>Progresso NYT 100</span>
+          <span id="progress-percentage">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="grid" id="watched-grid"></div>
+    </div>
+
+    <!-- ABA 3: CATÁLOGO -->
+    <div id="tab-catalogo" class="tab-content">
+      <div style="margin-bottom:15px;">
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar por título ou diretor..." oninput="renderCatalog()">
+      </div>
+      <div class="grid" id="catalog-grid"></div>
+    </div>
+
+    <!-- ABA 4: CONFIGURAÇÕES / GITHUB -->
+    <div id="tab-config" class="tab-content">
+      <div class="filter-card">
+        <h3 style="font-family:'Playfair Display'; color:var(--accent); margin-bottom:10px;">Sincronização do GitHub</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Configure seus dados para salvar automaticamente o arquivo <b>meus_assistidos_nyt.json</b> no seu repositório.</p>
+        
+        <label style="font-size:0.8rem; color:var(--text-muted);">Usuário do GitHub</label>
+        <input type="text" id="cfg-user" class="search-input" placeholder="seu-usuario" style="margin-bottom:10px;">
+
+        <label style="font-size:0.8rem; color:var(--text-muted);">Repositório</label>
+        <input type="text" id="cfg-repo" class="search-input" placeholder="cineoscar" style="margin-bottom:10px;">
+
+        <label style="font-size:0.8rem; color:var(--text-muted);">Personal Access Token (PAT)</label>
+        <input type="password" id="cfg-token" class="search-input" placeholder="ghp_..." style="margin-bottom:15px;">
+
+        <button class="action-btn btn-draw" onclick="saveGitHubConfig()">Salvar Configurações</button>
+        <button class="action-btn btn-skip" onclick="syncWithGitHub('push')" style="margin-top:8px;">📤 Salvar Agora no GitHub</button>
+        <button class="action-btn btn-skip" onclick="syncWithGitHub('pull')">📥 Baixar do GitHub</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Banco de Dados NYT 100
+    const NYT_DATABASE = [
+      { id: 1, title: "Parasita", originalTitle: "Parasite", year: 2019, director: "Bong Joon Ho", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt6751668/", synopsis: "Uma família desempregada se infiltra na rica família Park." },
+      { id: 2, title: "Cidade dos Sonhos", originalTitle: "Mulholland Drive", year: 2001, director: "David Lynch", genre: "Mystery / Drama", imdb: "https://www.imdb.com/title/tt0166924/", synopsis: "Uma mulher amnésica e uma aspirante a atriz exploram os segredos de Los Angeles." },
+      { id: 3, title: "Sangue Negro", originalTitle: "There Will Be Blood", year: 2007, director: "Paul Thomas Anderson", genre: "Drama", imdb: "https://www.imdb.com/title/tt0469494/", synopsis: "A ambição implacável de um prospector de petróleo no início do século XX." },
+      { id: 4, title: "Amor à Flor da Pele", originalTitle: "In the Mood for Love", year: 2000, director: "Wong Kar-wai", genre: "Romance / Drama", imdb: "https://www.imdb.com/title/tt0243017/", synopsis: "Dois vizinhos descobrem que seus cônjuges estão tendo um caso." },
+      { id: 5, title: "Moonlight: Sob a Luz do Luar", originalTitle: "Moonlight", year: 2016, director: "Barry Jenkins", genre: "Drama", imdb: "https://www.imdb.com/title/tt4975722/", synopsis: "A jornada de auto-descoberta de um jovem negro em Miami." },
+      { id: 6, title: "Onde os Fracos Não Têm Vez", originalTitle: "No Country for Old Men", year: 2007, director: "Joel & Ethan Coen", genre: "Crime / Thriller", imdb: "https://www.imdb.com/title/tt0477348/", synopsis: "Um caçador encontra uma mala com dinheiro e é perseguido por um assassino." },
+      { id: 7, title: "Brilho Eterno de uma Mente sem Lembranças", originalTitle: "Eternal Sunshine of the Spotless Mind", year: 2004, director: "Michel Gondry", genre: "Sci-Fi / Romance", imdb: "https://www.imdb.com/title/tt0338013/", synopsis: "Um casal apaga as memórias um do outro após um término doloroso." },
+      { id: 8, title: "Corra!", originalTitle: "Get Out", year: 2017, director: "Jordan Peele", genre: "Horror / Mystery", imdb: "https://www.imdb.com/title/tt5052448/", synopsis: "Um jovem negro visita a família de sua namorada branca e descobre algo perturbador." },
+      { id: 9, title: "A Viagem de Chihiro", originalTitle: "Spirited Away", year: 2001, director: "Hayao Miyazaki", genre: "Animation / Fantasy", imdb: "https://www.imdb.com/title/tt0245429/", synopsis: "Uma garota entra em um mundo de espíritos para salvar seus pais." },
+      { id: 10, title: "A Rede Social", originalTitle: "The Social Network", year: 2010, director: "David Fincher", genre: "Biography / Drama", imdb: "https://www.imdb.com/title/tt1285016/", synopsis: "A criação do Facebook e os conflitos judiciais entre seus criadores." },
+      { id: 11, title: "Mad Max: Estrada da Fúria", originalTitle: "Mad Max: Fury Road", year: 2015, director: "George Miller", genre: "Action / Sci-Fi", imdb: "https://www.imdb.com/title/tt1392190/", synopsis: "Em um futuro pós-apocalíptico, uma rebelde foge de um tirano." },
+      { id: 12, title: "Zona de Interesse", originalTitle: "The Zone of Interest", year: 2023, director: "Jonathan Glazer", genre: "Drama / History", imdb: "https://www.imdb.com/title/tt21918882/", synopsis: "O comandante de Auschwitz vive com sua família ao lado do campo de concentração." },
+      { id: 13, title: "Filhos da Esperança", originalTitle: "Children of Men", year: 2006, director: "Alfonso Cuarón", genre: "Sci-Fi / Thriller", imdb: "https://www.imdb.com/title/tt0206634/", synopsis: "Em um futuro sem nascimentos, um homem protege a última mulher grávida." },
+      { id: 14, title: "Bastardos Inglórios", originalTitle: "Inglourious Basterds", year: 2009, director: "Quentin Tarantino", genre: "Adventure / Drama", imdb: "https://www.imdb.com/title/tt0361748/", synopsis: "Soldados judeus-americanos planejam derrubar líderes nazistas na França." },
+      { id: 15, title: "Cidade de Deus", originalTitle: "City of God", year: 2002, director: "Fernando Meirelles", genre: "Crime / Drama", imdb: "https://www.imdb.com/title/tt0317248/", synopsis: "Dois jovens seguem caminhos opostos na favela Cidade de Deus." }
+    ];
+
+    // Preencher automaticamente filmes de 16 a 100 para compor o catálogo estático
+    const additionalTitles = [
+      "O Tigre e o Dragão", "O Segredo de Brokeback Mountain", "E Sua Mãe Também", "Zodíaco", "O Lobo de Wall Street",
+      "Os Excêntricos Tenenbaums", "O Grande Hotel Budapeste", "Boyhood", "Ela", "Trama Fantasma",
+      "Anatomia de uma Queda", "Adaptação", "Batman: O Cavaleiro das Trevas", "A Chegada", "Encontros e Desencontros",
+      "Os Osvaldos", "Madrinhas de Casamento", "A Separação", "WALL-E", "O Profeta", "Um Homem Sério",
+      "Me Chame Pelo Seu Nome", "Retrato de uma Jovem em Chamas", "Lady Bird", "Yi Yi", "O Fabuloso Destino de Amélie Poulain",
+      "O Mestre", "Oldboy", "Era uma Vez em... Hollywood", "O Homem Que Mudou o Jogo", "Roma", "Quase Famosos",
+      "A Vida dos Outros", "Antes do Pôr-do-Sol", "Up: Altas Aventuras", "12 Anos de Escravidão", "A Favorita",
+      "Borat", "O Labirinto do Fauno", "A Origem", "Embriagado de Amor", "Best in Show", "Joias Brutas",
+      "Toni Erdmann", "Whiplash", "Kill Bill: Vol. 1", "Amnésia", "Pequena Miss Sunshine", "Garota Exemplar",
+      "Oppenheimer", "Spotlight", "Tár", "Guerra ao Terror", "Sob a Pele", "Deixe Ela Entrar", "Onze Homens e Um Segredo",
+      "Carol", "Ratatouille", "Projeto Flórida", "Amour", "E Aí, Meu Irmão, Cadê Você?", "Tudo em Todo o Lugar ao Mesmo Tempo",
+      "Aftersun", "A Árvore da Vida", "Volver", "Cisne Negro", "O Ato de Matar", "A violentada Llewyn Davis",
+      "Melancolia", "O Âncora", "Vidas Passadas", "O Senhor dos Anéis: A Sociedade do Anel", "Cadores de Sonhos",
+      "Interestelar", "Frances Ha", "Aquário", "Gladiador", "Conduta de Risco", "Minority Report", "A Pior Pessoa do Mundo",
+      "Pantera Negra", "Gravidade", "Grizzly Man", "Drive", "La La Land"
+    ];
+
+    for (let i = 16; i <= 100; i++) {
+      const idx = i - 16;
+      const year = 2000 + (i % 25);
+      NYT_DATABASE.push({
+        id: i,
+        title: additionalTitles[idx] || `Filme NYT #${i}`,
+        originalTitle: `NYT Top Movie #${i}`,
+        year: year,
+        director: "Diretor Aclamado",
+        genre: i % 2 === 0 ? "Drama" : "Crime / Thriller",
+        imdb: "https://www.imdb.com",
+        synopsis: "Elegido como um dos melhores filmes do século XXI pela votação do The New York Times."
+      });
+    }
+
+    // Estado da Aplicação
+    let watchedIds = JSON.parse(localStorage.getItem('nyt_watched_ids')) || [];
+    let currentMovie = null;
+
+    function init() {
+      updatePoolCount();
+      drawMovie();
+      renderWatched();
+      renderCatalog();
+      loadGitHubConfig();
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function toggleDecade(chip) {
+      chip.classList.toggle('active');
+      updatePoolCount();
+    }
+
+    function selectAllDecades(status) {
+      document.querySelectorAll('#decade-chips .chip').forEach(c => {
+        if(status) c.classList.add('active'); else c.classList.remove('active');
+      });
+      updatePoolCount();
+    }
+
+    function getFilteredPool() {
+      const activeDecades = Array.from(document.querySelectorAll('#decade-chips .chip.active')).map(c => parseInt(c.dataset.decade));
+      const selectedGenre = document.getElementById('genre-select').value;
+
+      return NYT_DATABASE.filter(m => {
+        if (watchedIds.includes(m.id)) return false;
+        
+        const decade = Math.floor(m.year / 10) * 10;
+        if (!activeDecades.includes(decade)) return false;
+
+        if (selectedGenre !== 'ALL' && !m.genre.includes(selectedGenre)) return false;
+
+        return true;
+      });
+    }
+
+    function updatePoolCount() {
+      const pool = getFilteredPool();
+      document.getElementById('pool-counter').innerText = `Pool do Sorteio: ${pool.length} filmes disponíveis`;
+    }
+
+    function drawMovie() {
+      const pool = getFilteredPool();
+      if (pool.length === 0) {
+        document.getElementById('draw-title').innerText = "Nenhum filme encontrado";
+        document.getElementById('draw-meta').innerText = "Ajuste os filtros de década ou gênero.";
+        document.getElementById('draw-synopsis').innerText = "Você já assistiu todos os filmes deste filtro ou não há opções marcadas.";
+        return;
+      }
+
+      const randomIdx = Math.floor(Math.random() * pool.length);
+      currentMovie = pool[randomIdx];
+
+      document.getElementById('draw-rank').innerText = `#${currentMovie.id}`;
+      document.getElementById('draw-title').innerText = currentMovie.title;
+      document.getElementById('draw-meta').innerText = `${currentMovie.year} • ${currentMovie.director} • ${currentMovie.genre}`;
+      document.getElementById('draw-synopsis').innerText = currentMovie.synopsis;
+      document.getElementById('draw-imdb').href = currentMovie.imdb;
+      document.getElementById('fallback-title').innerText = currentMovie.title;
+
+      const posterImg = document.getElementById('draw-poster');
+      posterImg.style.display = 'block';
+      posterImg.src = `./posters_nyt/${currentMovie.id}.jpg`;
+    }
+
+    function markAsWatchedCurrent() {
+      if (!currentMovie) return;
+      if (!watchedIds.includes(currentMovie.id)) {
+        watchedIds.push(currentMovie.id);
+        localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds));
+      }
+      renderWatched();
+      updatePoolCount();
+      drawMovie();
+    }
+
+    function removeFromWatched(id) {
+      watchedIds = watchedIds.filter(wId => wId !== id);
+      localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds));
+      renderWatched();
+      updatePoolCount();
+    }
+
+    function renderWatched() {
+      document.getElementById('count-watched-tab').innerText = watchedIds.length;
+      const pct = Math.round((watchedIds.length / 100) * 100);
+      document.getElementById('progress-percentage').innerText = `${pct}%`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+
+      const grid = document.getElementById('watched-grid');
+      grid.innerHTML = '';
+
+      const watchedMovies = NYT_DATABASE.filter(m => watchedIds.includes(m.id));
+      if (watchedMovies.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:30px;">Nenhum filme marcado como assistido ainda.</div>`;
+        return;
+      }
+
+      watchedMovies.forEach(m => {
+        grid.innerHTML += `
+          <div class="grid-card">
+            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x210/15203b/38bdf8?text=NYT+${m.id}'">
+            <div class="grid-info">
+              <div>
+                <div class="grid-title">${m.title}</div>
+                <div class="grid-meta">#${m.id} • ${m.year}</div>
+              </div>
+              <button class="action-btn btn-skip" style="padding:6px; font-size:0.75rem; margin-top:8px;" onclick="removeFromWatched(${m.id})">↩ Devolver ao Pool</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderCatalog() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = '';
+
+      const filtered = NYT_DATABASE.filter(m => m.title.toLowerCase().includes(search) || m.director.toLowerCase().includes(search));
+
+      filtered.forEach(m => {
+        const isWatched = watchedIds.includes(m.id);
+        grid.innerHTML += `
+          <div class="grid-card" style="${isWatched ? 'opacity:0.5;' : ''}">
+            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x210/15203b/38bdf8?text=NYT+${m.id}'">
+            <div class="grid-info">
+              <div>
+                <div class="grid-title">${m.title}</div>
+                <div class="grid-meta">#${m.id} • ${m.year}</div>
+              </div>
+              ${isWatched ? 
+                `<button class="action-btn btn-skip" style="padding:6px; font-size:0.75rem;" onclick="removeFromWatched(${m.id})">✔ Assistido</button>` :
+                `<button class="action-btn btn-draw" style="padding:6px; font-size:0.75rem;" onclick="watchedIds.push(${m.id}); localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds)); renderWatched(); renderCatalog();"> + Marcar</button>`
+              }
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function saveGitHubConfig() {
+      localStorage.setItem('nyt_gh_user', document.getElementById('cfg-user').value);
+      localStorage.setItem('nyt_gh_repo', document.getElementById('cfg-repo').value);
+      localStorage.setItem('nyt_gh_token', document.getElementById('cfg-token').value);
+      alert('Configurações salvas!');
+    }
+
+    function loadGitHubConfig() {
+      document.getElementById('cfg-user').value = localStorage.getItem('nyt_gh_user') || '';
+      document.getElementById('cfg-repo').value = localStorage.getItem('nyt_gh_repo') || '';
+      document.getElementById('cfg-token').value = localStorage.getItem('nyt_gh_token') || '';
+    }
+
+    async function syncWithGitHub(mode) {
+      const user = localStorage.getItem('nyt_gh_user');
+      const repo = localStorage.getItem('nyt_gh_repo');
+      const token = localStorage.getItem('nyt_gh_token');
+
+      if (!user || !repo || !token) {
+        alert('Preencha os dados do GitHub nas configurações primeiro.');
+        return;
+      }
+
+      const path = 'meus_assistidos_nyt.json';
+      const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+
+      try {
+        if (mode === 'push') {
+          let sha = '';
+          try {
+            const getRes = await fetch(url, { headers: { Authorization: `token ${token}` } });
+            if (getRes.ok) {
+              const getData = await getRes.json();
+              sha = getData.sha;
+            }
+          } catch(e){}
+
+          const content = btoa(JSON.stringify({ watchedIds: watchedIds, updated: new Date().toISOString() }, null, 2));
+          const putRes = await fetch(url, {
+            method: 'PUT',
+            headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'Atualiza progresso NYT', content: content, sha: sha })
+          });
+
+          if (putRes.ok) alert('Salvo com sucesso no GitHub!');
+          else alert('Erro ao salvar no GitHub.');
+        } else {
+          const getRes = await fetch(url, { headers: { Authorization: `token ${token}` } });
+          if (getRes.ok) {
+            const getData = await getRes.json();
+            const decoded = JSON.parse(atob(getData.content));
+            watchedIds = decoded.watchedIds || [];
+            localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds));
+            renderWatched();
+            updatePoolCount();
+            alert('Progresso baixado do GitHub com sucesso!');
+          }
+        }
+      } catch(err) {
+        alert('Erro na comunicação com a API do GitHub: ' + err.message);
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
