@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Executar script de download NYT
+      - name: Executar script de download NYT corrigido
         run: |
           python -c "
           import os, json, time, sys, urllib.request, urllib.parse
@@ -45,13 +45,13 @@ jobs:
               {'id': 15, 'wiki': 'City_of_God_(2002_film)'},
               {'id': 16, 'wiki': 'Crouching_Tiger,_Hidden_Dragon'},
               {'id': 17, 'wiki': 'Brokeback_Mountain'},
-              {'id': 18, 'wiki': 'Y_tu_mamá_también'},
+              {'id': 18, 'wiki': 'Y_Tu_Mamá_También'},
               {'id': 19, 'wiki': 'Zodiac_(film)'},
               {'id': 20, 'wiki': 'The_Wolf_of_Wall_Street_(2013_film)'},
               {'id': 21, 'wiki': 'The_Royal_Tenenbaums'},
               {'id': 22, 'wiki': 'The_Grand_Budapest_Hotel'},
               {'id': 23, 'wiki': 'Boyhood_(2014_film)'},
-              {'id': 24, 'wiki': 'Her_(film)'},
+              {'id': 24, 'wiki': 'Her_(2013_film)'},
               {'id': 25, 'wiki': 'Phantom_Thread'},
               {'id': 26, 'wiki': 'Anatomy_of_a_Fall'},
               {'id': 27, 'wiki': 'Adaptation._(film)'},
@@ -79,7 +79,7 @@ jobs:
               {'id': 49, 'wiki': 'Before_Sunset'},
               {'id': 50, 'wiki': 'Up_(2009_film)'},
               {'id': 51, 'wiki': '12_Years_a_Slave_(film)'},
-              {'id': 52, 'wiki': 'The_Favourite_(film)'},
+              {'id': 52, 'wiki': 'The_Favourite'},
               {'id': 53, 'wiki': 'Borat'},
               {'id': 54, 'wiki': 'Pan%27s_Labyrinth'},
               {'id': 55, 'wiki': 'Inception'},
@@ -107,7 +107,7 @@ jobs:
               {'id': 77, 'wiki': 'Everything_Everywhere_All_at_Once'},
               {'id': 78, 'wiki': 'Aftersun'},
               {'id': 79, 'wiki': 'The_Tree_of_Life_(film)'},
-              {'id': 80, 'wiki': 'Volver_(2006_film)'},
+              {'id': 80, 'wiki': 'Volver_(film)'},
               {'id': 81, 'wiki': 'Black_Swan_(film)'},
               {'id': 82, 'wiki': 'The_Act_of_Killing'},
               {'id': 83, 'wiki': 'Inside_Llewyn_Davis'},
@@ -133,7 +133,7 @@ jobs:
           def get_image_url(wiki_title):
               try:
                   url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{wiki_title}'
-                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/2.0'})
+                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/3.0'})
                   with urllib.request.urlopen(req) as resp:
                       data = json.loads(resp.read().decode('utf-8'))
                       if 'thumbnail' in data and 'source' in data['thumbnail']:
@@ -166,5 +166,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add posters_nyt/
-          git commit -m "Salva posters NYT sem erros de encoding" || exit 0
+          git commit -m "Atualiza posters NYT restantes" || exit 0
           git push
