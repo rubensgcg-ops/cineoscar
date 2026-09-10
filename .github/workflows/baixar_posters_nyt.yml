@@ -18,42 +18,31 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Executar script com titulos diretos
+      - name: Executar script com URLs diretas
         run: |
           python -c "
-          import os, json, urllib.request
+          import os, urllib.request
 
           OUTPUT_DIR = 'posters_nyt'
           os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-          # Mapeamento com o título exato da página da Wikipedia em inglês
-          DIRECT_MOVIES = [
-              {'id': 18, 'page': 'Y_Tu_Mamá_También'},
-              {'id': 41, 'page': 'Amélie'},
-              {'id': 52, 'page': 'The_Favourite'},
-              {'id': 67, 'page': 'Tár_(film)'}
-          ]
+          # URLs diretas e estáveis para os 4 filmes restantes
+          DIRECT_URLS = {
+              18: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Y_tu_mam%C3%A1_tambi%C3%A9n_poster.jpg',
+              41: 'https://upload.wikimedia.org/wikipedia/en/5/53/Amelie_poster.jpg',
+              52: 'https://upload.wikimedia.org/wikipedia/en/d/dc/The_Favourite_%282018%29_official_poster.jpg',
+              67: 'https://upload.wikimedia.org/wikipedia/en/6/62/T%C3%A1r_poster.jpg'
+          }
 
-          for m in DIRECT_MOVIES:
-              path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
-              url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{m[\"page\"]}'
-              
+          for movie_id, img_url in DIRECT_URLS.items():
+              path = f'{OUTPUT_DIR}/{movie_id}.jpg'
               try:
-                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/5.0'})
-                  with urllib.request.urlopen(req) as resp:
-                      data = json.loads(resp.read().decode('utf-8'))
-                      if 'thumbnail' in data and 'source' in data['thumbnail']:
-                          img_url = data['thumbnail']['source']
-                          
-                          # Baixar a imagem
-                          img_req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
-                          with urllib.request.urlopen(img_req) as img_resp, open(path, 'wb') as f:
-                              f.write(img_resp.read())
-                          print(f'Sucesso ID {m[\"id\"]}')
-                      else:
-                          print(f'Thumbnail nao encontrada para ID {m[\"id\"]}')
+                  req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+                  with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
+                      f.write(resp.read())
+                  print(f'Sucesso absoluto para o ID {movie_id}')
               except Exception as e:
-                  print(f'Erro ao baixar ID {m[\"id\"]}: {e}')
+                  print(f'Erro no ID {movie_id}: {e}')
           "
 
       - name: Salvar posters no repositorio
@@ -61,5 +50,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add posters_nyt/
-          git commit -m "Corrige posters 18, 41, 52 e 67 via links diretos da Wikipedia" || exit 0
+          git commit -m "Adiciona posters 18, 41, 52 e 67 via URLs diretas" || exit 0
           git push
