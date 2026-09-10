@@ -207,6 +207,8 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      position: relative;
+      z-index: 2;
     }
     .fallback-card {
       position: absolute;
@@ -218,6 +220,7 @@
       padding: 20px;
       background: linear-gradient(135deg, #15203b, #0b132a);
       border: 2px solid var(--accent);
+      z-index: 1;
     }
     .rank-badge {
       position: absolute;
@@ -229,6 +232,7 @@
       font-size: 0.8rem;
       padding: 4px 10px;
       border-radius: 12px;
+      z-index: 3;
     }
 
     /* Movie Info */
@@ -283,7 +287,7 @@
       margin-top: 10px;
     }
 
-    /* Movie Grid: 2 Posters Lado a Lado no Mobile e responsivo */
+    /* Movie Grid: 2 Posters Lado a Lado no Mobile */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -477,7 +481,6 @@
   </div>
 
   <script>
-    // Banco de Dados NYT 100 em Inglês com Diretores e IMDb
     const NYT_DATABASE = [
       { id: 1, title: "Parasite", year: 2019, director: "Bong Joon Ho", genre: "Drama / Thriller", imdb: "https://www.imdb.com/title/tt6751668/", synopsis: "A destitute family infiltrates the lives of the wealthy Park family." },
       { id: 2, title: "Mulholland Drive", year: 2001, director: "David Lynch", genre: "Mystery / Drama", imdb: "https://www.imdb.com/title/tt0166924/", synopsis: "An amnesiac woman and an aspiring actress uncover dark secrets in Los Angeles." },
@@ -581,7 +584,6 @@
       { id: 100, title: "La La Land", year: 2016, director: "Damien Chazelle", genre: "Comedy / Drama / Music", imdb: "https://www.imdb.com/title/tt3783958/", synopsis: "While navigating their careers in Los Angeles, a pianist and an actress fall in love." }
     ];
 
-    // Estado da Aplicação
     let watchedIds = JSON.parse(localStorage.getItem('nyt_watched_ids')) || [];
     let currentMovie = null;
 
@@ -654,7 +656,7 @@
       document.getElementById('fallback-title').innerText = currentMovie.title;
 
       const posterImg = document.getElementById('draw-poster');
-      posterImg.style.display = 'block';
+      posterImg.style.display = 'block'; // RESTAURA A VISIBILIDADE DO PÔSTER
       posterImg.src = `./posters_nyt/${currentMovie.id}.jpg`;
     }
 
