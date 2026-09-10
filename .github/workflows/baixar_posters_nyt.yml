@@ -18,53 +18,42 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Executar script corrigido
+      - name: Executar script com titulos diretos
         run: |
           python -c "
-          import os, json, time, sys, urllib.request, urllib.parse
-          sys.stdout.reconfigure(encoding='utf-8')
+          import os, json, urllib.request
 
           OUTPUT_DIR = 'posters_nyt'
           os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-          # Focando nos filmes específicos que faltaram e em alguns gerais de reforço
-          MOVIES = [
-              {'id': 18, 'queries': ['Y tu mama tambien', 'Y tu mama también film', 'Y Tu Mama Tambien 2001']},
-              {'id': 41, 'queries': ['Amelie film', 'Amelie 2001 film', 'Le fabuleux destin d Amelie Poulain']},
-              {'id': 52, 'queries': ['The Favourite 2018 film', 'The Favourite film']},
-              {'id': 67, 'queries': ['Tar 2022 film', 'Tar film Todd Field', 'Tár film']}
+          # Mapeamento com o título exato da página da Wikipedia em inglês
+          DIRECT_MOVIES = [
+              {'id': 18, 'page': 'Y_Tu_Mamá_También'},
+              {'id': 41, 'page': 'Amélie'},
+              {'id': 52, 'page': 'The_Favourite'},
+              {'id': 67, 'page': 'Tár_(film)'}
           ]
 
-          def get_image_from_wiki(queries):
-              for q in queries:
-                  try:
-                      url = f'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(q)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=600'
-                      req = urllib.request.Request(url, headers={'User-Agent': 'CineNYT/4.0'})
-                      with urllib.request.urlopen(req) as resp:
-                          data = json.loads(resp.read().decode('utf-8'))
-                          pages = data.get('query', {}).get('pages', {})
-                          for pid in pages:
-                              if 'thumbnail' in pages[pid]:
-                                  return pages[pid]['thumbnail']['source']
-                  except Exception:
-                      continue
-              return None
-
-          for m in MOVIES:
+          for m in DIRECT_MOVIES:
               path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
+              url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{m[\"page\"]}'
               
-              img_url = get_image_from_wiki(m['queries'])
-              if img_url:
-                  try:
-                      req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
-                      with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
-                          f.write(resp.read())
-                      print(f'Baixado com sucesso: ID {m[\"id\"]}')
-                  except Exception as e:
-                      print(f'Erro ao baixar ID {m[\"id\"]}: {e}')
-              else:
-                  print(f'Nao encontrado na Wikipedia para ID {m[\"id\"]}')
-              time.sleep(1.0)
+              try:
+                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/5.0'})
+                  with urllib.request.urlopen(req) as resp:
+                      data = json.loads(resp.read().decode('utf-8'))
+                      if 'thumbnail' in data and 'source' in data['thumbnail']:
+                          img_url = data['thumbnail']['source']
+                          
+                          # Baixar a imagem
+                          img_req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+                          with urllib.request.urlopen(img_req) as img_resp, open(path, 'wb') as f:
+                              f.write(img_resp.read())
+                          print(f'Sucesso ID {m[\"id\"]}')
+                      else:
+                          print(f'Thumbnail nao encontrada para ID {m[\"id\"]}')
+              except Exception as e:
+                  print(f'Erro ao baixar ID {m[\"id\"]}: {e}')
           "
 
       - name: Salvar posters no repositorio
@@ -72,5 +61,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add posters_nyt/
-          git commit -m "Baixa posters 18, 41, 52 e 67 do NYT" || exit 0
+          git commit -m "Corrige posters 18, 41, 52 e 67 via links diretos da Wikipedia" || exit 0
           git push
