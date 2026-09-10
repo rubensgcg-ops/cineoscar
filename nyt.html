@@ -224,15 +224,16 @@
     }
     .rank-badge {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 10px;
+      left: 10px;
       background: var(--accent);
       color: var(--bg-dark);
       font-weight: 800;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       padding: 4px 10px;
-      border-radius: 12px;
-      z-index: 3;
+      border-radius: 10px;
+      z-index: 4;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
 
     /* Movie Info */
@@ -305,11 +306,16 @@
       flex-direction: column;
       position: relative;
     }
-    .grid-poster {
+    .grid-poster-container {
+      position: relative;
       width: 100%;
       height: 220px;
-      object-fit: cover;
       background: var(--bg-dark);
+    }
+    .grid-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .grid-info {
       padding: 10px;
@@ -349,6 +355,13 @@
       height: 100%;
       width: 0%;
       transition: width 0.3s;
+    }
+    .sync-status {
+      font-size: 0.75rem;
+      color: var(--success);
+      text-align: center;
+      margin-top: 8px;
+      min-height: 16px;
     }
   </style>
 </head>
@@ -461,7 +474,7 @@
     <div id="tab-config" class="tab-content">
       <div class="filter-card">
         <h3 style="font-family:'Playfair Display'; color:var(--accent); margin-bottom:10px;">Sincronização do GitHub</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Configure seus dados para salvar automaticamente o arquivo <b>meus_assistidos_nyt.json</b> no seu repositório.</p>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Utiliza as mesmas credenciais compartilhadas com a página do Oscar para salvar em <b>meus_assistidos_nyt.json</b>.</p>
         
         <label style="font-size:0.8rem; color:var(--text-muted);">Usuário do GitHub</label>
         <input type="text" id="cfg-user" class="search-input" placeholder="seu-usuario" style="margin-bottom:10px;">
@@ -475,6 +488,7 @@
         <button class="action-btn btn-draw" onclick="saveGitHubConfig()">Salvar Configurações</button>
         <button class="action-btn btn-skip" onclick="syncWithGitHub('push')" style="margin-top:8px;">📤 Salvar Agora no GitHub</button>
         <button class="action-btn btn-skip" onclick="syncWithGitHub('pull')">📥 Baixar do GitHub</button>
+        <div class="sync-status" id="sync-status"></div>
       </div>
     </div>
 
@@ -656,7 +670,7 @@
       document.getElementById('fallback-title').innerText = currentMovie.title;
 
       const posterImg = document.getElementById('draw-poster');
-      posterImg.style.display = 'block'; // RESTAURA A VISIBILIDADE DO PÔSTER
+      posterImg.style.display = 'block';
       posterImg.src = `./posters_nyt/${currentMovie.id}.jpg`;
     }
 
@@ -669,6 +683,7 @@
       renderWatched();
       updatePoolCount();
       drawMovie();
+      autoSaveGitHub();
     }
 
     function removeFromWatched(id) {
@@ -676,6 +691,7 @@
       localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds));
       renderWatched();
       updatePoolCount();
+      autoSaveGitHub();
     }
 
     function renderWatched() {
@@ -696,7 +712,10 @@
       watchedMovies.forEach(m => {
         grid.innerHTML += `
           <div class="grid-card">
-            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
+            <div class="grid-poster-container">
+              <div class="rank-badge">#${m.id}</div>
+              <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
+            </div>
             <div class="grid-info">
               <div>
                 <div class="grid-title">${m.title}</div>
@@ -721,7 +740,10 @@
         const isWatched = watchedIds.includes(m.id);
         grid.innerHTML += `
           <div class="grid-card" style="${isWatched ? 'opacity:0.5;' : ''}">
-            <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
+            <div class="grid-poster-container">
+              <div class="rank-badge">#${m.id}</div>
+              <img class="grid-poster" src="./posters_nyt/${m.id}.jpg" onerror="this.src='https://via.placeholder.com/150x220/15203b/38bdf8?text=NYT+${m.id}'">
+            </div>
             <div class="grid-info">
               <div>
                 <div class="grid-title">${m.title}</div>
@@ -730,7 +752,7 @@
               </div>
               ${isWatched ? 
                 `<button class="action-btn btn-skip" style="padding:6px; font-size:0.72rem;" onclick="removeFromWatched(${m.id})">✔ Assistido</button>` :
-                `<button class="action-btn btn-draw" style="padding:6px; font-size:0.72rem;" onclick="watchedIds.push(${m.id}); localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds)); renderWatched(); renderCatalog();"> + Marcar</button>`
+                `<button class="action-btn btn-draw" style="padding:6px; font-size:0.72rem;" onclick="watchedIds.push(${m.id}); localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds)); renderWatched(); renderCatalog(); updatePoolCount(); autoSaveGitHub();"> + Marcar</button>`
               }
             </div>
           </div>
@@ -739,27 +761,28 @@
     }
 
     function saveGitHubConfig() {
-      localStorage.setItem('nyt_gh_user', document.getElementById('cfg-user').value);
-      localStorage.setItem('nyt_gh_repo', document.getElementById('cfg-repo').value);
-      localStorage.setItem('nyt_gh_token', document.getElementById('cfg-token').value);
+      // Compartilha as mesmas chaves unificadas do Oscar para sincronizar unificado
+      localStorage.setItem('gh_user', document.getElementById('cfg-user').value);
+      localStorage.setItem('gh_repo', document.getElementById('cfg-repo').value);
+      localStorage.setItem('gh_token', document.getElementById('cfg-token').value);
       alert('Configurações salvas!');
+      syncWithGitHub('pull');
     }
 
     function loadGitHubConfig() {
-      document.getElementById('cfg-user').value = localStorage.getItem('nyt_gh_user') || '';
-      document.getElementById('cfg-repo').value = localStorage.getItem('nyt_gh_repo') || '';
-      document.getElementById('cfg-token').value = localStorage.getItem('nyt_gh_token') || '';
+      // Lê das mesmas chaves unificadas do Oscar
+      document.getElementById('cfg-user').value = localStorage.getItem('gh_user') || localStorage.getItem('nyt_gh_user') || '';
+      document.getElementById('cfg-repo').value = localStorage.getItem('gh_repo') || localStorage.getItem('nyt_gh_repo') || '';
+      document.getElementById('cfg-token').value = localStorage.getItem('gh_token') || localStorage.getItem('nyt_gh_token') || '';
     }
 
     async function syncWithGitHub(mode) {
-      const user = localStorage.getItem('nyt_gh_user');
-      const repo = localStorage.getItem('nyt_gh_repo');
-      const token = localStorage.getItem('nyt_gh_token');
+      const user = localStorage.getItem('gh_user') || localStorage.getItem('nyt_gh_user');
+      const repo = localStorage.getItem('gh_repo') || localStorage.getItem('nyt_gh_repo');
+      const token = localStorage.getItem('gh_token') || localStorage.getItem('nyt_gh_token');
+      const statusEl = document.getElementById('sync-status');
 
-      if (!user || !repo || !token) {
-        alert('Preencha os dados do GitHub nas configurações primeiro.');
-        return;
-      }
+      if (!user || !repo || !token) return;
 
       const path = 'meus_assistidos_nyt.json';
       const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
@@ -775,30 +798,40 @@
             }
           } catch(e){}
 
-          const content = btoa(JSON.stringify({ watchedIds: watchedIds, updated: new Date().toISOString() }, null, 2));
+          const content = btoa(unescape(encodeURIComponent(JSON.stringify({ watchedIds: watchedIds, updated: new Date().toISOString() }, null, 2))));
           const putRes = await fetch(url, {
             method: 'PUT',
             headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: 'Atualiza progresso NYT', content: content, sha: sha })
+            body: JSON.stringify({ message: 'Auto-sync NYT progress', content: content, sha: sha })
           });
 
-          if (putRes.ok) alert('Salvo com sucesso no GitHub!');
-          else alert('Erro ao salvar no GitHub.');
+          if (putRes.ok && statusEl) {
+            statusEl.innerText = '✔ Salvo automaticamente no GitHub';
+            setTimeout(() => { statusEl.innerText = ''; }, 3000);
+          }
         } else {
           const getRes = await fetch(url, { headers: { Authorization: `token ${token}` } });
           if (getRes.ok) {
             const getData = await getRes.json();
-            const decoded = JSON.parse(atob(getData.content));
+            const decoded = JSON.parse(decodeURIComponent(escape(atob(getData.content))));
             watchedIds = decoded.watchedIds || [];
             localStorage.setItem('nyt_watched_ids', JSON.stringify(watchedIds));
             renderWatched();
+            renderCatalog();
             updatePoolCount();
-            alert('Progresso baixado do GitHub com sucesso!');
           }
         }
       } catch(err) {
-        alert('Erro na comunicação com a API do GitHub: ' + err.message);
+        console.error('Erro de sync GitHub:', err);
       }
+    }
+
+    let saveTimeout = null;
+    function autoSaveGitHub() {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        syncWithGitHub('push');
+      }, 1000);
     }
 
     window.onload = init;
