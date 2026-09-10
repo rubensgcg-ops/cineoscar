@@ -1,0 +1,165 @@
+name: Baixar Poster dos Filmes
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Executar script de download
+        run: |
+          python -c "
+          import os, json, time, urllib.request, urllib.parse
+
+          OUTPUT_DIR = 'posters'
+          os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+          MOVIES = [
+              {'id': 1, 'query': 'Wings 1927 film'},
+              {'id': 2, 'query': 'The Broadway Melody'},
+              {'id': 3, 'query': 'All Quiet on the Western Front 1930 film'},
+              {'id': 4, 'query': 'Cimarron 1931 film'},
+              {'id': 5, 'query': 'Grand Hotel 1932 film'},
+              {'id': 6, 'query': 'Cavalcade 1933 film'},
+              {'id': 7, 'query': 'It Happened One Night'},
+              {'id': 8, 'query': 'Mutiny on the Bounty 1935 film'},
+              {'id': 9, 'query': 'The Great Ziegfeld'},
+              {'id': 10, 'query': 'The Life of Emile Zola'},
+              {'id': 11, 'query': 'You Can\'t Take It with You film'},
+              {'id': 12, 'query': 'Gone with the Wind film'},
+              {'id': 13, 'query': 'Rebecca 1940 film'},
+              {'id': 14, 'query': 'How Green Was My Valley film'},
+              {'id': 15, 'query': 'Mrs. Miniver'},
+              {'id': 16, 'query': 'Casablanca film'},
+              {'id': 17, 'query': 'Going My Way'},
+              {'id': 18, 'query': 'The Lost Weekend film'},
+              {'id': 19, 'query': 'The Best Years of Our Lives'},
+              {'id': 20, 'query': 'Gentleman\'s Agreement film'},
+              {'id': 21, 'query': 'Hamlet 1948 film'},
+              {'id': 22, 'query': 'All the King\'s Men 1949 film'},
+              {'id': 23, 'query': 'All About Eve'},
+              {'id': 24, 'query': 'An American in Paris film'},
+              {'id': 25, 'query': 'The Greatest Show on Earth film'},
+              {'id': 26, 'query': 'From Here to Eternity'},
+              {'id': 27, 'query': 'On the Waterfront'},
+              {'id': 28, 'query': 'Marty film'},
+              {'id': 29, 'query': 'Around the World in 80 Days 1956 film'},
+              {'id': 30, 'query': 'The Bridge on the River Kwai'},
+              {'id': 31, 'query': 'Gigi 1958 film'},
+              {'id': 32, 'query': 'Ben-Hur 1959 film'},
+              {'id': 33, 'query': 'The Apartment'},
+              {'id': 34, 'query': 'West Side Story 1961 film'},
+              {'id': 35, 'query': 'Lawrence of Arabia film'},
+              {'id': 36, 'query': 'Tom Jones 1963 film'},
+              {'id': 37, 'query': 'My Fair Lady film'},
+              {'id': 38, 'query': 'The Sound of Music film'},
+              {'id': 39, 'query': 'A Man for All Seasons 1966 film'},
+              {'id': 40, 'query': 'In the Heat of the Night film'},
+              {'id': 41, 'query': 'Oliver! film'},
+              {'id': 42, 'query': 'Midnight Cowboy'},
+              {'id': 43, 'query': 'Patton film'},
+              {'id': 44, 'query': 'The French Connection film'},
+              {'id': 45, 'query': 'The Godfather'},
+              {'id': 46, 'query': 'The Sting'},
+              {'id': 47, 'query': 'The Godfather Part II'},
+              {'id': 48, 'query': 'One Flew Over the Cuckoo\'s Nest film'},
+              {'id': 49, 'query': 'Rocky'},
+              {'id': 50, 'query': 'Annie Hall'},
+              {'id': 51, 'query': 'The Deer Hunter'},
+              {'id': 52, 'query': 'Kramer vs. Kramer'},
+              {'id': 53, 'query': 'Ordinary People'},
+              {'id': 54, 'query': 'Chariots of Fire'},
+              {'id': 55, 'query': 'Gandhi film'},
+              {'id': 56, 'query': 'Terms of Endearment'},
+              {'id': 57, 'query': 'Amadeus film'},
+              {'id': 58, 'query': 'Out of Africa film'},
+              {'id': 59, 'query': 'Platoon film'},
+              {'id': 60, 'query': 'The Last Emperor'},
+              {'id': 61, 'query': 'Rain Man'},
+              {'id': 62, 'query': 'Driving Miss Daisy'},
+              {'id': 63, 'query': 'Dances with Wolves'},
+              {'id': 64, 'query': 'The Silence of the Lambs film'},
+              {'id': 65, 'query': 'Unforgiven'},
+              {'id': 66, 'query': 'Schindler\'s List'},
+              {'id': 67, 'query': 'Forrest Gump'},
+              {'id': 68, 'query': 'Braveheart'},
+              {'id': 69, 'query': 'The English Patient film'},
+              {'id': 70, 'query': 'Titanic 1997 film'},
+              {'id': 71, 'query': 'Shakespeare in Love'},
+              {'id': 72, 'query': 'American Beauty 1999 film'},
+              {'id': 73, 'query': 'Gladiator 2000 film'},
+              {'id': 74, 'query': 'A Beautiful Mind film'},
+              {'id': 75, 'query': 'Chicago 2002 film'},
+              {'id': 76, 'query': 'The Lord of the Rings: The Return of the King'},
+              {'id': 77, 'query': 'Million Dollar Baby'},
+              {'id': 78, 'query': 'Crash 2004 film'},
+              {'id': 79, 'query': 'The Departed'},
+              {'id': 80, 'query': 'No Country for Old Men film'},
+              {'id': 81, 'query': 'Slumdog Millionaire'},
+              {'id': 82, 'query': 'The Hurt Locker'},
+              {'id': 83, 'query': 'The King\'s Speech'},
+              {'id': 84, 'query': 'The Artist film'},
+              {'id': 85, 'query': 'Argo film'},
+              {'id': 86, 'query': '12 Years a Slave film'},
+              {'id': 87, 'query': 'Birdman film'},
+              {'id': 88, 'query': 'Spotlight film'},
+              {'id': 89, 'query': 'Moonlight 2016 film'},
+              {'id': 90, 'query': 'The Shape of Water film'},
+              {'id': 91, 'query': 'Green Book film'},
+              {'id': 92, 'query': 'Parasite 2019 film'},
+              {'id': 93, 'query': 'Nomadland film'},
+              {'id': 94, 'query': 'CODA 2021 film'},
+              {'id': 95, 'query': 'Everything Everywhere All at Once'},
+              {'id': 96, 'query': 'Oppenheimer film'},
+              {'id': 97, 'query': 'Anora film'}
+          ]
+
+          def fetch_poster(query):
+              url = f'https://en.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote(query)}&prop=pageimages&format=json&pithumbsize=600'
+              req = urllib.request.Request(url, headers={'User-Agent': 'CineOscar/1.0'})
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      data = json.loads(resp.read().decode())
+                      pages = data.get('query', {}).get('pages', {})
+                      for pid in pages:
+                          if 'thumbnail' in pages[pid]:
+                              return pages[pid]['thumbnail']['source']
+              except Exception as e:
+                  print('Erro:', e)
+              return None
+
+          for m in MOVIES:
+              path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
+              if os.path.exists(path): continue
+              img_url = fetch_poster(m['query'])
+              if img_url:
+                  try:
+                      req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
+                      with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
+                          f.write(resp.read())
+                      print(f'Salvo: {path}')
+                  except Exception as e:
+                      print(f'Erro img {m[\"id\"]}:', e)
+              time.sleep(0.2)
+          "
+
+      - name: Salvar posters no repositório
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add posters/
+          git commit -m "Salva os 97 pôsteres na pasta local /posters" || exit 0
+          git push
+          
