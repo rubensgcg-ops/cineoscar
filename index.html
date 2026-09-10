@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -37,6 +38,7 @@
         }
     </script>
 
+    <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -132,7 +134,7 @@
                         <button onclick="toggleGithubModal(true)" title="Sincronização com GitHub" class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition flex items-center space-x-2 border border-gray-700/80">
                             <i class="fa-brands fa-github text-gold-400 text-sm"></i>
                             <span class="hidden md:inline">GitHub</span>
-                            <span id="github-sync-indicator" class="w-2 h-2 rounded-full bg-gray-500"></span>
+                            <span id="github-sync-indicator" class="w-2.5 h-2.5 rounded-full bg-gray-500"></span>
                         </button>
 
                         <button onclick="toggleBackupModal(true)" title="Exportar/Importar Dados" class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition flex items-center space-x-2 border border-gray-700/80">
@@ -221,7 +223,7 @@
                             
                             <!-- Movie Poster -->
                             <div class="md:col-span-5 bg-black/60 relative min-h-[360px] flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-gray-800 group">
-                                <img id="result-poster" src="" alt="Pôster do filme" class="w-full h-full object-cover absolute inset-0 transition-opacity duration-300">
+                                <img id="result-poster" src="" alt="Pôster do filme" referrerpolicy="no-referrer" class="w-full h-full object-cover absolute inset-0 transition-opacity duration-300">
                                 <div class="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-gold-500/30 text-gold-400 text-xs font-bold font-cinzel z-10 shadow">
                                     <i class="fa-solid fa-award mr-1"></i> Oscar <span id="result-year">2024</span>
                                 </div>
@@ -609,7 +611,7 @@
                 genre: "Guerra",
                 imdb: "https://www.imdb.com/title/tt0018578/",
                 synopsis: "Dois jovens pilotos de caça apaixonados pela mesma mulher lutam nos céus da Primeira Guerra Mundial.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wings_1927_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/9P5S2R1E7fO4b5tB4sO3tJ6l.jpg"
             },
             {
                 id: "broadway-melody-1930",
@@ -620,7 +622,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0019729/",
                 synopsis: "Duas irmãs artistas da Broadway navegam por romances e desafios no mundo do espetáculo.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/ea/The_Broadway_Melody_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/uB2C5qR1u3Qv0.jpg"
             },
             {
                 id: "all-quiet-western-front-1931",
@@ -631,7 +633,7 @@
                 genre: "Guerra",
                 imdb: "https://www.imdb.com/title/tt0020629/",
                 synopsis: "Jovens soldados alemães encaram o desespero e o horror realista da Primeira Guerra Mundial.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f6/All_quiet_on_the_western_front_poster_1930.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/2L20436lO4B4G5e28P0c9.jpg"
             },
             {
                 id: "cimarron-1931",
@@ -642,7 +644,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0021748/",
                 synopsis: "Um leitor de jornal e sua esposa se mudam para o novo estado de Oklahoma durante a corrida do ouro do século XIX.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Cimarron_1931_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/1X6M6.jpg"
             },
             {
                 id: "grand-hotel-1932",
@@ -653,7 +655,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0022958/",
                 synopsis: "Várias vidas se entrelaçam durante uma estadia num luxuoso hotel de Berlim.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Grand_Hotel_%281932_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/f3X53zG834a.jpg"
             },
             {
                 id: "cavalcade-1933",
@@ -664,7 +666,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0023876/",
                 synopsis: "A história de duas famílias inglesas durante os primeiros 30 anos do século XX.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Cavalcade_%281933_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/3o8A8kL2c5q.jpg"
             },
             {
                 id: "it-happened-one-night-1935",
@@ -675,7 +677,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0025316/",
                 synopsis: "Uma herdeira mimada em fuga e um repórter desempregado se envolvem numa jornada cômica inesquecível.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f0/It_Happened_One_Night_%281934_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/xW1rGv2f2sP.jpg"
             },
             {
                 id: "mutiny-on-bounty-1936",
@@ -686,7 +688,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0026752/",
                 synopsis: "A lendária história da revolta dos marinheiros liderados por Fletcher Christian contra o tirânico Capitão Bligh.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Mutiny_on_the_Bounty_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/m0v1r2.jpg"
             },
             {
                 id: "great-ziegfeld-1937",
@@ -697,7 +699,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0027698/",
                 synopsis: "A cinebiografia espetacular do lendário produtor teatral Florenz Ziegfeld Jr.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/The_Great_Ziegfeld_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/8R2R.jpg"
             },
             {
                 id: "emile-zola-1938",
@@ -708,7 +710,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0029146/",
                 synopsis: "O célebre escritor francês Émile Zola arrisca sua carreira para defender um oficial judeu injustamente acusado.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Life_of_Emile_Zola_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/9B3L.jpg"
             },
             {
                 id: "you-cant-take-it-1939",
@@ -717,8 +719,9 @@
                 titleOrig: "You Can't Take It with You",
                 director: "Frank Capra",
                 genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0030993/",
                 synopsis: "Um homem de uma família de banqueiros se apaixona por uma mulher de uma família excêntrica e libertária.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/a/a2/You_Can%27t_Take_It_with_You_%281938_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/4K3.jpg"
             },
             {
                 id: "gone-with-the-wind-1940",
@@ -729,7 +732,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0031381/",
                 synopsis: "A saga de Scarlett O'Hara no sul dos Estados Unidos durante e após a Guerra Civil Americana.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/27/Poster_-_Gone_With_the_Wind_01.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/s353L3.jpg"
             },
             {
                 id: "rebecca-1941",
@@ -740,7 +743,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0032976/",
                 synopsis: "Uma jovem recém-casada se vê assombrada pela memória da falecida primeira esposa de seu marido abastado.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/16/Rebecca_1940_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/16R.jpg"
             },
             {
                 id: "how-green-valley-1942",
@@ -751,7 +754,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0033729/",
                 synopsis: "A vida de uma família de mineradores de carvão no País de Gales na virada do século.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/7/77/How_Green_Was_My_Valley_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/77R.jpg"
             },
             {
                 id: "mrs-miniver-1943",
@@ -762,7 +765,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0035093/",
                 synopsis: "Uma família inglesa tenta manter a normalidade durante os bombardeios da Segunda Guerra Mundial.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Mrs._Miniver_%281942_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/aR.jpg"
             },
             {
                 id: "casablanca-1944",
@@ -773,7 +776,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0034583/",
                 synopsis: "Um cínico exilado americano em Casablanca precisa escolher entre o amor de sua vida e a luta contra o nazismo.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b3/CasablancaPoster-1942.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/5m1Omy839.jpg"
             },
             {
                 id: "going-my-way-1945",
@@ -784,7 +787,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0036872/",
                 synopsis: "Um jovem e dinâmico padre traz novos caminhos e esperança para uma paróquia em dificuldades financeiras.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/Going_My_Way_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/07G.jpg"
             },
             {
                 id: "lost-weekend-1946",
@@ -795,7 +798,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0037884/",
                 synopsis: "Um escritor alcoólatra passa por um fim de semana devastador de alucinações e desespero.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/d/df/The_Lost_Weekend_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/dfT.jpg"
             },
             {
                 id: "best-years-lives-1947",
@@ -806,7 +809,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0036868/",
                 synopsis: "Três veteranos da Segunda Guerra Mundial retornam para casa e enfrentam o desafio de se reajustar à vida civil.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/f/fc/The_Best_Years_of_Our_Lives_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/fcT.jpg"
             },
             {
                 id: "gentlemans-agreement-1948",
@@ -817,7 +820,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0039416/",
                 synopsis: "Um jornalista finge ser judeu para investigar e expor o antissemitismo velado na sociedade americana.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Gentleman%27s_Agreement_%281947_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/b3G.jpg"
             },
             {
                 id: "hamlet-1949",
@@ -828,7 +831,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0040416/",
                 synopsis: "O príncipe da Dinamarca busca vingar a morte de seu pai assassinando o próprio tio.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Hamlet_%281948_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/c3H.jpg"
             },
             {
                 id: "all-kings-men-1950",
@@ -839,7 +842,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0041113/",
                 synopsis: "A ascensão e corrupção de um político populista num estado do sul dos Estados Unidos.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/9/90/All_the_King%27s_Men_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/90A.jpg"
             },
             {
                 id: "all-about-eve-1951",
@@ -850,7 +853,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0042192/",
                 synopsis: "Uma jovem fã ambiciosa se insinua na vida de uma grande estrela da Broadway para tomar seu lugar.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/a/a7/All_About_Eve_%281950_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/a7A.jpg"
             },
             {
                 id: "american-in-paris-1952",
@@ -861,7 +864,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0043278/",
                 synopsis: "Um ex-soldado americano permanece em Paris para se tornar pintor e se apaixona por uma jovem francesa.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/An_American_in_Paris_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/30A.jpg"
             },
             {
                 id: "greatest-show-earth-1953",
@@ -872,7 +875,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0044672/",
                 synopsis: "Os dramas, traições e paixões nos bastidores da maior companhia de circo do mundo.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Greatest_Show_on_Earth_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23T.jpg"
             },
             {
                 id: "from-here-eternity-1954",
@@ -883,7 +886,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0045793/",
                 synopsis: "Conflitos amorosos e disciplinais em uma base militar no Havaí nas vésperas do ataque a Pearl Harbor.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2a/From_Here_To_Eternity_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/2aF.jpg"
             },
             {
                 id: "on-the-waterfront-1955",
@@ -894,7 +897,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0047296/",
                 synopsis: "Um ex-lutador de boxe enfrenta os chefes corruptos do sindicato dos portuários onde trabalha.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f6/On_The_Waterfront_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/f6O.jpg"
             },
             {
                 id: "marty-1956",
@@ -905,7 +908,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0048356/",
                 synopsis: "Um açougueiro ítalo-americano solitário de 34 anos finalmente encontra o amor em uma professora tímida.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/87/Marty_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/87M.jpg"
             },
             {
                 id: "around-world-80-days-1957",
@@ -916,7 +919,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0048960/",
                 synopsis: "O cavalheiro vitoriano Phileas Fogg aposta que pode dar a volta ao mundo em apenas 80 dias.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Around_the_World_in_80_Days_%281956_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23A.jpg"
             },
             {
                 id: "bridge-river-kwai-1958",
@@ -927,7 +930,7 @@
                 genre: "Guerra",
                 imdb: "https://www.imdb.com/title/tt0050212/",
                 synopsis: "Prisioneiros britânicos são forçados a construir uma ponte ferroviária crucial para os japoneses.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/15/Bridge_on_the_River_Kwai_movie_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/15B.jpg"
             },
             {
                 id: "gigi-1959",
@@ -938,7 +941,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0051658/",
                 synopsis: "Na Paris da Belle Époque, um jovem milionário se apaixona por uma moça que está sendo treinada para ser cortesã.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/Gigi_1958_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/30G.jpg"
             },
             {
                 id: "ben-hur-1960",
@@ -949,7 +952,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0052618/",
                 synopsis: "Um nobre judeu é traído por seu amigo romano, escravizado e busca vingança em corridas de quadrigas.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/7/74/Ben_hur_1959_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/74B.jpg"
             },
             {
                 id: "the-apartment-1961",
@@ -960,7 +963,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0053604/",
                 synopsis: "Um funcionário seguro empresta seu apartamento para executivos da empresa encontrarem suas amantes.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/The_Apartment_%281960_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/e0T.jpg"
             },
             {
                 id: "west-side-story-1962",
@@ -971,7 +974,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0055614/",
                 synopsis: "Duas gangues de Nova York disputam território enquanto dois jovens de lados opostos se apaixonam.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/West_side_story_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23W.jpg"
             },
             {
                 id: "lawrence-arabia-1963",
@@ -982,7 +985,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0056172/",
                 synopsis: "A história do oficial britânico T.E. Lawrence liderando tribos árabes contra o Império Otomano.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Lawrence_of_arabia_ver3_xxlg.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/c5L.jpg"
             },
             {
                 id: "tom-jones-1964",
@@ -993,7 +996,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0057590/",
                 synopsis: "As peripécias amorosas e escandalosas de um jovem conquistador na Inglaterra do século XVIII.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Tom_Jones_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23TJ.jpg"
             },
             {
                 id: "my-fair-lady-1965",
@@ -1004,7 +1007,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0058385/",
                 synopsis: "Um elitista professor de fonética aposta que pode transformar uma florista de rua em uma dama da alta sociedade.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2d/My_Fair_Lady_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/2dM.jpg"
             },
             {
                 id: "sound-of-music-1966",
@@ -1015,7 +1018,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0059742/",
                 synopsis: "Uma noviça alegre é enviada como governanta para os sete filhos de um capitão austríaco viúvo.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c6/The_Sound_of_Music_%281965_poster%29.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/c6T.jpg"
             },
             {
                 id: "man-for-all-seasons-1967",
@@ -1026,7 +1029,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0060665/",
                 synopsis: "Sir Thomas More enfrenta o Rei Henrique VIII quando este busca quebrar o casamento com Catarina de Aragão.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/A_Man_for_All_Seasons_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23M.jpg"
             },
             {
                 id: "in-heat-night-1968",
@@ -1037,7 +1040,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0061811/",
                 synopsis: "Um detetive negro da Filadélfia é chamado para investigar um assassinato em uma cidade racista do Mississippi.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/In_the_Heat_of_the_Night_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23I.jpg"
             },
             {
                 id: "oliver-1969",
@@ -1048,7 +1051,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0063385/",
                 synopsis: "Um jovem órfão na Inglaterra vitoriana foge do orfanato e se junta a uma gangue de pivetes batedores de carteira.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/Oliver%21_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/30O.jpg"
             },
             {
                 id: "midnight-cowboy-1970",
@@ -1059,7 +1062,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0064665/",
                 synopsis: "Um jovem texano ingênuo tenta a sorte como michê em Nova York e faz amizade com um trapaceiro tuberculoso.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Midnight_Cowboy_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/c5M.jpg"
             },
             {
                 id: "patton-1971",
@@ -1070,7 +1073,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0066206/",
                 synopsis: "A carreira militar do polêmico general americano George S. Patton durante a Segunda Guerra Mundial.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Patton_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/1aP.jpg"
             },
             {
                 id: "french-connection-1972",
@@ -1081,7 +1084,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0067116/",
                 synopsis: "Dois detetives obstinados de Nova York tentam desmantelar um gigantesco esquema francês de contrabando de heroína.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/87/The_French_Connection_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/87F.jpg"
             },
             {
                 id: "godfather-1973",
@@ -1092,7 +1095,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0068646/",
                 synopsis: "O envelhecido patriarca de uma dinastia do crime organizado transfere o controle do seu império ao filho relutante.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Godfather_ver1.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"
             },
             {
                 id: "the-sting-1974",
@@ -1103,7 +1106,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0070735/",
                 synopsis: "Dois trapaceiros profissionais nos anos 1930 planejam um grande golpe contra um perigoso chefe da máfia.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Sting_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23TS.jpg"
             },
             {
                 id: "godfather-2-1975",
@@ -1114,7 +1117,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0071562/",
                 synopsis: "A ascensão do jovem Vito Corleone em Nova York intercalada com a consolidação do poder de Michael.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/0/03/Godfather_part_ii.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/hek3koDUyL29.jpg"
             },
             {
                 id: "cuckoos-nest-1976",
@@ -1125,7 +1128,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0073486/",
                 synopsis: "Um prisioneiro rebelde simula insanidade e lidera os pacientes de uma instituição psiquiátrica opressiva.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/36/One_Flew_Over_the_Cuckoo%27s_Nest_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/336O.jpg"
             },
             {
                 id: "rocky-1977",
@@ -1136,7 +1139,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0075148/",
                 synopsis: "Um cobrador e pugilista amador da Filadélfia recebe uma chance única de disputar o título mundial dos pesos-pesados.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/18/Rocky_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/18R.jpg"
             },
             {
                 id: "annie-hall-1978",
@@ -1147,7 +1150,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt0075686/",
                 synopsis: "Um comediante nova-iorquino reflete sobre as idas e vindas de seu relacionamento com uma cantora livre de espírito.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Annie_Hall_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/e6A.jpg"
             },
             {
                 id: "deer-hunter-1979",
@@ -1158,7 +1161,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0077416/",
                 synopsis: "O impacto devastador da Guerra do Vietnã na vida de três amigos operários da Pensilvânia.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/5/52/Deer_Hunter_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/52D.jpg"
             },
             {
                 id: "kramer-vs-kramer-1980",
@@ -1169,7 +1172,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0079417/",
                 synopsis: "Após ser abandonado pela esposa, um executivo aprende a cuidar do filho até a mãe retornar exigindo a guarda.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Kramer_vs_Kramer_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23K.jpg"
             },
             {
                 id: "ordinary-people-1981",
@@ -1180,7 +1183,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0081283/",
                 synopsis: "Uma família de classe média alta enfrenta o luto e o trauma emocional após a morte acidental do filho mais velho.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Ordinary_People_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23OP.jpg"
             },
             {
                 id: "chariots-of-fire-1982",
@@ -1191,7 +1194,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0082158/",
                 synopsis: "Dois atletas britânicos de origens distintas correm pelas Olimpíadas de 1924 por motivos pessoais e religiosos.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Chariots_of_Fire_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23CF.jpg"
             },
             {
                 id: "gandhi-1983",
@@ -1202,7 +1205,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0083987/",
                 synopsis: "A vida de Mahatma Gandhi e sua resistência não-violenta contra o domínio britânico na Índia.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Gandhi_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23G.jpg"
             },
             {
                 id: "terms-endearment-1984",
@@ -1213,7 +1216,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0086425/",
                 synopsis: "A complexa e emocionante relação de trinta anos entre uma mãe controladora e sua filha.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Terms_of_Endearment_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23TE.jpg"
             },
             {
                 id: "amadeus-1985",
@@ -1224,7 +1227,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0086879/",
                 synopsis: "A obsessão e inveja mortal do compositor Antonio Salieri em relação ao genial Wolfgang Amadeus Mozart.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/22/Amadeus_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/22A.jpg"
             },
             {
                 id: "out-of-africa-1986",
@@ -1235,7 +1238,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0089755/",
                 synopsis: "Uma baronesa dinamarquesa gerencia uma fazenda no Quênia e se apaixona por um caçador nômade.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Out_of_Africa_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23OA.jpg"
             },
             {
                 id: "platoon-1987",
@@ -1246,7 +1249,7 @@
                 genre: "Guerra",
                 imdb: "https://www.imdb.com/title/tt0091763/",
                 synopsis: "Um jovem recruta enfrenta a brutalidade moral e física no meio do conflito do Vietnã.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/9/90/Platoon_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/90P.jpg"
             },
             {
                 id: "last-emperor-1988",
@@ -1257,7 +1260,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0093389/",
                 synopsis: "A vida de Puyi, o último imperador da China, desde sua coroação na infância até sua reeducação política.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Last_Emperor_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23LE.jpg"
             },
             {
                 id: "rain-man-1989",
@@ -1268,7 +1271,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0095953/",
                 synopsis: "Um jovem egoísta descobre que tem um irmão mais velho autista sábio e viaja com ele pelo país.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Rain_man_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23RM.jpg"
             },
             {
                 id: "driving-miss-daisy-1990",
@@ -1279,7 +1282,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0097239/",
                 synopsis: "A amizade de 25 anos entre uma idosa senhora judia e seu motorista afro-americano no sul dos EUA.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Driving_miss_daisy_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23DMD.jpg"
             },
             {
                 id: "dances-with-wolves-1991",
@@ -1290,7 +1293,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0099348/",
                 synopsis: "Um oficial da União na Guerra Civil isolado num posto remoto cria laços com uma tribo Sioux.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Dances_with_wolves_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23DW.jpg"
             },
             {
                 id: "silence-of-lambs-1992",
@@ -1301,7 +1304,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0102926/",
                 synopsis: "Uma estagiária do FBI consulta o psiquiatra e serial killer Hannibal Lecter para capturar outro assassino.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/86/The_Silence_of_the_Lambs_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/86SL.jpg"
             },
             {
                 id: "unforgiven-1993",
@@ -1312,7 +1315,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0105695/",
                 synopsis: "Um idoso pistoleiro aposentado aceita um último trabalho de recompensa ao lado de seu antigo parceiro.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Unforgiven_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23U.jpg"
             },
             {
                 id: "schindlers-list-1994",
@@ -1323,7 +1326,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0108052/",
                 synopsis: "O empresário Oskar Schindler salva a vida de mais de mil refugiados judeus durante o Holocausto.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/3/38/Schindler%27s_List_movie.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/sF11C8.jpg"
             },
             {
                 id: "forrest-gump-1995",
@@ -1334,7 +1337,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0109830/",
                 synopsis: "Um homem simples do Alabama presencia e influencia involuntariamente grandes momentos históricos dos EUA.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/6/67/Forrest_Gump_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/arw2vc.jpg"
             },
             {
                 id: "braveheart-1996",
@@ -1345,7 +1348,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0112573/",
                 synopsis: "William Wallace lidera os escoceses numa revolta contra a opressão do rei inglês Eduardo I.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/5/55/Braveheart_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/55B.jpg"
             },
             {
                 id: "english-patient-1997",
@@ -1356,7 +1359,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0116209/",
                 synopsis: "No fim da 2ª Guerra, uma enfermeira cuida de um homem terrivelmente queimado que relembra seu trágico romance.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_English_Patient_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23EP.jpg"
             },
             {
                 id: "titanic-1998",
@@ -1367,7 +1370,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0120338/",
                 synopsis: "Um jovem artista pobre e uma aristocrata se apaixonam a bordo do fatídico navio transatlântico.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/1/18/Titanic_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/9xjZS2rlVxm8SFx8kPC3aLrmA3U.jpg"
             },
             {
                 id: "shakespeare-in-love-1999",
@@ -1378,7 +1381,7 @@
                 genre: "Romance",
                 imdb: "https://www.imdb.com/title/tt0138097/",
                 synopsis: "Um jovem William Shakespeare com bloqueio criativo encontra sua inspiração na nobre Viola de Lesseps.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Shakespeare_in_love_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23SL.jpg"
             },
             {
                 id: "american-beauty-2000",
@@ -1389,7 +1392,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0169547/",
                 synopsis: "Um pai de família em crise de meia-idade se apaixona pela melhor amiga adolescente da sua filha.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/American_beauty_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23AB.jpg"
             },
             {
                 id: "gladiator-2001",
@@ -1400,7 +1403,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0172495/",
                 synopsis: "Um ex-general romano traído busca vingança contra o imperador corrupto que assassinou sua família.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Gladiator_ver1.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/ty8TTHuvA2L5q9R3C59L5p0.jpg"
             },
             {
                 id: "beautiful-mind-2002",
@@ -1411,7 +1414,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt0268978/",
                 synopsis: "A história do gênio matemático John Nash lidando com a esquizofrenia e a conquista do Nobel.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b8/A_Beautiful_Mind_Poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/b8BM.jpg"
             },
             {
                 id: "chicago-2003",
@@ -1422,7 +1425,7 @@
                 genre: "Musical",
                 imdb: "https://www.imdb.com/title/tt0299658/",
                 synopsis: "Duas assassinas na Chicago dos anos 1920 disputam a fama e os serviços do mesmo advogado sedutor.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Chicago_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23CHI.jpg"
             },
             {
                 id: "lotr-return-king-2004",
@@ -1433,7 +1436,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt0167260/",
                 synopsis: "A batalha final pela Terra-média acontece enquanto Frodo e Sam se aproximam da Montanha da Perdição.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b9/Lord_of_the_rings_return_of_the_king.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/rCzpDGLbOoPwL223R3S832585.jpg"
             },
             {
                 id: "million-dollar-baby-2005",
@@ -1444,7 +1447,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0405159/",
                 synopsis: "Um ranzinza treinador de boxe aceita treinar uma determinada mulher até o topo do boxe profissional.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Million_dollar_baby_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23MDB.jpg"
             },
             {
                 id: "crash-2006",
@@ -1455,7 +1458,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt0375679/",
                 synopsis: "Moradores de Los Angeles de diferentes origens raciais têm suas vidas colididas em 36 horas turbulentas.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Crash_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23CR.jpg"
             },
             {
                 id: "departed-2007",
@@ -1466,7 +1469,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0407887/",
                 synopsis: "Um policial disfarçado na máfia e um criminoso infiltrado na polícia tentam se identificar mutuamente.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/5/50/Departed2006.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/50D.jpg"
             },
             {
                 id: "no-country-old-men-2008",
@@ -1477,7 +1480,7 @@
                 genre: "Crime",
                 imdb: "https://www.imdb.com/title/tt0477348/",
                 synopsis: "Um caçador encontra uma mala de dinheiro de um negócio fracassado de drogas e é caçado por um sociopata.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8b/No_Country_for_Old_Men_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/8bNC.jpg"
             },
             {
                 id: "slumdog-millionaire-2009",
@@ -1488,18 +1491,18 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt1010048/",
                 synopsis: "Um jovem das favelas de Mumbai relembra sua vida conturbada para explicar seu sucesso num jogo de TV.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Slumdog_millionaire_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/e1SM.jpg"
             },
             {
                 id: "hurt-locker-2010",
                 year: 2010,
-                titlePt: "Guerra Ao Ao Marcador / Guerra ao Terror",
+                titlePt: "Guerra ao Terror",
                 titleOrig: "The Hurt Locker",
                 director: "Kathryn Bigelow",
                 genre: "Guerra",
                 imdb: "https://www.imdb.com/title/tt0887912/",
                 synopsis: "Um esquadrão anti-bombas no Iraque lida com o perigo constante e os conflitos psicológicos internos.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Hurt_Locker_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23HL.jpg"
             },
             {
                 id: "kings-speech-2011",
@@ -1510,7 +1513,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt1504320/",
                 synopsis: "O Rei Jorge VI contrata um terapeuta de fala não convencional para superar sua gagueira antes do discurso da guerra.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_king%27s_speech_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23KS.jpg"
             },
             {
                 id: "the-artist-2012",
@@ -1521,7 +1524,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt1655442/",
                 synopsis: "A decadência de uma estrela do cinema mudo enquanto uma jovem atriz decolava com a chegada do som.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Artist_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23TAR.jpg"
             },
             {
                 id: "argo-2013",
@@ -1532,7 +1535,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt1024648/",
                 synopsis: "Agentes da CIA forjam a produção de um filme de ficção científica para resgatar diplomatas no Irã.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Argo_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23ARG.jpg"
             },
             {
                 id: "12-years-slave-2014",
@@ -1543,7 +1546,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt2024544/",
                 synopsis: "Solomon Northup, homem negro livre em Nova York, é sequestrado e vendido como escravo no sul dos EUA.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/82/12_Years_a_Slave_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/882YS.jpg"
             },
             {
                 id: "birdman-2015",
@@ -1554,7 +1557,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt2562232/",
                 synopsis: "Um ator esquecido famoso por interpretar um super-herói tenta recuperar o prestígio dirigindo uma peça na Broadway.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Birdman_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/23BM.jpg"
             },
             {
                 id: "spotlight-2016",
@@ -1565,7 +1568,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt1895587/",
                 synopsis: "Jornalistas investigativos revelam abusos e acobertamentos sistêmicos na Igreja Católica em Boston.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Spotlight_film_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/f3S.jpg"
             },
             {
                 id: "moonlight-2017",
@@ -1576,7 +1579,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt4975722/",
                 synopsis: "Três momentos da vida de um jovem negro em Miami enfrentando sua identidade e sexualidade.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/84/Moonlight_%282016_film%29.png"
+                poster: "https://image.tmdb.org/t/p/w500/84M.jpg"
             },
             {
                 id: "shape-of-water-2018",
@@ -1587,7 +1590,7 @@
                 genre: "Aventura",
                 imdb: "https://www.imdb.com/title/tt5580390/",
                 synopsis: "Uma faxineira muda em um laboratório do governo estabelece uma conexão amorosa com uma criatura anfíbia.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/The_Shape_of_Water_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/07SW.jpg"
             },
             {
                 id: "green-book-2019",
@@ -1598,7 +1601,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt6966692/",
                 synopsis: "Um segurança Ítalo-americano torna-se motorista de um pianista negro em turnê pelo sul segregado dos EUA.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Green_Book_poster.png"
+                poster: "https://image.tmdb.org/t/p/w500/8dGB.jpg"
             },
             {
                 id: "parasite-2020",
@@ -1609,7 +1612,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt6751668/",
                 synopsis: "Uma família desempregada se infiltra aos poucos na rotina de uma família rica com consequências drásticas.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/4/43/Parasite_%282019_film%29_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/7IiT389822R34A3Gzz8R26553m.jpg"
             },
             {
                 id: "nomadland-2021",
@@ -1620,7 +1623,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt9770150/",
                 synopsis: "Uma mulher perde tudo na Grande Recessão e embarca em uma jornada pelo oeste americano vivendo em sua van.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Nomadland_poster.png"
+                poster: "https://image.tmdb.org/t/p/w500/e0N.jpg"
             },
             {
                 id: "coda-2022",
@@ -1631,7 +1634,7 @@
                 genre: "Drama",
                 imdb: "https://www.imdb.com/title/tt10366460/",
                 synopsis: "Única ouvinte em uma família de surdos, uma jovem se divide entre ajudar a família e seguir a paixão pela música.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b8/CODA_film_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/b8C.jpg"
             },
             {
                 id: "eeaao-2023",
@@ -1642,7 +1645,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt6710474/",
                 synopsis: "Uma imigrante chinesa em crise se vê envolvida em uma aventura no multiverso para salvar a própria realidade.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/8/81/Everything_Everywhere_All_at_Once_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/81E.jpg"
             },
             {
                 id: "oppenheimer-2024",
@@ -1653,7 +1656,7 @@
                 genre: "Biografia",
                 imdb: "https://www.imdb.com/title/tt15398776/",
                 synopsis: "A cinebiografia de J. Robert Oppenheimer, o cientista responsável pelo desenvolvimento da bomba atômica no Projeto Manhattan.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/Oppenheimer_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv3B23uq5y.jpg"
             },
             {
                 id: "anora-2025",
@@ -1664,7 +1667,7 @@
                 genre: "Comédia",
                 imdb: "https://www.imdb.com/title/tt29615112/",
                 synopsis: "Uma jovem dançarina erótica de Brooklyn se casa impulsivamente com o filho de um oligarca russo, provocando um caos familiar cômico e dramático.",
-                poster: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Anora_2024_poster.jpg/440px-Anora_2024_poster.jpg"
+                poster: "https://image.tmdb.org/t/p/w500/7aE1mQ79UAnL9T8R3p0qCjIq6e.jpg"
             }
         ];
 
@@ -1698,6 +1701,12 @@
                 pullFromGithub(true);
             }
         });
+
+        // Image Poster Error Fallback
+        function handlePosterError(imgEl, title, year) {
+            imgEl.onerror = null;
+            imgEl.src = `https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(title + '\n(' + year + ')')}`;
+        }
 
         function loadSavedData() {
             try {
@@ -1790,9 +1799,8 @@
                 if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
 
                 const data = await res.json();
-                ghSettings.sha = data.sha; // Save SHA for updating
+                ghSettings.sha = data.sha;
                 
-                // Decode UTF-8 base64
                 const content = decodeURIComponent(escape(atob(data.content)));
                 const parsed = JSON.parse(content);
 
@@ -1825,7 +1833,6 @@
             statusEl.textContent = "Status: Enviando atualizações para o GitHub...";
 
             try {
-                // Check current file SHA if missing
                 if (!ghSettings.sha) {
                     const checkRes = await fetch(url, {
                         headers: {
@@ -1931,10 +1938,7 @@
         function displayDrawnMovie(movie) {
             const posterImg = document.getElementById('result-poster');
             posterImg.src = movie.poster;
-            posterImg.onerror = function() {
-                this.onerror = null;
-                this.src = `https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}`;
-            };
+            posterImg.setAttribute('onerror', `handlePosterError(this, "${movie.titlePt.replace(/"/g, '&quot;')}", ${movie.year})`);
 
             document.getElementById('result-year').textContent = movie.year;
             document.getElementById('result-title-pt').textContent = movie.titlePt;
@@ -2062,7 +2066,7 @@
             container.innerHTML = watchedList.map(movie => `
                 <div class="bg-dark-card border border-gray-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-gold-500/40 transition group">
                     <div class="relative aspect-[2/3] overflow-hidden bg-black/60">
-                        <img src="${movie.poster}" alt="${movie.titlePt}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}'">
+                        <img src="${movie.poster}" alt="${movie.titlePt}" referrerpolicy="no-referrer" onerror="handlePosterError(this, '${movie.titlePt.replace(/'/g, "\\'")}', ${movie.year})" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute top-2 left-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-bold text-gold-400 border border-gold-500/20">
                             Oscar ${movie.year}
                         </div>
@@ -2167,7 +2171,7 @@
                 return `
                     <div class="bg-dark-card border ${isWatched ? 'border-emerald-900/50' : 'border-gray-800'} rounded-2xl overflow-hidden flex flex-col justify-between hover:border-gold-500/40 transition group">
                         <div class="relative aspect-[2/3] overflow-hidden bg-black/60">
-                            <img src="${movie.poster}" alt="${movie.titlePt}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}'">
+                            <img src="${movie.poster}" alt="${movie.titlePt}" referrerpolicy="no-referrer" onerror="handlePosterError(this, '${movie.titlePt.replace(/'/g, "\\'")}', ${movie.year})" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                             <div class="absolute top-2 left-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-bold text-gold-400 border border-gold-500/20">
                                 Oscar ${movie.year}
                             </div>
@@ -2220,7 +2224,7 @@
             const decades = {};
             OSCAR_MOVIES.forEach(m => {
                 let dec = Math.floor(m.year / 10) * 10;
-                if (dec < 1930) dec = 1930; // Group 1920s into 1930s
+                if (dec < 1930) dec = 1930;
                 if (!decades[dec]) decades[dec] = { total: 0, watched: 0 };
                 decades[dec].total++;
                 if (watchedIds.has(m.id)) decades[dec].watched++;
@@ -2343,3 +2347,4 @@
     </script>
 </body>
 </html>
+```
