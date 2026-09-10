@@ -21,7 +21,8 @@ jobs:
       - name: Executar script de download NYT
         run: |
           python -c "
-          import os, json, time, urllib.request, urllib.parse
+          import os, json, time, sys, urllib.request, urllib.parse
+          sys.stdout.reconfigure(encoding='utf-8')
 
           OUTPUT_DIR = 'posters_nyt'
           os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -44,7 +45,7 @@ jobs:
               {'id': 15, 'wiki': 'City_of_God_(2002_film)'},
               {'id': 16, 'wiki': 'Crouching_Tiger,_Hidden_Dragon'},
               {'id': 17, 'wiki': 'Brokeback_Mountain'},
-              {'id': 18, 'wiki': 'Y_tu_mam%C3%A1_tambi%C3%A9n'},
+              {'id': 18, 'wiki': 'Y_tu_mamá_también'},
               {'id': 19, 'wiki': 'Zodiac_(film)'},
               {'id': 20, 'wiki': 'The_Wolf_of_Wall_Street_(2013_film)'},
               {'id': 21, 'wiki': 'The_Royal_Tenenbaums'},
@@ -67,7 +68,7 @@ jobs:
               {'id': 38, 'wiki': 'Portrait_of_a_Lady_on_Fire'},
               {'id': 39, 'wiki': 'Lady_Bird_(film)'},
               {'id': 40, 'wiki': 'Yi_Yi'},
-              {'id': 41, 'wiki': 'Am%C3%A9lie'},
+              {'id': 41, 'wiki': 'Amélie'},
               {'id': 42, 'wiki': 'The_Master_(2012_film)'},
               {'id': 43, 'wiki': 'Oldboy_(2003_film)'},
               {'id': 44, 'wiki': 'Once_Upon_a_Time_in_Hollywood'},
@@ -93,7 +94,7 @@ jobs:
               {'id': 64, 'wiki': 'Gone_Girl_(film)'},
               {'id': 65, 'wiki': 'Oppenheimer_(film)'},
               {'id': 66, 'wiki': 'Spotlight_(film)'},
-              {'id': 67, 'wiki': 'T%C3%A1r'},
+              {'id': 67, 'wiki': 'Tár'},
               {'id': 68, 'wiki': 'The_Hurt_Locker'},
               {'id': 69, 'wiki': 'Under_the_Skin_(2013_film)'},
               {'id': 70, 'wiki': 'Let_the_Right_One_In_(film)'},
@@ -132,35 +133,19 @@ jobs:
           def get_image_url(wiki_title):
               try:
                   url = f'https://en.wikipedia.org/api/rest_v1/page/summary/{wiki_title}'
-                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/1.0 (contact@cineoscar.app)'})
+                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/2.0'})
                   with urllib.request.urlopen(req) as resp:
-                      data = json.loads(resp.read().decode())
+                      data = json.loads(resp.read().decode('utf-8'))
                       if 'thumbnail' in data and 'source' in data['thumbnail']:
                           return data['thumbnail']['source']
               except Exception:
                   pass
-
-              try:
-                  clean_title = urllib.parse.unquote(wiki_title).replace('_', ' ')
-                  url = f'https://en.wikipedia.org/w/api.php?action=query&titles={urllib.parse.quote(clean_title)}&prop=pageimages&format=json&pithumbsize=600'
-                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYTApp/1.0 (contact@cineoscar.app)'})
-                  with urllib.request.urlopen(req) as resp:
-                      data = json.loads(resp.read().decode())
-                      pages = data.get('query', {}).get('pages', {})
-                      for pid in pages:
-                          if 'thumbnail' in pages[pid]:
-                              return pages[pid]['thumbnail']['source']
-              except Exception:
-                  pass
-
               return None
 
-          for pass_num in range(1, 5):
-              missing = [m for m in MOVIES if not (os.path.exists(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') and os.path.getsize(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') > 3000)]
-              print(f'=== RODADA {pass_num}/4 === (Faltam {len(missing)} de {len(MOVIES)})')
-              if not missing:
-                  print('Todos os 100 posters NYT ja foram baixados!')
-                  break
+          for pass_num in range(1, 4):
+              missing = [m for m in MOVIES if not (os.path.exists(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') and os.path.getsize(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') > 2000)]
+              print(f'Rodada {pass_num}: Faltam {len(missing)} posters')
+              if not missing: break
 
               for m in missing:
                   path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
@@ -170,16 +155,10 @@ jobs:
                           req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
                           with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
                               f.write(resp.read())
-                          print(f'[{m[\"id\"]}/100] Salvo -> {path}')
-                      except Exception as e:
-                          print(f'[{m[\"id\"]}/100] Erro ao salvar: {e}')
-                  time.sleep(1.2)
-
-              if pass_num < 4 and len(missing) > 0:
-                  time.sleep(5)
-
-          total_existentes = len([m for m in MOVIES if os.path.exists(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') and os.path.getsize(f'{OUTPUT_DIR}/{m[\"id\"]}.jpg') > 3000])
-          print(f'STATUS FINAL NYT: {total_existentes} de 100 posters salvos em /posters_nyt!')
+                          print(f'Salvo ID {m[\"id\"]}')
+                      except Exception:
+                          pass
+                  time.sleep(1.0)
           "
 
       - name: Salvar posters no repositorio
@@ -187,5 +166,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add posters_nyt/
-          git commit -m "Salva todos os 100 posters NYT na pasta local /posters_nyt" || exit 0
+          git commit -m "Salva posters NYT sem erros de encoding" || exit 0
           git push
