@@ -27,137 +27,43 @@ jobs:
           OUTPUT_DIR = 'posters_nyt'
           os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+          # Focando nos filmes específicos que faltaram e em alguns gerais de reforço
           MOVIES = [
-              {'id': 1, 'query': 'Parasite 2019 film'},
-              {'id': 2, 'query': 'Mulholland Drive film'},
-              {'id': 3, 'query': 'There Will Be Blood'},
-              {'id': 4, 'query': 'In the Mood for Love'},
-              {'id': 5, 'query': 'Moonlight 2016 film'},
-              {'id': 6, 'query': 'No Country for Old Men film'},
-              {'id': 7, 'query': 'Eternal Sunshine of the Spotless Mind'},
-              {'id': 8, 'query': 'Get Out film'},
-              {'id': 9, 'query': 'Spirited Away'},
-              {'id': 10, 'query': 'The Social Network film'},
-              {'id': 11, 'query': 'Mad Max Fury Road'},
-              {'id': 12, 'query': 'The Zone of Interest film'},
-              {'id': 13, 'query': 'Children of Men film'},
-              {'id': 14, 'query': 'Inglourious Basterds'},
-              {'id': 15, 'query': 'City of God 2002 film'},
-              {'id': 16, 'query': 'Crouching Tiger Hidden Dragon'},
-              {'id': 17, 'query': 'Brokeback Mountain'},
-              {'id': 18, 'query': 'Y tu mamá también'},
-              {'id': 19, 'query': 'Zodiac film'},
-              {'id': 20, 'query': 'The Wolf of Wall Street 2013 film'},
-              {'id': 21, 'query': 'The Royal Tenenbaums'},
-              {'id': 22, 'query': 'The Grand Budapest Hotel'},
-              {'id': 23, 'query': 'Boyhood 2014 film'},
-              {'id': 24, 'query': 'Her 2013 film'},
-              {'id': 25, 'query': 'Phantom Thread'},
-              {'id': 26, 'query': 'Anatomy of a Fall'},
-              {'id': 27, 'query': 'Adaptation film'},
-              {'id': 28, 'query': 'The Dark Knight film'},
-              {'id': 29, 'query': 'Arrival 2016 film'},
-              {'id': 30, 'query': 'Lost in Translation film'},
-              {'id': 31, 'query': 'The Departed'},
-              {'id': 32, 'query': 'Bridesmaids 2011 film'},
-              {'id': 33, 'query': 'A Separation'},
-              {'id': 34, 'query': 'WALL-E'},
-              {'id': 35, 'query': 'A Prophet'},
-              {'id': 36, 'query': 'A Serious Man'},
-              {'id': 37, 'query': 'Call Me by Your Name film'},
-              {'id': 38, 'query': 'Portrait of a Lady on Fire'},
-              {'id': 39, 'query': 'Lady Bird film'},
-              {'id': 40, 'query': 'Yi Yi'},
-              {'id': 41, 'query': 'Amélie film'},
-              {'id': 42, 'query': 'The Master 2012 film'},
-              {'id': 43, 'query': 'Oldboy 2003 film'},
-              {'id': 44, 'query': 'Once Upon a Time in Hollywood'},
-              {'id': 45, 'query': 'Moneyball film'},
-              {'id': 46, 'query': 'Roma 2018 film'},
-              {'id': 47, 'query': 'Almost Famous'},
-              {'id': 48, 'query': 'The Lives of Others'},
-              {'id': 49, 'query': 'Before Sunset'},
-              {'id': 50, 'query': 'Up 2009 film'},
-              {'id': 51, 'query': '12 Years a Slave film'},
-              {'id': 52, 'query': 'The Favourite film'},
-              {'id': 53, 'query': 'Borat film'},
-              {'id': 54, 'query': 'Pans Labyrinth'},
-              {'id': 55, 'query': 'Inception film'},
-              {'id': 56, 'query': 'Punch-Drunk Love'},
-              {'id': 57, 'query': 'Best in Show film'},
-              {'id': 58, 'query': 'Uncut Gems'},
-              {'id': 59, 'query': 'Toni Erdmann'},
-              {'id': 60, 'query': 'Whiplash 2014 film'},
-              {'id': 61, 'query': 'Kill Bill Volume 1'},
-              {'id': 62, 'query': 'Memento film'},
-              {'id': 63, 'query': 'Little Miss Sunshine'},
-              {'id': 64, 'query': 'Gone Girl film'},
-              {'id': 65, 'query': 'Oppenheimer film'},
-              {'id': 66, 'query': 'Spotlight 2015 film'},
-              {'id': 67, 'query': 'Tár film'},
-              {'id': 68, 'query': 'The Hurt Locker'},
-              {'id': 69, 'query': 'Under the Skin 2013 film'},
-              {'id': 70, 'query': 'Let the Right One In film'},
-              {'id': 71, 'query': 'Oceans Eleven 2001 film'},
-              {'id': 72, 'query': 'Carol 2015 film'},
-              {'id': 73, 'query': 'Ratatouille film'},
-              {'id': 74, 'query': 'The Florida Project'},
-              {'id': 75, 'query': 'Amour 2012 film'},
-              {'id': 76, 'query': 'O Brother Where Art Thou'},
-              {'id': 77, 'query': 'Everything Everywhere All at Once'},
-              {'id': 78, 'query': 'Aftersun'},
-              {'id': 79, 'query': 'The Tree of Life film'},
-              {'id': 80, 'query': 'Volver film'},
-              {'id': 81, 'query': 'Black Swan film'},
-              {'id': 82, 'query': 'The Act of Killing'},
-              {'id': 83, 'query': 'Inside Llewyn Davis'},
-              {'id': 84, 'query': 'Melancholia 2011 film'},
-              {'id': 85, 'query': 'Anchorman The Legend of Ron Burgundy'},
-              {'id': 86, 'query': 'Past Lives film'},
-              {'id': 87, 'query': 'The Lord of the Rings The Fellowship of the Ring'},
-              {'id': 88, 'query': 'The Gleaners and I'},
-              {'id': 89, 'query': 'Interstellar film'},
-              {'id': 90, 'query': 'Frances Ha'},
-              {'id': 91, 'query': 'Fish Tank film'},
-              {'id': 92, 'query': 'Gladiator 2000 film'},
-              {'id': 93, 'query': 'Michael Clayton film'},
-              {'id': 94, 'query': 'Minority Report film'},
-              {'id': 95, 'query': 'The Worst Person in the World film'},
-              {'id': 96, 'query': 'Black Panther film'},
-              {'id': 97, 'query': 'Gravity 2013 film'},
-              {'id': 98, 'query': 'Grizzly Man'},
-              {'id': 99, 'query': 'Drive 2011 film'},
-              {'id': 100, 'query': 'La La Land film'}
+              {'id': 18, 'queries': ['Y tu mama tambien', 'Y tu mama también film', 'Y Tu Mama Tambien 2001']},
+              {'id': 41, 'queries': ['Amelie film', 'Amelie 2001 film', 'Le fabuleux destin d Amelie Poulain']},
+              {'id': 52, 'queries': ['The Favourite 2018 film', 'The Favourite film']},
+              {'id': 67, 'queries': ['Tar 2022 film', 'Tar film Todd Field', 'Tár film']}
           ]
 
-          def get_image_from_wiki_search(query_str):
-              try:
-                  url = f'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(query_str)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=600'
-                  req = urllib.request.Request(url, headers={'User-Agent': 'CineNYT/4.0'})
-                  with urllib.request.urlopen(req) as resp:
-                      data = json.loads(resp.read().decode('utf-8'))
-                      pages = data.get('query', {}).get('pages', {})
-                      for pid in pages:
-                          if 'thumbnail' in pages[pid]:
-                              return pages[pid]['thumbnail']['source']
-              except Exception:
-                  pass
+          def get_image_from_wiki(queries):
+              for q in queries:
+                  try:
+                      url = f'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch={urllib.parse.quote(q)}&gsrlimit=1&prop=pageimages&format=json&pithumbsize=600'
+                      req = urllib.request.Request(url, headers={'User-Agent': 'CineNYT/4.0'})
+                      with urllib.request.urlopen(req) as resp:
+                          data = json.loads(resp.read().decode('utf-8'))
+                          pages = data.get('query', {}).get('pages', {})
+                          for pid in pages:
+                              if 'thumbnail' in pages[pid]:
+                                  return pages[pid]['thumbnail']['source']
+                  except Exception:
+                      continue
               return None
 
           for m in MOVIES:
               path = f'{OUTPUT_DIR}/{m[\"id\"]}.jpg'
-              if os.path.exists(path) and os.path.getsize(path) > 2000:
-                  continue
-
-              img_url = get_image_from_wiki_search(m['query'])
+              
+              img_url = get_image_from_wiki(m['queries'])
               if img_url:
                   try:
                       req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
                       with urllib.request.urlopen(req) as resp, open(path, 'wb') as f:
                           f.write(resp.read())
                       print(f'Baixado com sucesso: ID {m[\"id\"]}')
-                  except Exception:
-                      pass
+                  except Exception as e:
+                      print(f'Erro ao baixar ID {m[\"id\"]}: {e}')
+              else:
+                  print(f'Nao encontrado na Wikipedia para ID {m[\"id\"]}')
               time.sleep(1.0)
           "
 
@@ -166,5 +72,5 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add posters_nyt/
-          git commit -m "Baixa posters NYT restantes com busca robusta" || exit 0
+          git commit -m "Baixa posters 18, 41, 52 e 67 do NYT" || exit 0
           git push
