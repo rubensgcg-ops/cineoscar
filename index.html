@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
@@ -168,8 +167,58 @@
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
-            <section id="tab-sorteio" class="tab-content space-y-8">
+            <section id="tab-sorteio" class="tab-content space-y-6">
                 
+                <!-- Draw Filter Panel (Décadas e Gêneros) -->
+                <div class="bg-dark-card border border-gray-800 rounded-2xl p-5 shadow-lg space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800/80 pb-3">
+                        <div class="flex items-center space-x-2 text-gold-400 font-cinzel font-bold text-sm sm:text-base">
+                            <i class="fa-solid fa-sliders text-gold-500"></i>
+                            <span>Filtros para o Sorteio</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <button onclick="selectAllDrawDecades(true)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition border border-gray-700">
+                                Marcar Todas
+                            </button>
+                            <button onclick="selectAllDrawDecades(false)" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition border border-gray-700">
+                                Desmarcar Todas
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Decades Checkboxes / Pills -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold text-xs mb-2.5">
+                            <i class="fa-regular fa-calendar-days mr-1 text-gold-500"></i>
+                            Filtrar por Décadas do Oscar:
+                        </label>
+                        <div id="draw-decades-container" class="flex flex-wrap gap-2 text-xs">
+                            <!-- Rendered dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Genre Dropdown Filter -->
+                    <div class="pt-2 border-t border-gray-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex-1 max-w-md">
+                            <label class="block text-gray-300 font-semibold text-xs mb-1.5">
+                                <i class="fa-solid fa-masks-theater mr-1 text-gold-500"></i>
+                                Filtrar por Gênero:
+                            </label>
+                            <select id="draw-genre-select" onchange="onDrawGenreChange()" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                                <option value="all">Todos os Gêneros</option>
+                                <option value="Drama">Drama</option>
+                                <option value="Romance">Romance</option>
+                                <option value="Guerra">Guerra</option>
+                                <option value="Crime">Crime / Policial</option>
+                                <option value="Comédia">Comédia</option>
+                                <option value="Biografia">Biografia</option>
+                                <option value="Aventura">Aventura / Fantasia</option>
+                                <option value="Musical">Musical</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Pool Status Bar -->
                 <div class="bg-gradient-to-r from-dark-card via-gray-900 to-dark-card p-4 rounded-2xl border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
                     <div class="flex items-center space-x-3.5">
@@ -177,7 +226,7 @@
                             <i class="fa-solid fa-ticket text-xl"></i>
                         </div>
                         <div>
-                            <h2 class="font-cinzel font-bold text-base text-gray-100">Pool de Sorteio do Oscar</h2>
+                            <h2 class="font-cinzel font-bold text-base text-gray-100">Pool de Sorteio Filtrado</h2>
                             <p id="pool-count-text" class="text-xs text-gray-400">Carregando filmes disponíveis...</p>
                         </div>
                     </div>
@@ -197,7 +246,7 @@
                             Pronto para descobrir o próximo campeão?
                         </h2>
                         <p class="text-gray-400 text-xs sm:text-sm max-w-lg mx-auto mb-8 leading-relaxed">
-                            Sorteie aleatoriamente um vencedor do Oscar de Melhor Filme (1927 - 2025) entre os títulos que você ainda não marcou como assistidos.
+                            Sorteie aleatoriamente um vencedor do Oscar de Melhor Filme entre os títulos que você ainda não marcou como assistidos e que se ajustam aos filtros acima.
                         </p>
                         <button onclick="drawMovie()" class="px-8 py-4 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-400 text-black font-extrabold rounded-2xl text-base hover:shadow-xl hover:shadow-gold-500/30 hover:scale-105 active:scale-95 transition duration-200 flex items-center justify-center space-x-3 mx-auto">
                             <i class="fa-solid fa-shuffle text-lg"></i>
@@ -211,7 +260,7 @@
                         <div id="roulette-title" class="roulette-spin font-cinzel text-2xl sm:text-3xl font-bold gold-gradient-text my-8">
                             CONSULTANDO ARQUIVOS DA ACADEMIA...
                         </div>
-                        <p class="text-gray-400 text-xs animate-pulse z-20 relative">Sorteando vencedor entre 1927 e 2025...</p>
+                        <p class="text-gray-400 text-xs animate-pulse z-20 relative">Sorteando vencedor no pool filtrado...</p>
                     </div>
 
                     <div id="draw-result-state" class="hidden bg-dark-card border border-gray-800 rounded-3xl overflow-hidden gold-border-glow text-left transition-all">
@@ -270,19 +319,19 @@
                             <i class="fa-solid fa-crown"></i>
                         </div>
                         <h2 class="font-cinzel text-3xl font-bold gold-gradient-text mb-3">
-                            PARABÉNS! CINÉFILO SUPREMO!
+                            NENHUM FILME ENCONTRADO NO POOL!
                         </h2>
                         <p class="text-gray-300 text-sm max-w-lg mx-auto mb-8 leading-relaxed">
-                            Você assistiu a **todos** os 97 filmes vencedores do Oscar de Melhor Filme! Sua maratona épica da história do cinema foi concluída com sucesso.
+                            Você já assistiu a todos os filmes que correspondem aos filtros selecionados de década/gênero ou desmarcou todas as opções de filtros.
                         </p>
                         <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <button onclick="selectAllDrawDecades(true)" class="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-black font-bold rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-gold-500/20">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span>Restaurar Todas as Décadas</span>
+                            </button>
                             <button onclick="switchTab('assistidos')" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gold-400 font-semibold rounded-xl text-xs border border-gold-500/30 transition flex items-center justify-center space-x-2">
                                 <i class="fa-solid fa-list-check"></i>
                                 <span>Ver Minha Lista de Assistidos</span>
-                            </button>
-                            <button onclick="resetAllWatched(true)" class="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-black font-bold rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-gold-500/20">
-                                <i class="fa-solid fa-rotate-right"></i>
-                                <span>Reiniciar Todos no Pool</span>
                             </button>
                         </div>
                     </div>
@@ -433,11 +482,11 @@
 
                     <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
                         <div class="flex justify-between items-center text-gray-400 text-xs mb-2">
-                            <span>Restantes no Pool</span>
+                            <span>Restantes no Pool Geral</span>
                             <i class="fa-solid fa-ticket text-gold-500"></i>
                         </div>
                         <p id="stat-pool-count" class="text-3xl font-bold font-cinzel text-gold-400">97</p>
-                        <p class="text-[11px] text-gray-500 mt-1">Disponíveis para sorteio</p>
+                        <p class="text-[11px] text-gray-500 mt-1">Sem filtros aplicados</p>
                     </div>
 
                     <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
@@ -463,6 +512,7 @@
         </main>
     </div>
 
+    <!-- MODAL GITHUB -->
     <div id="github-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-dark-card border border-gray-800 rounded-3xl max-w-lg w-full p-6 space-y-5 gold-border-glow relative text-xs">
             <button onclick="toggleGithubModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white">
@@ -589,984 +639,117 @@
     </footer>
 
     <script>
-        /* COMPLETE DATABASE OF ALL 97 BEST PICTURE OSCAR WINNERS (1927 - 2025)
-           IDs match downloaded posters: 1.jpg up to 97.jpg */
+        /* DATABASE OF ALL 97 BEST PICTURE OSCAR WINNERS (1927 - 2025) */
         const OSCAR_MOVIES = [
-            {
-                id: 1,
-                imdb: "tt0018578",
-                year: 1927,
-                titlePt: "As Asas",
-                titleOrig: "Wings",
-                director: "William A. Wellman",
-                genre: "Guerra",
-                synopsis: "Dois jovens pilotos de caça apaixonados pela mesma mulher lutam nos céus da Primeira Guerra Mundial."
-            },
-            {
-                id: 2,
-                imdb: "tt0019729",
-                year: 1929,
-                titlePt: "Melodia da Broadway",
-                titleOrig: "The Broadway Melody",
-                director: "Harry Beaumont",
-                genre: "Musical",
-                synopsis: "Duas irmãs artistas da Broadway navegam por romances e desafios no mundo do espetáculo."
-            },
-            {
-                id: 3,
-                imdb: "tt0020629",
-                year: 1930,
-                titlePt: "Sem Novidade no Front",
-                titleOrig: "All Quiet on the Western Front",
-                director: "Lewis Milestone",
-                genre: "Guerra",
-                synopsis: "Jovens soldados alemães encaram o desespero e o horror realista da Primeira Guerra Mundial."
-            },
-            {
-                id: 4,
-                imdb: "tt0021748",
-                year: 1931,
-                titlePt: "Cimarron",
-                titleOrig: "Cimarron",
-                director: "Wesley Ruggles",
-                genre: "Aventura",
-                synopsis: "Um leitor de jornal e sua esposa se mudam para o novo estado de Oklahoma durante a corrida do ouro do século XIX."
-            },
-            {
-                id: 5,
-                imdb: "tt0022958",
-                year: 1932,
-                titlePt: "Grande Hotel",
-                titleOrig: "Grand Hotel",
-                director: "Edmund Goulding",
-                genre: "Drama",
-                synopsis: "Várias vidas se entrelaçam durante uma estadia num luxuoso hotel de Berlim."
-            },
-            {
-                id: 6,
-                imdb: "tt0023876",
-                year: 1933,
-                titlePt: "Cavalcada",
-                titleOrig: "Cavalcade",
-                director: "Frank Lloyd",
-                genre: "Drama",
-                synopsis: "A história de duas famílias inglesas durante os primeiros 30 anos do século XX."
-            },
-            {
-                id: 7,
-                imdb: "tt0025316",
-                year: 1934,
-                titlePt: "Aconteceu Naquela Noite",
-                titleOrig: "It Happened One Night",
-                director: "Frank Capra",
-                genre: "Comédia",
-                synopsis: "Uma herdeira mimada em fuga e um repórter desempregado se envolvem numa jornada cômica inesquecível."
-            },
-            {
-                id: 8,
-                imdb: "tt0026752",
-                year: 1935,
-                titlePt: "O Grande Motim",
-                titleOrig: "Mutiny on the Bounty",
-                director: "Frank Lloyd",
-                genre: "Aventura",
-                synopsis: "A lendária história da revolta dos marinheiros liderados por Fletcher Christian contra o tirânico Capitão Bligh."
-            },
-            {
-                id: 9,
-                imdb: "tt0027698",
-                year: 1936,
-                titlePt: "Ziegfeld: O Criador de Estrelas",
-                titleOrig: "The Great Ziegfeld",
-                director: "Robert Z. Leonard",
-                genre: "Musical",
-                synopsis: "A cinebiografia espetacular do lendário produtor teatral Florenz Ziegfeld Jr."
-            },
-            {
-                id: 10,
-                imdb: "tt0029146",
-                year: 1937,
-                titlePt: "A Vida de Émile Zola",
-                titleOrig: "The Life of Emile Zola",
-                director: "William Dieterle",
-                genre: "Biografia",
-                synopsis: "O célebre escritor francês Émile Zola arrisca sua carreira para defender um oficial judeu injustamente acusado."
-            },
-            {
-                id: 11,
-                imdb: "tt0030993",
-                year: 1938,
-                titlePt: "Do Mundo Nada Se Leva",
-                titleOrig: "You Can't Take It with You",
-                director: "Frank Capra",
-                genre: "Comédia",
-                synopsis: "Um homem de uma família de banqueiros se apaixona por uma mulher de uma família excêntrica e libertária."
-            },
-            {
-                id: 12,
-                imdb: "tt0031381",
-                year: 1939,
-                titlePt: "E o Vento Levou",
-                titleOrig: "Gone with the Wind",
-                director: "Victor Fleming",
-                genre: "Romance",
-                synopsis: "A saga de Scarlett O'Hara no sul dos Estados Unidos durante e após a Guerra Civil Americana."
-            },
-            {
-                id: 13,
-                imdb: "tt0032976",
-                year: 1940,
-                titlePt: "Rebecca, a Mulher Inesquecível",
-                titleOrig: "Rebecca",
-                director: "Alfred Hitchcock",
-                genre: "Drama",
-                synopsis: "Uma jovem recém-casada se vê assombrada pela memória da falecida primeira esposa de seu marido abastado."
-            },
-            {
-                id: 14,
-                imdb: "tt0033729",
-                year: 1941,
-                titlePt: "Como Era Verde o Meu Vale",
-                titleOrig: "How Green Was My Valley",
-                director: "John Ford",
-                genre: "Drama",
-                synopsis: "A vida de uma família de mineradores de carvão no País de Gales na virada do século."
-            },
-            {
-                id: 15,
-                imdb: "tt0035093",
-                year: 1942,
-                titlePt: "Rosa da Esperança",
-                titleOrig: "Mrs. Miniver",
-                director: "William Wyler",
-                genre: "Drama",
-                synopsis: "Uma família inglesa tenta manter a normalidade durante os bombardeios da Segunda Guerra Mundial."
-            },
-            {
-                id: 16,
-                imdb: "tt0034583",
-                year: 1943,
-                titlePt: "Casablanca",
-                titleOrig: "Casablanca",
-                director: "Michael Curtiz",
-                genre: "Drama",
-                synopsis: "Um cínico exilado americano em Casablanca precisa escolher entre o amor de sua vida e a luta contra o nazismo."
-            },
-            {
-                id: 17,
-                imdb: "tt0036872",
-                year: 1944,
-                titlePt: "O Bom Pastor",
-                titleOrig: "Going My Way",
-                director: "Leo McCarey",
-                genre: "Comédia",
-                synopsis: "Um jovem e dinâmico padre traz novos caminhos e esperança para uma paróquia em dificuldades financeiras."
-            },
-            {
-                id: 18,
-                imdb: "tt0037884",
-                year: 1945,
-                titlePt: "Farrapo Humano",
-                titleOrig: "The Lost Weekend",
-                director: "Billy Wilder",
-                genre: "Drama",
-                synopsis: "Um escritor alcoólatra passa por um fim de semana devastador de alucinações e desespero."
-            },
-            {
-                id: 19,
-                imdb: "tt0036868",
-                year: 1946,
-                titlePt: "Os Melhores Anos de Nossas Vidas",
-                titleOrig: "The Best Years of Our Lives",
-                director: "William Wyler",
-                genre: "Drama",
-                synopsis: "Três veteranos da Segunda Guerra Mundial retornam para casa e enfrentam o desafio de se reajustar à vida civil."
-            },
-            {
-                id: 20,
-                imdb: "tt0039416",
-                year: 1947,
-                titlePt: "A Luz É Para Todos",
-                titleOrig: "Gentleman's Agreement",
-                director: "Elia Kazan",
-                genre: "Drama",
-                synopsis: "Um jornalista finge ser judeu para investigar e expor o antissemitismo velado na sociedade americana."
-            },
-            {
-                id: 21,
-                imdb: "tt0040416",
-                year: 1948,
-                titlePt: "Hamlet",
-                titleOrig: "Hamlet",
-                director: "Laurence Olivier",
-                genre: "Drama",
-                synopsis: "O príncipe da Dinamarca busca vingar a morte de seu pai assassinando o próprio tio."
-            },
-            {
-                id: 22,
-                imdb: "tt0041113",
-                year: 1949,
-                titlePt: "A Grande Ilusão",
-                titleOrig: "All the King's Men",
-                director: "Robert Rossen",
-                genre: "Drama",
-                synopsis: "A ascensão e corrupção de um político populista num estado do sul dos Estados Unidos."
-            },
-            {
-                id: 23,
-                imdb: "tt0042192",
-                year: 1950,
-                titlePt: "A Eva",
-                titleOrig: "All About Eve",
-                director: "Joseph L. Mankiewicz",
-                genre: "Drama",
-                synopsis: "Uma jovem fã ambiciosa se insinua na vida de uma grande estrela da Broadway para tomar seu lugar."
-            },
-            {
-                id: 24,
-                imdb: "tt0043278",
-                year: 1951,
-                titlePt: "Sinfonia de Paris",
-                titleOrig: "An American in Paris",
-                director: "Vincente Minnelli",
-                genre: "Musical",
-                synopsis: "Um ex-soldado americano permanece em Paris para se tornar pintor e se apaixona por uma jovem francesa."
-            },
-            {
-                id: 25,
-                imdb: "tt0044672",
-                year: 1952,
-                titlePt: "O Maior Espetáculo da Terra",
-                titleOrig: "The Greatest Show on Earth",
-                director: "Cecil B. DeMille",
-                genre: "Aventura",
-                synopsis: "Os dramas, traições e paixões nos bastidores da maior companhia de circo do mundo."
-            },
-            {
-                id: 26,
-                imdb: "tt0045793",
-                year: 1953,
-                titlePt: "A Um Passo da Eternidade",
-                titleOrig: "From Here to Eternity",
-                director: "Fred Zinnemann",
-                genre: "Drama",
-                synopsis: "Conflitos amorosos e disciplinais em uma base militar no Havaí nas vésperas do ataque a Pearl Harbor."
-            },
-            {
-                id: 27,
-                imdb: "tt0047296",
-                year: 1954,
-                titlePt: "Sindicato de Ladrões",
-                titleOrig: "On the Waterfront",
-                director: "Elia Kazan",
-                genre: "Crime",
-                synopsis: "Um ex-lutador de boxe enfrenta os chefes corruptos do sindicato dos portuários onde trabalha."
-            },
-            {
-                id: 28,
-                imdb: "tt0048356",
-                year: 1955,
-                titlePt: "Marty",
-                titleOrig: "Marty",
-                director: "Delbert Mann",
-                genre: "Romance",
-                synopsis: "Um açougueiro ítalo-americano solitário de 34 anos finalmente encontra o amor em uma professora tímida."
-            },
-            {
-                id: 29,
-                imdb: "tt0048960",
-                year: 1956,
-                titlePt: "A Volta ao Mundo em 80 Dias",
-                titleOrig: "Around the World in 80 Days",
-                director: "Michael Anderson",
-                genre: "Aventura",
-                synopsis: "O cavalheiro vitoriano Phileas Fogg aposta que pode dar a volta ao mundo em apenas 80 dias."
-            },
-            {
-                id: 30,
-                imdb: "tt0050212",
-                year: 1957,
-                titlePt: "A Ponte do Rio Kwai",
-                titleOrig: "The Bridge on the River Kwai",
-                director: "David Lean",
-                genre: "Guerra",
-                synopsis: "Prisioneiros britânicos são forçados a construir uma ponte ferroviária crucial para os japoneses."
-            },
-            {
-                id: 31,
-                imdb: "tt0051658",
-                year: 1958,
-                titlePt: "Gigi",
-                titleOrig: "Gigi",
-                director: "Vincente Minnelli",
-                genre: "Musical",
-                synopsis: "Na Paris da Belle Époque, um jovem milionário se apaixona por uma moça que está sendo treinada para ser cortesã."
-            },
-            {
-                id: 32,
-                imdb: "tt0052618",
-                year: 1959,
-                titlePt: "Ben-Hur",
-                titleOrig: "Ben-Hur",
-                director: "William Wyler",
-                genre: "Aventura",
-                synopsis: "Um nobre judeu é traído por seu amigo romano, escravizado e busca vingança em corridas de quadrigas."
-            },
-            {
-                id: 33,
-                imdb: "tt0053604",
-                year: 1960,
-                titlePt: "Se Meu Apartamento Falasse",
-                titleOrig: "The Apartment",
-                director: "Billy Wilder",
-                genre: "Comédia",
-                synopsis: "Um funcionário seguro empresta seu apartamento para executivos da empresa encontrarem suas amantes."
-            },
-            {
-                id: 34,
-                imdb: "tt0055614",
-                year: 1961,
-                titlePt: "Amor, Sublime Amor",
-                titleOrig: "West Side Story",
-                director: "Robert Wise, Jerome Robbins",
-                genre: "Musical",
-                synopsis: "Duas gangues de Nova York disputam território enquanto dois jovens de lados opostos se apaixonam."
-            },
-            {
-                id: 35,
-                imdb: "tt0056172",
-                year: 1962,
-                titlePt: "Lawrence da Arábia",
-                titleOrig: "Lawrence of Arabia",
-                director: "David Lean",
-                genre: "Aventura",
-                synopsis: "A história do oficial britânico T.E. Lawrence liderando tribos árabes contra o Império Otomano."
-            },
-            {
-                id: 36,
-                imdb: "tt0057590",
-                year: 1963,
-                titlePt: "As Aventuras de Tom Jones",
-                titleOrig: "Tom Jones",
-                director: "Tony Richardson",
-                genre: "Comédia",
-                synopsis: "As peripécias amorosas e escandalosas de um jovem conquistador na Inglaterra do século XVIII."
-            },
-            {
-                id: 37,
-                imdb: "tt0058385",
-                year: 1964,
-                titlePt: "Minha Bela Dama",
-                titleOrig: "My Fair Lady",
-                director: "George Cukor",
-                genre: "Musical",
-                synopsis: "Um elitista professor de fonética aposta que pode transformar uma florista de rua em uma dama da alta sociedade."
-            },
-            {
-                id: 38,
-                imdb: "tt0059742",
-                year: 1965,
-                titlePt: "A Noviça Rebelde",
-                titleOrig: "The Sound of Music",
-                director: "Robert Wise",
-                genre: "Musical",
-                synopsis: "Uma noviça alegre é enviada como governanta para os sete filhos de um capitão austríaco viúvo."
-            },
-            {
-                id: 39,
-                imdb: "tt0060665",
-                year: 1966,
-                titlePt: "O Homem Que Não Vendeu Sua Alma",
-                titleOrig: "A Man for All Seasons",
-                director: "Fred Zinnemann",
-                genre: "Drama",
-                synopsis: "Sir Thomas More enfrenta o Rei Henrique VIII quando este busca quebrar o casamento com Catarina de Aragão."
-            },
-            {
-                id: 40,
-                imdb: "tt0061811",
-                year: 1967,
-                titlePt: "No Calor da Noite",
-                titleOrig: "In the Heat of the Night",
-                director: "Norman Jewison",
-                genre: "Crime",
-                synopsis: "Um detetive negro da Filadélfia é chamado para investigar um assassinato em uma cidade racista do Mississippi."
-            },
-            {
-                id: 41,
-                imdb: "tt0063385",
-                year: 1968,
-                titlePt: "Oliver!",
-                titleOrig: "Oliver!",
-                director: "Carol Reed",
-                genre: "Musical",
-                synopsis: "Um jovem órfão na Inglaterra vitoriana foge do orfanato e se junta a uma gangue de pivetes batedores de carteira."
-            },
-            {
-                id: 42,
-                imdb: "tt0064665",
-                year: 1969,
-                titlePt: "Perdidos na Noite",
-                titleOrig: "Midnight Cowboy",
-                director: "John Schlesinger",
-                genre: "Drama",
-                synopsis: "Um jovem texano ingênuo tenta a sorte como michê em Nova York e faz amizade com um trapaceiro tuberculoso."
-            },
-            {
-                id: 43,
-                imdb: "tt0066206",
-                year: 1970,
-                titlePt: "Patton: Rebelde ou Herói?",
-                titleOrig: "Patton",
-                director: "Franklin J. Schaffner",
-                genre: "Biografia",
-                synopsis: "A carreira militar do polêmico general americano George S. Patton durante a Segunda Guerra Mundial."
-            },
-            {
-                id: 44,
-                imdb: "tt0067116",
-                year: 1971,
-                titlePt: "Operação França",
-                titleOrig: "The French Connection",
-                director: "William Friedkin",
-                genre: "Crime",
-                synopsis: "Dois detetives obstinados de Nova York tentam desmantelar um gigantesco esquema francês de contrabando de heroína."
-            },
-            {
-                id: 45,
-                imdb: "tt0068646",
-                year: 1972,
-                titlePt: "O Chefão",
-                titleOrig: "The Godfather",
-                director: "Francis Ford Coppola",
-                genre: "Crime",
-                synopsis: "O envelhecido patriarca de uma dinastia do crime organizado transfere o controle do seu império ao filho relutante."
-            },
-            {
-                id: 46,
-                imdb: "tt0070735",
-                year: 1973,
-                titlePt: "Golpe de Mestre",
-                titleOrig: "The Sting",
-                director: "George Roy Hill",
-                genre: "Comédia",
-                synopsis: "Dois trapaceiros profissionais nos anos 1930 planejam um grande golpe contra um perigoso chefe da máfia."
-            },
-            {
-                id: 47,
-                imdb: "tt0071562",
-                year: 1974,
-                titlePt: "O Chefão II",
-                titleOrig: "The Godfather Part II",
-                director: "Francis Ford Coppola",
-                genre: "Crime",
-                synopsis: "A ascensão do jovem Vito Corleone em Nova York intercalada com a consolidação do poder de Michael."
-            },
-            {
-                id: 48,
-                imdb: "tt0073486",
-                year: 1975,
-                titlePt: "Um Estranho no Ninho",
-                titleOrig: "One Flew Over the Cuckoo's Nest",
-                director: "Miloš Forman",
-                genre: "Drama",
-                synopsis: "Um prisioneiro rebelde simula insanidade e lidera os pacientes de uma instituição psiquiátrica opressiva."
-            },
-            {
-                id: 49,
-                imdb: "tt0075148",
-                year: 1976,
-                titlePt: "Rocky: Um Lutador",
-                titleOrig: "Rocky",
-                director: "John G. Avildsen",
-                genre: "Drama",
-                synopsis: "Um cobrador e pugilista amador da Filadélfia recebe uma chance única de disputar o título mundial dos pesos-pesados."
-            },
-            {
-                id: 50,
-                imdb: "tt0075686",
-                year: 1977,
-                titlePt: "Noivo Neurótico, Noiva Nervosa",
-                titleOrig: "Annie Hall",
-                director: "Woody Allen",
-                genre: "Comédia",
-                synopsis: "Um comediante nova-iorquino reflete sobre as idas e vindas de seu relacionamento com uma cantora livre de espírito."
-            },
-            {
-                id: 51,
-                imdb: "tt0077416",
-                year: 1978,
-                titlePt: "O Franco Atirador",
-                titleOrig: "The Deer Hunter",
-                director: "Michael Cimino",
-                genre: "Drama",
-                synopsis: "O impacto devastador da Guerra do Vietnã na vida de três amigos operários da Pensilvânia."
-            },
-            {
-                id: 52,
-                imdb: "tt0079417",
-                year: 1979,
-                titlePt: "Kramer vs. Kramer",
-                titleOrig: "Kramer vs. Kramer",
-                director: "Robert Benton",
-                genre: "Drama",
-                synopsis: "Após ser abandonado pela esposa, um executivo aprende a cuidar do filho até a mãe retornar exigindo a guarda."
-            },
-            {
-                id: 53,
-                imdb: "tt0081283",
-                year: 1980,
-                titlePt: "Gente Como A Gente",
-                titleOrig: "Ordinary People",
-                director: "Robert Redford",
-                genre: "Drama",
-                synopsis: "Uma família de classe média alta enfrenta o luto e o trauma emocional após a morte acidental do filho mais velho."
-            },
-            {
-                id: 54,
-                imdb: "tt0082158",
-                year: 1981,
-                titlePt: "Carruagens de Fogo",
-                titleOrig: "Chariots of Fire",
-                director: "Hugh Hudson",
-                genre: "Biografia",
-                synopsis: "Dois atletas britânicos de origens distintas correm pelas Olimpíadas de 1924 por motivos pessoais e religiosos."
-            },
-            {
-                id: 55,
-                imdb: "tt0083987",
-                year: 1982,
-                titlePt: "Gandhi",
-                titleOrig: "Gandhi",
-                director: "Richard Attenborough",
-                genre: "Biografia",
-                synopsis: "A vida de Mahatma Gandhi e sua resistência não-violenta contra o domínio britânico na Índia."
-            },
-            {
-                id: 56,
-                imdb: "tt0086425",
-                year: 1983,
-                titlePt: "Laços de Ternura",
-                titleOrig: "Terms of Endearment",
-                director: "James L. Brooks",
-                genre: "Drama",
-                synopsis: "A complexa e emocionante relação de trinta anos entre uma mãe controladora e sua filha."
-            },
-            {
-                id: 57,
-                imdb: "tt0086879",
-                year: 1984,
-                titlePt: "Amadeus",
-                titleOrig: "Amadeus",
-                director: "Miloš Forman",
-                genre: "Biografia",
-                synopsis: "A obsessão e inveja mortal do compositor Antonio Salieri em relação ao genial Wolfgang Amadeus Mozart."
-            },
-            {
-                id: 58,
-                imdb: "tt0089755",
-                year: 1985,
-                titlePt: "Entre Dois Amores",
-                titleOrig: "Out of Africa",
-                director: "Sydney Pollack",
-                genre: "Romance",
-                synopsis: "Uma baronesa dinamarquesa gerencia uma fazenda no Quênia e se apaixona por um caçador nômade."
-            },
-            {
-                id: 59,
-                imdb: "tt0091763",
-                year: 1986,
-                titlePt: "Platoon",
-                titleOrig: "Platoon",
-                director: "Oliver Stone",
-                genre: "Guerra",
-                synopsis: "Um jovem recruta enfrenta a brutalidade moral e física no meio do conflito do Vietnã."
-            },
-            {
-                id: 60,
-                imdb: "tt0093389",
-                year: 1987,
-                titlePt: "O Último Imperador",
-                titleOrig: "The Last Emperor",
-                director: "Bernardo Bertolucci",
-                genre: "Biografia",
-                synopsis: "A vida de Puyi, o último imperador da China, desde sua coroação na infância até sua reeducação política."
-            },
-            {
-                id: 61,
-                imdb: "tt0095953",
-                year: 1988,
-                titlePt: "Rain Man",
-                titleOrig: "Rain Man",
-                director: "Barry Levinson",
-                genre: "Drama",
-                synopsis: "Um jovem egoísta descobre que tem um irmão mais velho autista sábio e viaja com ele pelo país."
-            },
-            {
-                id: 62,
-                imdb: "tt0097239",
-                year: 1989,
-                titlePt: "Conduzindo Miss Daisy",
-                titleOrig: "Driving Miss Daisy",
-                director: "Bruce Beresford",
-                genre: "Drama",
-                synopsis: "A amizade de 25 anos entre uma idosa senhora judia e seu motorista afro-americano no sul dos EUA."
-            },
-            {
-                id: 63,
-                imdb: "tt0099348",
-                year: 1990,
-                titlePt: "Dança com Lobos",
-                titleOrig: "Dances with Wolves",
-                director: "Kevin Costner",
-                genre: "Aventura",
-                synopsis: "Um oficial da União na Guerra Civil isolado num posto remoto cria laços com uma tribo Sioux."
-            },
-            {
-                id: 64,
-                imdb: "tt0102926",
-                year: 1991,
-                titlePt: "O Silêncio dos Inocentes",
-                titleOrig: "The Silence of the Lambs",
-                director: "Jonathan Demme",
-                genre: "Crime",
-                synopsis: "Uma estagiária do FBI consulta o psiquiatra e serial killer Hannibal Lecter para capturar outro assassino."
-            },
-            {
-                id: 65,
-                imdb: "tt0105695",
-                year: 1992,
-                titlePt: "Os Imperdoáveis",
-                titleOrig: "Unforgiven",
-                director: "Clint Eastwood",
-                genre: "Aventura",
-                synopsis: "Um idoso pistoleiro aposentado aceita um último trabalho de recompensa ao lado de seu antigo parceiro."
-            },
-            {
-                id: 66,
-                imdb: "tt0108052",
-                year: 1993,
-                titlePt: "A Lista de Schindler",
-                titleOrig: "Schindler's List",
-                director: "Steven Spielberg",
-                genre: "Biografia",
-                synopsis: "O empresário Oskar Schindler salva a vida de mais de mil refugiados judeus durante o Holocausto."
-            },
-            {
-                id: 67,
-                imdb: "tt0109830",
-                year: 1994,
-                titlePt: "Forrest Gump: O Contador de Histórias",
-                titleOrig: "Forrest Gump",
-                director: "Robert Zemeckis",
-                genre: "Drama",
-                synopsis: "Um homem simples do Alabama presencia e influencia involuntariamente grandes momentos históricos dos EUA."
-            },
-            {
-                id: 68,
-                imdb: "tt0112573",
-                year: 1995,
-                titlePt: "Coração Valente",
-                titleOrig: "Braveheart",
-                director: "Mel Gibson",
-                genre: "Aventura",
-                synopsis: "William Wallace lidera os escoceses numa revolta contra a opressão do rei inglês Eduardo I."
-            },
-            {
-                id: 69,
-                imdb: "tt0116209",
-                year: 1996,
-                titlePt: "O Paciente Inglês",
-                titleOrig: "The English Patient",
-                director: "Anthony Minghella",
-                genre: "Romance",
-                synopsis: "No fim da 2ª Guerra, uma enfermeira cuida de um homem terrivelmente queimado que relembra seu trágico romance."
-            },
-            {
-                id: 70,
-                imdb: "tt0120338",
-                year: 1997,
-                titlePt: "Titanic",
-                titleOrig: "Titanic",
-                director: "James Cameron",
-                genre: "Romance",
-                synopsis: "Um jovem artista pobre e uma aristocrata se apaixonam a bordo do fatídico navio transatlântico."
-            },
-            {
-                id: 71,
-                imdb: "tt0138097",
-                year: 1998,
-                titlePt: "Shakespeare Apaixonado",
-                titleOrig: "Shakespeare in Love",
-                director: "John Madden",
-                genre: "Romance",
-                synopsis: "Um jovem William Shakespeare com bloqueio criativo encontra sua inspiração na nobre Viola de Lesseps."
-            },
-            {
-                id: 72,
-                imdb: "tt0169547",
-                year: 1999,
-                titlePt: "Beleza Americana",
-                titleOrig: "American Beauty",
-                director: "Sam Mendes",
-                genre: "Drama",
-                synopsis: "Um pai de família em crise de meia-idade se apaixona pela melhor amiga adolescente da sua filha."
-            },
-            {
-                id: 73,
-                imdb: "tt0172495",
-                year: 2000,
-                titlePt: "Gladiador",
-                titleOrig: "Gladiator",
-                director: "Ridley Scott",
-                genre: "Aventura",
-                synopsis: "Um ex-general romano traído busca vingança contra o imperador corrupto que assassinou sua família."
-            },
-            {
-                id: 74,
-                imdb: "tt0268978",
-                year: 2001,
-                titlePt: "Uma Mente Brilhante",
-                titleOrig: "A Beautiful Mind",
-                director: "Ron Howard",
-                genre: "Biografia",
-                synopsis: "A história do gênio matemático John Nash lidando com a esquizofrenia e a conquista do Nobel."
-            },
-            {
-                id: 75,
-                imdb: "tt0299658",
-                year: 2002,
-                titlePt: "Chicago",
-                titleOrig: "Chicago",
-                director: "Rob Marshall",
-                genre: "Musical",
-                synopsis: "Duas assassinas na Chicago dos anos 1920 disputam a fama e os serviços do mesmo advogado sedutor."
-            },
-            {
-                id: 76,
-                imdb: "tt0167260",
-                year: 2003,
-                titlePt: "O Senhor dos Anéis: O Retorno do Rei",
-                titleOrig: "The Lord of the Rings: The Return of the King",
-                director: "Peter Jackson",
-                genre: "Aventura",
-                synopsis: "A batalha final pela Terra-média acontece enquanto Frodo e Sam se aproximam da Montanha da Perdição."
-            },
-            {
-                id: 77,
-                imdb: "tt0405159",
-                year: 2004,
-                titlePt: "Menina de Ouro",
-                titleOrig: "Million Dollar Baby",
-                director: "Clint Eastwood",
-                genre: "Drama",
-                synopsis: "Um ranzinza treinador de boxe aceita treinar uma determinada mulher até o topo do boxe profissional."
-            },
-            {
-                id: 78,
-                imdb: "tt0375679",
-                year: 2005,
-                titlePt: "Crash: No Limite",
-                titleOrig: "Crash",
-                director: "Paul Haggis",
-                genre: "Drama",
-                synopsis: "Moradores de Los Angeles de diferentes origens raciais têm suas vidas colididas em 36 horas turbulentas."
-            },
-            {
-                id: 79,
-                imdb: "tt0407887",
-                year: 2006,
-                titlePt: "Os Infiltrados",
-                titleOrig: "The Departed",
-                director: "Martin Scorsese",
-                genre: "Crime",
-                synopsis: "Um policial disfarçado na máfia e um criminoso infiltrado na polícia tentam se identificar mutuamente."
-            },
-            {
-                id: 80,
-                imdb: "tt0477348",
-                year: 2007,
-                titlePt: "Onde os Fracos Não Têm Vez",
-                titleOrig: "No Country for Old Men",
-                director: "Joel & Ethan Coen",
-                genre: "Crime",
-                synopsis: "Um caçador encontra uma mala de dinheiro de um negócio fracassado de drogas e é caçado por um sociopata."
-            },
-            {
-                id: 81,
-                imdb: "tt1010048",
-                year: 2008,
-                titlePt: "Quem Quer Ser um Milionário?",
-                titleOrig: "Slumdog Millionaire",
-                director: "Danny Boyle",
-                genre: "Drama",
-                synopsis: "Um jovem das favelas de Mumbai relembra sua vida conturbada para explicar seu sucesso num jogo de TV."
-            },
-            {
-                id: 82,
-                imdb: "tt0887912",
-                year: 2009,
-                titlePt: "Guerra ao Terror",
-                titleOrig: "The Hurt Locker",
-                director: "Kathryn Bigelow",
-                genre: "Guerra",
-                synopsis: "Um esquadrão anti-bombas no Iraque lida com o perigo constante e os conflitos psicológicos internos."
-            },
-            {
-                id: 83,
-                imdb: "tt1504320",
-                year: 2010,
-                titlePt: "O Discurso do Rei",
-                titleOrig: "The King's Speech",
-                director: "Tom Hooper",
-                genre: "Biografia",
-                synopsis: "O Rei Jorge VI contrata um terapeuta de fala não convencional para superar sua gagueira antes do discurso da guerra."
-            },
-            {
-                id: 84,
-                imdb: "tt1655442",
-                year: 2011,
-                titlePt: "O Artista",
-                titleOrig: "The Artist",
-                director: "Michel Hazanavicius",
-                genre: "Comédia",
-                synopsis: "A decadência de uma estrela do cinema mudo enquanto uma jovem atriz decolava com a chegada do som."
-            },
-            {
-                id: 85,
-                imdb: "tt1023114",
-                year: 2012,
-                titlePt: "Argo",
-                titleOrig: "Argo",
-                director: "Ben Affleck",
-                genre: "Drama",
-                synopsis: "Agentes da CIA forjam a produção de um filme de ficção científica para resgatar diplomatas no Irã."
-            },
-            {
-                id: 86,
-                imdb: "tt2024544",
-                year: 2013,
-                titlePt: "12 Anos de Escravidão",
-                titleOrig: "12 Years a Slave",
-                director: "Steve McQueen",
-                genre: "Biografia",
-                synopsis: "Solomon Northup, homem negro livre em Nova York, é sequestrado e vendido como escravo no sul dos EUA."
-            },
-            {
-                id: 87,
-                imdb: "tt2562232",
-                year: 2014,
-                titlePt: "Birdman ou (A Inesperada Virtude da Ignorância)",
-                titleOrig: "Birdman",
-                director: "Alejandro G. Iñárritu",
-                genre: "Comédia",
-                synopsis: "Um ator esquecido famoso por interpretar um super-herói tenta recuperar o prestígio dirigindo uma peça na Broadway."
-            },
-            {
-                id: 88,
-                imdb: "tt1895587",
-                year: 2015,
-                titlePt: "Spotlight: Segredos Revelados",
-                titleOrig: "Spotlight",
-                director: "Tom McCarthy",
-                genre: "Drama",
-                synopsis: "Jornalistas investigativos revelam abusos e acobertamentos sistêmicos na Igreja Católica em Boston."
-            },
-            {
-                id: 89,
-                imdb: "tt4975722",
-                year: 2016,
-                titlePt: "Moonlight: Sob a Luz do Luar",
-                titleOrig: "Moonlight",
-                director: "Barry Jenkins",
-                genre: "Drama",
-                synopsis: "Três momentos da vida de um jovem negro em Miami enfrentando sua identidade e sexualidade."
-            },
-            {
-                id: 90,
-                imdb: "tt5580390",
-                year: 2017,
-                titlePt: "A Forma da Água",
-                titleOrig: "The Shape of Water",
-                director: "Guillermo del Toro",
-                genre: "Aventura",
-                synopsis: "Uma faxineira muda em um laboratório do governo estabelece uma conexão amorosa com uma criatura anfíbia."
-            },
-            {
-                id: 91,
-                imdb: "tt6966692",
-                year: 2018,
-                titlePt: "Green Book: O Guia",
-                titleOrig: "Green Book",
-                director: "Peter Farrelly",
-                genre: "Drama",
-                synopsis: "Um segurança Ítalo-americano torna-se motorista de um pianista negro em turnê pelo sul segregado dos EUA."
-            },
-            {
-                id: 92,
-                imdb: "tt6751668",
-                year: 2019,
-                titlePt: "Parasita",
-                titleOrig: "Gisaengchung / Parasite",
-                director: "Bong Joon-ho",
-                genre: "Drama",
-                synopsis: "Uma família desempregada se infiltra aos poucos na rotina de uma família rica com consequências drásticas."
-            },
-            {
-                id: 93,
-                imdb: "tt9770150",
-                year: 2020,
-                titlePt: "Nomadland",
-                titleOrig: "Nomadland",
-                director: "Chloé Zhao",
-                genre: "Drama",
-                synopsis: "Uma mulher perde tudo na Grande Recessão e embarca em uma jornada pelo oeste americano vivendo em sua van."
-            },
-            {
-                id: 94,
-                imdb: "tt10366460",
-                year: 2021,
-                titlePt: "No Ritmo do Coração",
-                titleOrig: "CODA",
-                director: "Sian Heder",
-                genre: "Drama",
-                synopsis: "Única ouvinte em uma família de surdos, uma jovem se divide entre ajudar a família e seguir a paixão pela música."
-            },
-            {
-                id: 95,
-                imdb: "tt6710474",
-                year: 2022,
-                titlePt: "Tudo em Todo o Lugar ao Mesmo Tempo",
-                titleOrig: "Everything Everywhere All at Once",
-                director: "Daniel Kwan, Daniel Scheinert",
-                genre: "Comédia",
-                synopsis: "Uma imigrante chinesa em crise se vê envolvida em uma aventura no multiverso para salvar a própria realidade."
-            },
-            {
-                id: 96,
-                imdb: "tt15398776",
-                year: 2023,
-                titlePt: "Oppenheimer",
-                titleOrig: "Oppenheimer",
-                director: "Christopher Nolan",
-                genre: "Biografia",
-                synopsis: "A cinebiografia de J. Robert Oppenheimer, o cientista responsável pelo desenvolvimento da bomba atômica no Projeto Manhattan."
-            },
-            {
-                id: 97,
-                imdb: "tt27820410",
-                year: 2024,
-                titlePt: "Anora",
-                titleOrig: "Anora",
-                director: "Sean Baker",
-                genre: "Comédia",
-                synopsis: "Uma jovem dançarina erótica de Brooklyn se casa impulsivamente com o filho de um oligarca russo, provocando um caos familiar cômico e dramático."
-            }
+            { id: 1, imdb: "tt0018578", year: 1927, titlePt: "As Asas", titleOrig: "Wings", director: "William A. Wellman", genre: "Guerra", synopsis: "Dois jovens pilotos de caça apaixonados pela mesma mulher lutam nos céus da Primeira Guerra Mundial." },
+            { id: 2, imdb: "tt0019729", year: 1929, titlePt: "Melodia da Broadway", titleOrig: "The Broadway Melody", director: "Harry Beaumont", genre: "Musical", synopsis: "Duas irmãs artistas da Broadway navegam por romances e desafios no mundo do espetáculo." },
+            { id: 3, imdb: "tt0020629", year: 1930, titlePt: "Sem Novidade no Front", titleOrig: "All Quiet on the Western Front", director: "Lewis Milestone", genre: "Guerra", synopsis: "Jovens soldados alemães encaram o desespero e o horror realista da Primeira Guerra Mundial." },
+            { id: 4, imdb: "tt0021748", year: 1931, titlePt: "Cimarron", titleOrig: "Cimarron", director: "Wesley Ruggles", genre: "Aventura", synopsis: "Um leitor de jornal e sua esposa se mudam para o novo estado de Oklahoma durante a corrida do ouro do século XIX." },
+            { id: 5, imdb: "tt0022958", year: 1932, titlePt: "Grande Hotel", titleOrig: "Grand Hotel", director: "Edmund Goulding", genre: "Drama", synopsis: "Várias vidas se entrelaçam durante uma estadia num luxuoso hotel de Berlim." },
+            { id: 6, imdb: "tt0023876", year: 1933, titlePt: "Cavalcada", titleOrig: "Cavalcade", director: "Frank Lloyd", genre: "Drama", synopsis: "A história de duas famílias inglesas durante os primeiros 30 anos do século XX." },
+            { id: 7, imdb: "tt0025316", year: 1934, titlePt: "Aconteceu Naquela Noite", titleOrig: "It Happened One Night", director: "Frank Capra", genre: "Comédia", synopsis: "Uma herdeira mimada em fuga e um repórter desempregado se envolvem numa jornada cômica inesquecível." },
+            { id: 8, imdb: "tt0026752", year: 1935, titlePt: "O Grande Motim", titleOrig: "Mutiny on the Bounty", director: "Frank Lloyd", genre: "Aventura", synopsis: "A lendária história da revolta dos marinheiros liderados por Fletcher Christian contra o tirânico Capitão Bligh." },
+            { id: 9, imdb: "tt0027698", year: 1936, titlePt: "Ziegfeld: O Criador de Estrelas", titleOrig: "The Great Ziegfeld", director: "Robert Z. Leonard", genre: "Musical", synopsis: "A cinebiografia espetacular do lendário produtor teatral Florenz Ziegfeld Jr." },
+            { id: 10, imdb: "tt0029146", year: 1937, titlePt: "A Vida de Émile Zola", titleOrig: "The Life of Emile Zola", director: "William Dieterle", genre: "Biografia", synopsis: "O célebre escritor francês Émile Zola arrisca sua carreira para defender um oficial judeu injustamente acusado." },
+            { id: 11, imdb: "tt0030993", year: 1938, titlePt: "Do Mundo Nada Se Leva", titleOrig: "You Can't Take It with You", director: "Frank Capra", genre: "Comédia", synopsis: "Um homem de uma família de banqueiros se apaixona por uma mulher de uma família excêntrica e libertária." },
+            { id: 12, imdb: "tt0031381", year: 1939, titlePt: "E o Vento Levou", titleOrig: "Gone with the Wind", director: "Victor Fleming", genre: "Romance", synopsis: "A saga de Scarlett O'Hara no sul dos Estados Unidos durante e após a Guerra Civil Americana." },
+            { id: 13, imdb: "tt0032976", year: 1940, titlePt: "Rebecca, a Mulher Inesquecível", titleOrig: "Rebecca", director: "Alfred Hitchcock", genre: "Drama", synopsis: "Uma jovem recém-casada se vê assombrada pela memória da falecida primeira esposa de seu marido abastado." },
+            { id: 14, imdb: "tt0033729", year: 1941, titlePt: "Como Era Verde o Meu Vale", titleOrig: "How Green Was My Valley", director: "John Ford", genre: "Drama", synopsis: "A vida de uma família de mineradores de carvão no País de Gales na virada do século." },
+            { id: 15, imdb: "tt0035093", year: 1942, titlePt: "Rosa da Esperança", titleOrig: "Mrs. Miniver", director: "William Wyler", genre: "Drama", synopsis: "Uma família inglesa tenta manter a normalidade durante os bombardeios da Segunda Guerra Mundial." },
+            { id: 16, imdb: "tt0034583", year: 1943, titlePt: "Casablanca", titleOrig: "Casablanca", director: "Michael Curtiz", genre: "Drama", synopsis: "Um cínico exilado americano em Casablanca precisa escolher entre o amor de sua vida e a luta contra o nazismo." },
+            { id: 17, imdb: "tt0036872", year: 1944, titlePt: "O Bom Pastor", titleOrig: "Going My Way", director: "Leo McCarey", genre: "Comédia", synopsis: "Um jovem e dinâmico padre traz novos caminhos e esperança para uma paróquia em dificuldades financeiras." },
+            { id: 18, imdb: "tt0037884", year: 1945, titlePt: "Farrapo Humano", titleOrig: "The Lost Weekend", director: "Billy Wilder", genre: "Drama", synopsis: "Um escritor alcoólatra passa por um fim de semana devastador de alucinações e desespero." },
+            { id: 19, imdb: "tt0036868", year: 1946, titlePt: "Os Melhores Anos de Nossas Vidas", titleOrig: "The Best Years of Our Lives", director: "William Wyler", genre: "Drama", synopsis: "Três veteranos da Segunda Guerra Mundial retornam para casa e enfrentam o desafio de se reajustar à vida civil." },
+            { id: 20, imdb: "tt0039416", year: 1947, titlePt: "A Luz É Para Todos", titleOrig: "Gentleman's Agreement", director: "Elia Kazan", genre: "Drama", synopsis: "Um jornalista finge ser judeu para investigar e expor o antissemitismo velado na sociedade americana." },
+            { id: 21, imdb: "tt0040416", year: 1948, titlePt: "Hamlet", titleOrig: "Hamlet", director: "Laurence Olivier", genre: "Drama", synopsis: "O príncipe da Dinamarca busca vingar a morte de seu pai assassinando o próprio tio." },
+            { id: 22, imdb: "tt0041113", year: 1949, titlePt: "A Grande Ilusão", titleOrig: "All the King's Men", director: "Robert Rossen", genre: "Drama", synopsis: "A ascensão e corrupção de um político populista num estado do sul dos Estados Unidos." },
+            { id: 23, imdb: "tt0042192", year: 1950, titlePt: "A Eva", titleOrig: "All About Eve", director: "Joseph L. Mankiewicz", genre: "Drama", synopsis: "Uma jovem fã ambiciosa se insinua na vida de uma grande estrela da Broadway para tomar seu lugar." },
+            { id: 24, imdb: "tt0043278", year: 1951, titlePt: "Sinfonia de Paris", titleOrig: "An American in Paris", director: "Vincente Minnelli", genre: "Musical", synopsis: "Um ex-soldado americano permanece em Paris para se tornar pintor e se apaixona por uma jovem francesa." },
+            { id: 25, imdb: "tt0044672", year: 1952, titlePt: "O Maior Espetáculo da Terra", titleOrig: "The Greatest Show on Earth", director: "Cecil B. DeMille", genre: "Aventura", synopsis: "Os dramas, traições e paixões nos bastidores da maior companhia de circo do mundo." },
+            { id: 26, imdb: "tt0045793", year: 1953, titlePt: "A Um Passo da Eternidade", titleOrig: "From Here to Eternity", director: "Fred Zinnemann", genre: "Drama", synopsis: "Conflitos amorosos e disciplinais em uma base militar no Havaí nas vésperas do ataque a Pearl Harbor." },
+            { id: 27, imdb: "tt0047296", year: 1954, titlePt: "Sindicato de Ladrões", titleOrig: "On the Waterfront", director: "Elia Kazan", genre: "Crime", synopsis: "Um ex-lutador de boxe enfrenta os chefes corruptos do sindicato dos portuários onde trabalha." },
+            { id: 28, imdb: "tt0048356", year: 1955, titlePt: "Marty", titleOrig: "Marty", director: "Delbert Mann", genre: "Romance", synopsis: "Um açougueiro ítalo-americano solitário de 34 anos finalmente encontra o amor em uma professora tímida." },
+            { id: 29, imdb: "tt0048960", year: 1956, titlePt: "A Volta ao Mundo em 80 Dias", titleOrig: "Around the World in 80 Days", director: "Michael Anderson", genre: "Aventura", synopsis: "O cavalheiro vitoriano Phileas Fogg aposta que pode dar a volta ao mundo em apenas 80 dias." },
+            { id: 30, imdb: "tt0050212", year: 1957, titlePt: "A Ponte do Rio Kwai", titleOrig: "The Bridge on the River Kwai", director: "David Lean", genre: "Guerra", synopsis: "Prisioneiros britânicos são forçados a construir uma ponte ferroviária crucial para os japoneses." },
+            { id: 31, imdb: "tt0051658", year: 1958, titlePt: "Gigi", titleOrig: "Gigi", director: "Vincente Minnelli", genre: "Musical", synopsis: "Na Paris da Belle Époque, um jovem milionário se apaixona por uma moça que está sendo treinada para ser cortesã." },
+            { id: 32, imdb: "tt0052618", year: 1959, titlePt: "Ben-Hur", titleOrig: "Ben-Hur", director: "William Wyler", genre: "Aventura", synopsis: "Um nobre judeu é traído por seu amigo romano, escravizado e busca vingança em corridas de quadrigas." },
+            { id: 33, imdb: "tt0053604", year: 1960, titlePt: "Se Meu Apartamento Falasse", titleOrig: "The Apartment", director: "Billy Wilder", genre: "Comédia", synopsis: "Um funcionário seguro empresta seu apartamento para executivos da empresa encontrarem suas amantes." },
+            { id: 34, imdb: "tt0055614", year: 1961, titlePt: "Amor, Sublime Amor", titleOrig: "West Side Story", director: "Robert Wise, Jerome Robbins", genre: "Musical", synopsis: "Duas gangues de Nova York disputam território enquanto dois jovens de lados opostos se apaixonam." },
+            { id: 35, imdb: "tt0056172", year: 1962, titlePt: "Lawrence da Arábia", titleOrig: "Lawrence of Arabia", director: "David Lean", genre: "Aventura", synopsis: "A história do oficial britânico T.E. Lawrence liderando tribos árabes contra o Império Otomano." },
+            { id: 36, imdb: "tt0057590", year: 1963, titlePt: "As Aventuras de Tom Jones", titleOrig: "Tom Jones", director: "Tony Richardson", genre: "Comédia", synopsis: "As peripécias amorosas e escandalosas de um jovem conquistador na Inglaterra do século XVIII." },
+            { id: 37, imdb: "tt0058385", year: 1964, titlePt: "Minha Bela Dama", titleOrig: "My Fair Lady", director: "George Cukor", genre: "Musical", synopsis: "Um elitista professor de fonética aposta que pode transformar uma florista de rua em uma dama da alta sociedade." },
+            { id: 38, imdb: "tt0059742", year: 1965, titlePt: "A Noviça Rebelde", titleOrig: "The Sound of Music", director: "Robert Wise", genre: "Musical", synopsis: "Uma noviça alegre é enviada como governanta para os sete filhos de um capitão austríaco viúvo." },
+            { id: 39, imdb: "tt0060665", year: 1966, titlePt: "O Homem Que Não Vendeu Sua Alma", titleOrig: "A Man for All Seasons", director: "Fred Zinnemann", genre: "Drama", synopsis: "Sir Thomas More enfrenta o Rei Henrique VIII quando este busca quebrar o casamento com Catarina de Aragão." },
+            { id: 40, imdb: "tt0061811", year: 1967, titlePt: "No Calor da Noite", titleOrig: "In the Heat of the Night", director: "Norman Jewison", genre: "Crime", synopsis: "Um detetive negro da Filadélfia é chamado para investigar um assassinato em uma cidade racista do Mississippi." },
+            { id: 41, imdb: "tt0063385", year: 1968, titlePt: "Oliver!", titleOrig: "Oliver!", director: "Carol Reed", genre: "Musical", synopsis: "Um jovem órfão na Inglaterra vitoriana foge do orfanato e se junta a uma gangue de pivetes batedores de carteira." },
+            { id: 42, imdb: "tt0064665", year: 1969, titlePt: "Perdidos na Noite", titleOrig: "Midnight Cowboy", director: "John Schlesinger", genre: "Drama", synopsis: "Um jovem texano ingênuo tenta a sorte como michê em Nova York e faz amizade com um trapaceiro tuberculoso." },
+            { id: 43, imdb: "tt0066206", year: 1970, titlePt: "Patton: Rebelde ou Herói?", titleOrig: "Patton", director: "Franklin J. Schaffner", genre: "Biografia", synopsis: "A carreira militar do polêmico general americano George S. Patton durante a Segunda Guerra Mundial." },
+            { id: 44, imdb: "tt0067116", year: 1971, titlePt: "Operação França", titleOrig: "The French Connection", director: "William Friedkin", genre: "Crime", synopsis: "Dois detetives obstinados de Nova York tentam desmantelar um gigantesco esquema francês de contrabando de heroína." },
+            { id: 45, imdb: "tt0068646", year: 1972, titlePt: "O Chefão", titleOrig: "The Godfather", director: "Francis Ford Coppola", genre: "Crime", synopsis: "O envelhecido patriarca de uma dinastia do crime organizado transfere o controle do seu império ao filho relutante." },
+            { id: 46, imdb: "tt0070735", year: 1973, titlePt: "Golpe de Mestre", titleOrig: "The Sting", director: "George Roy Hill", genre: "Comédia", synopsis: "Dois trapaceiros profissionais nos anos 1930 planejam um grande golpe contra um perigoso chefe da máfia." },
+            { id: 47, imdb: "tt0071562", year: 1974, titlePt: "O Chefão II", titleOrig: "The Godfather Part II", director: "Francis Ford Coppola", genre: "Crime", synopsis: "A ascensão do jovem Vito Corleone em Nova York intercalada com a consolidação do poder de Michael." },
+            { id: 48, imdb: "tt0073486", year: 1975, titlePt: "Um Estranho no Ninho", titleOrig: "One Flew Over the Cuckoo's Nest", director: "Miloš Forman", genre: "Drama", synopsis: "Um prisioneiro rebelde simula insanidade e lidera os pacientes de uma instituição psiquiátrica opressiva." },
+            { id: 49, imdb: "tt0075148", year: 1976, titlePt: "Rocky: Um Lutador", titleOrig: "Rocky", director: "John G. Avildsen", genre: "Drama", synopsis: "Um cobrador e pugilista amador da Filadélfia recebe uma chance única de disputar o título mundial dos pesos-pesados." },
+            { id: 50, imdb: "tt0075686", year: 1977, titlePt: "Noivo Neurótico, Noiva Nervosa", titleOrig: "Annie Hall", director: "Woody Allen", genre: "Comédia", synopsis: "Um comediante nova-iorquino reflete sobre as idas e vindas de seu relacionamento com uma cantora livre de espírito." },
+            { id: 51, imdb: "tt0077416", year: 1978, titlePt: "O Franco Atirador", titleOrig: "The Deer Hunter", director: "Michael Cimino", genre: "Drama", synopsis: "O impacto devastador da Guerra do Vietnã na vida de três amigos operários da Pensilvânia." },
+            { id: 52, imdb: "tt0079417", year: 1979, titlePt: "Kramer vs. Kramer", titleOrig: "Kramer vs. Kramer", director: "Robert Benton", genre: "Drama", synopsis: "Após ser abandonado pela esposa, um executivo aprende a cuidar do filho até a mãe retornar exigindo a guarda." },
+            { id: 53, imdb: "tt0081283", year: 1980, titlePt: "Gente Como A Gente", titleOrig: "Ordinary People", director: "Robert Redford", genre: "Drama", synopsis: "Uma família de classe média alta enfrenta o luto e o trauma emocional após a morte acidental do filho mais velho." },
+            { id: 54, imdb: "tt0082158", year: 1981, titlePt: "Carruagens de Fogo", titleOrig: "Chariots of Fire", director: "Hugh Hudson", genre: "Biografia", synopsis: "Dois atletas britânicos de origens distintas correm pelas Olimpíadas de 1924 por motivos pessoais e religiosos." },
+            { id: 55, imdb: "tt0083987", year: 1982, titlePt: "Gandhi", titleOrig: "Gandhi", director: "Richard Attenborough", genre: "Biografia", synopsis: "A vida de Mahatma Gandhi e sua resistência não-violenta contra o domínio britânico na Índia." },
+            { id: 56, imdb: "tt0086425", year: 1983, titlePt: "Laços de Ternura", titleOrig: "Terms of Endearment", director: "James L. Brooks", genre: "Drama", synopsis: "A complexa e emocionante relação de trinta anos entre uma mãe controladora e sua filha." },
+            { id: 57, imdb: "tt0086879", year: 1984, titlePt: "Amadeus", titleOrig: "Amadeus", director: "Miloš Forman", genre: "Biografia", synopsis: "A obsessão e inveja mortal do compositor Antonio Salieri em relação ao genial Wolfgang Amadeus Mozart." },
+            { id: 58, imdb: "tt0089755", year: 1985, titlePt: "Entre Dois Amores", titleOrig: "Out of Africa", director: "Sydney Pollack", genre: "Romance", synopsis: "Uma baronesa dinamarquesa gerencia uma fazenda no Quênia e se apaixona por um caçador nômade." },
+            { id: 59, imdb: "tt0091763", year: 1986, titlePt: "Platoon", titleOrig: "Platoon", director: "Oliver Stone", genre: "Guerra", synopsis: "Um jovem recruta enfrenta a brutalidade moral e física no meio do conflito do Vietnã." },
+            { id: 60, imdb: "tt0093389", year: 1987, titlePt: "O Último Imperador", titleOrig: "The Last Emperor", director: "Bernardo Bertolucci", genre: "Biografia", synopsis: "A vida de Puyi, o último imperador da China, desde sua coroação na infância até sua reeducação política." },
+            { id: 61, imdb: "tt0095953", year: 1988, titlePt: "Rain Man", titleOrig: "Rain Man", director: "Barry Levinson", genre: "Drama", synopsis: "Um jovem egoísta descobre que tem um irmão mais velho autista sábio e viaja com ele pelo país." },
+            { id: 62, imdb: "tt0097239", year: 1989, titlePt: "Conduzindo Miss Daisy", titleOrig: "Driving Miss Daisy", director: "Bruce Beresford", genre: "Drama", synopsis: "A amizade de 25 anos entre uma idosa senhora judia e seu motorista afro-americano no sul dos EUA." },
+            { id: 63, imdb: "tt0099348", year: 1990, titlePt: "Dança com Lobos", titleOrig: "Dances with Wolves", director: "Kevin Costner", genre: "Aventura", synopsis: "Um oficial da União na Guerra Civil isolado num posto remoto cria laços com uma tribo Sioux." },
+            { id: 64, imdb: "tt0102926", year: 1991, titlePt: "O Silêncio dos Inocentes", titleOrig: "The Silence of the Lambs", director: "Jonathan Demme", genre: "Crime", synopsis: "Uma estagiária do FBI consulta o psiquiatra e serial killer Hannibal Lecter para capturar outro assassino." },
+            { id: 65, imdb: "tt0105695", year: 1992, titlePt: "Os Imperdoáveis", titleOrig: "Unforgiven", director: "Clint Eastwood", genre: "Aventura", synopsis: "Um idoso pistoleiro aposentado aceita um último trabalho de recompensa ao lado de seu antigo parceiro." },
+            { id: 66, imdb: "tt0108052", year: 1993, titlePt: "A Lista de Schindler", titleOrig: "Schindler's List", director: "Steven Spielberg", genre: "Biografia", synopsis: "O empresário Oskar Schindler salva a vida de mais de mil refugiados judeus durante o Holocausto." },
+            { id: 67, imdb: "tt0109830", year: 1994, titlePt: "Forrest Gump: O Contador de Histórias", titleOrig: "Forrest Gump", director: "Robert Zemeckis", genre: "Drama", synopsis: "Um homem simples do Alabama presencia e influencia involuntariamente grandes momentos históricos dos EUA." },
+            { id: 68, imdb: "tt0112573", year: 1995, titlePt: "Coração Valente", titleOrig: "Braveheart", director: "Mel Gibson", genre: "Aventura", synopsis: "William Wallace lidera os escoceses numa revolta contra a opressão do rei inglês Eduardo I." },
+            { id: 69, imdb: "tt0116209", year: 1996, titlePt: "O Paciente Inglês", titleOrig: "The English Patient", director: "Anthony Minghella", genre: "Romance", synopsis: "No fim da 2ª Guerra, uma enfermeira cuida de um homem terrivelmente queimado que relembra seu trágico romance." },
+            { id: 70, imdb: "tt0120338", year: 1997, titlePt: "Titanic", titleOrig: "Titanic", director: "James Cameron", genre: "Romance", synopsis: "Um jovem artista pobre e uma aristocrata se apaixonam a bordo do fatídico navio transatlântico." },
+            { id: 71, imdb: "tt0138097", year: 1998, titlePt: "Shakespeare Apaixonado", titleOrig: "Shakespeare in Love", director: "John Madden", genre: "Romance", synopsis: "Um jovem William Shakespeare com bloqueio criativo encontra sua inspiração na nobre Viola de Lesseps." },
+            { id: 72, imdb: "tt0169547", year: 1999, titlePt: "Beleza Americana", titleOrig: "American Beauty", director: "Sam Mendes", genre: "Drama", synopsis: "Um pai de família em crise de meia-idade se apaixona pela melhor amiga adolescente da sua filha." },
+            { id: 73, imdb: "tt0172495", year: 2000, titlePt: "Gladiador", titleOrig: "Gladiator", director: "Ridley Scott", genre: "Aventura", synopsis: "Um ex-general romano traído busca vingança contra o imperador corrupto que assassinou sua família." },
+            { id: 74, imdb: "tt0268978", year: 2001, titlePt: "Uma Mente Brilhante", titleOrig: "A Beautiful Mind", director: "Ron Howard", genre: "Biografia", synopsis: "A história do gênio matemático John Nash lidando com a esquizofrenia e a conquista do Nobel." },
+            { id: 75, imdb: "tt0299658", year: 2002, titlePt: "Chicago", titleOrig: "Chicago", director: "Rob Marshall", genre: "Musical", synopsis: "Duas assassinas na Chicago dos anos 1920 disputam a fama e os serviços do mesmo advogado sedutor." },
+            { id: 76, imdb: "tt0167260", year: 2003, titlePt: "O Senhor dos Anéis: O Retorno do Rei", titleOrig: "The Lord of the Rings: The Return of the King", director: "Peter Jackson", genre: "Aventura", synopsis: "A batalha final pela Terra-média acontece enquanto Frodo e Sam se aproximam da Montanha da Perdição." },
+            { id: 77, imdb: "tt0405159", year: 2004, titlePt: "Menina de Ouro", titleOrig: "Million Dollar Baby", director: "Clint Eastwood", genre: "Drama", synopsis: "Um ranzinza treinador de boxe aceita treinar uma determinada mulher até o topo do boxe profissional." },
+            { id: 78, imdb: "tt0375679", year: 2005, titlePt: "Crash: No Limite", titleOrig: "Crash", director: "Paul Haggis", genre: "Drama", synopsis: "Moradores de Los Angeles de diferentes origens raciais têm suas vidas colididas em 36 horas turbulentas." },
+            { id: 79, imdb: "tt0407887", year: 2006, titlePt: "Os Infiltrados", titleOrig: "The Departed", director: "Martin Scorsese", genre: "Crime", synopsis: "Um policial disfarçado na máfia e um criminoso infiltrado na polícia tentam se identificar mutuamente." },
+            { id: 80, imdb: "tt0477348", year: 2007, titlePt: "Onde os Fracos Não Têm Vez", titleOrig: "No Country for Old Men", director: "Joel & Ethan Coen", genre: "Crime", synopsis: "Um caçador encontra uma mala de dinheiro de um negócio fracassado de drogas e é caçado por um sociopata." },
+            { id: 81, imdb: "tt1010048", year: 2008, titlePt: "Quem Quer Ser um Milionário?", titleOrig: "Slumdog Millionaire", director: "Danny Boyle", genre: "Drama", synopsis: "Um jovem das favelas de Mumbai relembra sua vida conturbada para explicar seu sucesso num jogo de TV." },
+            { id: 82, imdb: "tt0887912", year: 2009, titlePt: "Guerra ao Terror", titleOrig: "The Hurt Locker", director: "Kathryn Bigelow", genre: "Guerra", synopsis: "Um esquadrão anti-bombas no Iraque lida com o perigo constante e os conflitos psicológicos internos." },
+            { id: 83, imdb: "tt1504320", year: 2010, titlePt: "O Discurso do Rei", titleOrig: "The King's Speech", director: "Tom Hooper", genre: "Biografia", synopsis: "O Rei Jorge VI contrata um terapeuta de fala não convencional para superar sua gagueira antes do discurso da guerra." },
+            { id: 84, imdb: "tt1655442", year: 2011, titlePt: "O Artista", titleOrig: "The Artist", director: "Michel Hazanavicius", genre: "Comédia", synopsis: "A decadência de uma estrela do cinema mudo enquanto uma jovem atriz decolava com a chegada do som." },
+            { id: 85, imdb: "tt1023114", year: 2012, titlePt: "Argo", titleOrig: "Argo", director: "Ben Affleck", genre: "Drama", synopsis: "Agentes da CIA forjam a produção de um filme de ficção científica para resgatar diplomatas no Irã." },
+            { id: 86, imdb: "tt2024544", year: 2013, titlePt: "12 Anos de Escravidão", titleOrig: "12 Years a Slave", director: "Steve McQueen", genre: "Biografia", synopsis: "Solomon Northup, homem negro livre em Nova York, é sequestrado e vendido como escravo no sul dos EUA." },
+            { id: 87, imdb: "tt2562232", year: 2014, titlePt: "Birdman ou (A Inesperada Virtude da Ignorância)", titleOrig: "Birdman", director: "Alejandro G. Iñárritu", genre: "Comédia", synopsis: "Um ator esquecido famoso por interpretar um super-herói tenta recuperar o prestígio dirigindo uma peça na Broadway." },
+            { id: 88, imdb: "tt1895587", year: 2015, titlePt: "Spotlight: Segredos Revelados", titleOrig: "Spotlight", director: "Tom McCarthy", genre: "Drama", synopsis: "Jornalistas investigativos revelam abusos e acobertamentos sistêmicos na Igreja Católica em Boston." },
+            { id: 89, imdb: "tt4975722", year: 2016, titlePt: "Moonlight: Sob a Luz do Luar", titleOrig: "Moonlight", director: "Barry Jenkins", genre: "Drama", synopsis: "Três momentos da vida de um jovem negro em Miami enfrentando sua identidade e sexualidade." },
+            { id: 90, imdb: "tt5580390", year: 2017, titlePt: "A Forma da Água", titleOrig: "The Shape of Water", director: "Guillermo del Toro", genre: "Aventura", synopsis: "Uma faxineira muda em um laboratório do governo estabelece uma conexão amorosa com uma criatura anfíbia." },
+            { id: 91, imdb: "tt6966692", year: 2018, titlePt: "Green Book: O Guia", titleOrig: "Green Book", director: "Peter Farrelly", genre: "Drama", synopsis: "Um segurança Ítalo-americano torna-se motorista de um pianista negro em turnê pelo sul segregado dos EUA." },
+            { id: 92, imdb: "tt6751668", year: 2019, titlePt: "Parasita", titleOrig: "Gisaengchung / Parasite", director: "Bong Joon-ho", genre: "Drama", synopsis: "Uma família desempregada se infiltra aos poucos na rotina de uma família rica com consequências drásticas." },
+            { id: 93, imdb: "tt9770150", year: 2020, titlePt: "Nomadland", titleOrig: "Nomadland", director: "Chloé Zhao", genre: "Drama", synopsis: "Uma mulher perde tudo na Grande Recessão e embarca em uma jornada pelo oeste americano vivendo em sua van." },
+            { id: 94, imdb: "tt10366460", year: 2021, titlePt: "No Ritmo do Coração", titleOrig: "CODA", director: "Sian Heder", genre: "Drama", synopsis: "Única ouvinte em uma família de surdos, uma jovem se divide entre ajudar a família e seguir a paixão pela música." },
+            { id: 95, imdb: "tt6710474", year: 2022, titlePt: "Tudo em Todo o Lugar ao Mesmo Tempo", titleOrig: "Everything Everywhere All at Once", director: "Daniel Kwan, Daniel Scheinert", genre: "Comédia", synopsis: "Uma imigrante chinesa em crise se vê envolvida em uma aventura no multiverso para salvar a própria realidade." },
+            { id: 96, imdb: "tt15398776", year: 2023, titlePt: "Oppenheimer", titleOrig: "Oppenheimer", director: "Christopher Nolan", genre: "Biografia", synopsis: "A cinebiografia de J. Robert Oppenheimer, o cientista responsável pelo desenvolvimento da bomba atômica no Projeto Manhattan." },
+            { id: 97, imdb: "tt27820410", year: 2024, titlePt: "Anora", titleOrig: "Anora", director: "Sean Baker", genre: "Comédia", synopsis: "Uma jovem dançarina erótica de Brooklyn se casa impulsivamente com o filho de um oligarca russo, provocando um caos familiar cômico e dramático." }
         ];
+
+        // All Decades List
+        const ALL_DECADES = [2020, 2010, 2000, 1990, 1980, 1970, 1960, 1950, 1940, 1930];
 
         let watchedIds = new Set();
         let currentDrawnMovie = null;
         let currentCatalogFilter = 'all';
+
+        // Filters for Drawing (Sorteio)
+        let drawDecadesFilter = new Set(ALL_DECADES);
+        let drawGenreFilter = 'all';
 
         // Local Storage Keys
         const STORAGE_KEY = 'cineoscar_watched_ids_v6';
@@ -1584,6 +767,7 @@
         window.addEventListener('DOMContentLoaded', async () => {
             loadSavedData();
             loadGithubSettings();
+            renderDrawDecadePills();
             updateAllCounters();
             renderWatchedGrid();
             renderCatalogGrid();
@@ -1599,7 +783,6 @@
         }
 
         function handlePosterError(img) {
-            // Smoothly hide image if local poster file is missing or blocked, leaving elegant gold fallback card
             img.style.display = 'none';
         }
 
@@ -1608,7 +791,6 @@
 
             return `
                 <div class="poster-wrapper relative aspect-[2/3] w-full rounded-2xl overflow-hidden bg-gradient-to-b from-dark-card via-gray-900 to-black border border-gold-500/30 flex flex-col justify-between text-center group shadow-xl ${customClasses}">
-                    <!-- LUXURY FALLBACK CARD (Always pre-rendered underneath image) -->
                     <div class="absolute inset-0 flex flex-col items-center justify-between p-4 bg-gradient-to-b from-dark-card via-gray-900 to-black text-center z-0 pointer-events-none select-none">
                         <div class="w-12 h-12 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 mt-2 shadow-inner">
                             <i class="fa-solid fa-trophy text-lg"></i>
@@ -1623,7 +805,6 @@
                         </div>
                     </div>
 
-                    <!-- LOCAL POSTER IMAGE ELEMENT -->
                     <img src="${posterSrc}" 
                          alt="${escapeHtml(movie.titlePt)}" 
                          loading="lazy" 
@@ -1631,12 +812,55 @@
                          onerror="handlePosterError(this)"
                          class="absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 opacity-0 group-hover:scale-105">
 
-                    <!-- OVERLAY BADGE -->
                     <div class="absolute top-2.5 left-2.5 z-20 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-gold-500/30 text-gold-400 text-[10px] font-bold font-cinzel shadow">
                         <i class="fa-solid fa-award mr-1"></i> Oscar ${movie.year}
                     </div>
                 </div>
             `;
+        }
+
+        function renderDrawDecadePills() {
+            const container = document.getElementById('draw-decades-container');
+            container.innerHTML = ALL_DECADES.map(dec => {
+                const isActive = drawDecadesFilter.has(dec);
+                const label = dec === 1930 ? 'Anos 20/30' : `Anos ${dec}`;
+
+                return `
+                    <button onclick="toggleDrawDecade(${dec})" class="px-3 py-1.5 rounded-xl font-bold transition flex items-center space-x-1.5 border ${
+                        isActive 
+                        ? 'bg-gold-500 text-black border-gold-400 shadow-md shadow-gold-500/20' 
+                        : 'bg-dark-bg text-gray-400 hover:text-white border-gray-800'
+                    }">
+                        <i class="fa-solid ${isActive ? 'fa-square-check' : 'fa-square'} text-xs"></i>
+                        <span>${label}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function toggleDrawDecade(dec) {
+            if (drawDecadesFilter.has(dec)) {
+                drawDecadesFilter.delete(dec);
+            } else {
+                drawDecadesFilter.add(dec);
+            }
+            renderDrawDecadePills();
+            updateAllCounters();
+        }
+
+        function selectAllDrawDecades(select) {
+            if (select) {
+                drawDecadesFilter = new Set(ALL_DECADES);
+            } else {
+                drawDecadesFilter.clear();
+            }
+            renderDrawDecadePills();
+            updateAllCounters();
+        }
+
+        function onDrawGenreChange() {
+            drawGenreFilter = document.getElementById('draw-genre-select').value;
+            updateAllCounters();
         }
 
         function loadSavedData() {
@@ -1841,7 +1065,20 @@
         }
 
         function getAvailablePool() {
-            return OSCAR_MOVIES.filter(m => !watchedIds.has(m.id));
+            return OSCAR_MOVIES.filter(m => {
+                // 1. Must not be watched
+                if (watchedIds.has(m.id)) return false;
+
+                // 2. Filter by Genre
+                if (drawGenreFilter !== 'all' && m.genre !== drawGenreFilter) return false;
+
+                // 3. Filter by Decade
+                let dec = Math.floor(m.year / 10) * 10;
+                if (dec < 1930) dec = 1930;
+                if (!drawDecadesFilter.has(dec)) return false;
+
+                return true;
+            });
         }
 
         function drawMovie() {
@@ -1906,7 +1143,7 @@
         }
 
         function skipMovie() {
-            showToast("Sorteando o próximo filme...");
+            showToast("Sorteando o próximo filme do pool...");
             drawMovie();
         }
 
@@ -1916,7 +1153,7 @@
             document.getElementById('draw-result-state').classList.add('hidden');
             document.getElementById('draw-empty-state').classList.remove('hidden');
 
-            if (typeof confetti === 'function') {
+            if (typeof confetti === 'function' && watchedIds.size === OSCAR_MOVIES.length) {
                 confetti({
                     particleCount: 120,
                     spread: 70,
@@ -1954,18 +1191,25 @@
         function updateAllCounters() {
             const total = OSCAR_MOVIES.length;
             const watchedCount = watchedIds.size;
-            const poolCount = total - watchedCount;
+            const poolFiltered = getAvailablePool().length;
             const percent = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
 
             document.getElementById('header-progress-text').textContent = `${watchedCount} / ${total} (${percent}%)`;
             document.getElementById('badge-watched-count').textContent = watchedCount;
 
-            document.getElementById('pool-count-text').textContent = `${poolCount} de ${total} filmes disponíveis para sorteio (${percent}% assistidos)`;
-            document.getElementById('pool-progress-bar').style.width = `${percent}%`;
+            document.getElementById('pool-count-text').textContent = `${poolFiltered} de ${total} filmes disponíveis no sorteio com os filtros atuais`;
+            
+            const poolPercent = total > 0 ? Math.round((poolFiltered / total) * 100) : 0;
+            document.getElementById('pool-progress-bar').style.width = `${poolPercent}%`;
 
             document.getElementById('cat-count-all').textContent = total;
-            document.getElementById('cat-count-pool').textContent = poolCount;
+            document.getElementById('cat-count-pool').textContent = total - watchedCount;
             document.getElementById('cat-count-watched').textContent = watchedCount;
+
+            if (poolFiltered > 0 && !document.getElementById('draw-empty-state').classList.contains('hidden')) {
+                document.getElementById('draw-empty-state').classList.add('hidden');
+                document.getElementById('draw-idle-state').classList.remove('hidden');
+            }
         }
 
         function renderWatchedGrid() {
