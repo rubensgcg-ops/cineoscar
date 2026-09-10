@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineOscar - Sorteador de Campeões do Oscar</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#f6d365',
+                            500: '#D4AF37',
+                            600: '#aa8c2c',
+                            700: '#856a1d',
+                            light: '#FFD700'
+                        },
+                        dark: {
+                            bg: '#0a0b0e',
+                            card: '#14171f',
+                            cardHover: '#1c202b',
+                            border: '#2a2f3d',
+                            text: '#e2e8f0'
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0b0e;
+            color: #e2e8f0;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF5C0 0%, #D4AF37 50%, #AA7C11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 18px rgba(212, 175, 55, 0.25);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .gold-border-glow:hover {
+            box-shadow: 0 0 28px rgba(212, 175, 55, 0.45);
+            border-color: rgba(212, 175, 55, 0.8);
+        }
+
+        .roulette-spin {
+            animation: slotShuffle 0.12s infinite linear;
+        }
+
+        @keyframes slotShuffle {
+            0% { transform: translateY(0); filter: blur(2px); opacity: 0.7; }
+            50% { transform: translateY(-8px); filter: blur(4px); opacity: 0.4; }
+            100% { transform: translateY(0); filter: blur(2px); opacity: 0.7; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0b0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f3d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black">
+
+    <div>
+        <header class="border-b border-gray-800 bg-dark-card/90 backdrop-blur-md sticky top-0 z-40 shadow-xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    
+                    <!-- Logo Header -->
+                    <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('sorteio')">
+                        <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-gold-700 via-gold-500 to-gold-light flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-gold-500/20 group-hover:scale-105 transition">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-cinzel text-xl sm:text-2xl font-bold tracking-wider gold-gradient-text">
+                                CINEOSCAR
+                            </h1>
+                            <p class="text-[11px] text-gray-400 tracking-wider uppercase font-medium">Sorteador de Campeões do Oscar</p>
+                        </div>
+                    </div>
+
+                    <!-- Counter & Quick Actions -->
+                    <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <div class="bg-dark-bg/90 border border-gray-800 px-3.5 py-1.5 rounded-xl flex items-center space-x-3">
+                            <i class="fa-solid fa-film text-gold-500 text-sm"></i>
+                            <div class="text-xs">
+                                <span class="text-gray-400 block text-[10px] uppercase font-semibold">Progresso Geral</span>
+                                <span id="header-progress-text" class="font-bold text-gold-400">0 / 97 (0%)</span>
+                            </div>
+                        </div>
+
+                        <button onclick="toggleGithubModal(true)" title="Sincronização com GitHub" class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition flex items-center space-x-2 border border-gray-700/80">
+                            <i class="fa-brands fa-github text-gold-400 text-sm"></i>
+                            <span class="hidden md:inline">GitHub</span>
+                            <span id="github-sync-indicator" class="w-2 h-2 rounded-full bg-gray-500"></span>
+                        </button>
+
+                        <button onclick="toggleBackupModal(true)" title="Exportar/Importar Dados" class="px-3 py-2 bg-gray-800/80 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition flex items-center space-x-2 border border-gray-700/80">
+                            <i class="fa-solid fa-database text-gold-500"></i>
+                            <span class="hidden md:inline">Backup</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="flex justify-center sm:justify-start space-x-2 sm:space-x-3 mt-3 pt-2.5 border-t border-gray-800/60 overflow-x-auto pb-1 text-xs">
+                    <button id="tab-btn-sorteio" onclick="switchTab('sorteio')" class="tab-btn active px-4 py-2 rounded-xl font-medium transition flex items-center space-x-2 whitespace-nowrap bg-gold-500 text-black font-bold shadow-md shadow-gold-500/10">
+                        <i class="fa-solid fa-dice"></i>
+                        <span>Sorteio</span>
+                    </button>
+                    <button id="tab-btn-assistidos" onclick="switchTab('assistidos')" class="tab-btn px-4 py-2 rounded-xl font-medium transition flex items-center space-x-2 whitespace-nowrap text-gray-400 hover:text-white hover:bg-gray-800/70">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>Assistidos</span>
+                        <span id="badge-watched-count" class="ml-1 px-1.5 py-0.5 text-[10px] bg-gold-500/20 text-gold-400 rounded-full font-bold">0</span>
+                    </button>
+                    <button id="tab-btn-catalogo" onclick="switchTab('catalogo')" class="tab-btn px-4 py-2 rounded-xl font-medium transition flex items-center space-x-2 whitespace-nowrap text-gray-400 hover:text-white hover:bg-gray-800/70">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Catálogo Geral (97)</span>
+                    </button>
+                    <button id="tab-btn-estatisticas" onclick="switchTab('estatisticas')" class="tab-btn px-4 py-2 rounded-xl font-medium transition flex items-center space-x-2 whitespace-nowrap text-gray-400 hover:text-white hover:bg-gray-800/70">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Estatísticas</span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- ABA 1: SORTEIO -->
+            <section id="tab-sorteio" class="tab-content space-y-8">
+                
+                <!-- Pool Status Bar -->
+                <div class="bg-gradient-to-r from-dark-card via-gray-900 to-dark-card p-4 rounded-2xl border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="p-3 bg-gold-500/10 rounded-2xl border border-gold-500/20 text-gold-400">
+                            <i class="fa-solid fa-ticket text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-cinzel font-bold text-base text-gray-100">Pool de Sorteio do Oscar</h2>
+                            <p id="pool-count-text" class="text-xs text-gray-400">Carregando filmes disponíveis...</p>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-56 bg-gray-800 h-3 rounded-full overflow-hidden border border-gray-700/60 p-0.5">
+                        <div id="pool-progress-bar" class="bg-gradient-to-r from-gold-600 to-gold-light h-full rounded-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="max-w-3xl mx-auto">
+                    
+                    <!-- Welcome / Idle Card -->
+                    <div id="draw-idle-state" class="bg-dark-card border border-gray-800 rounded-3xl p-8 sm:p-12 text-center gold-border-glow transition-all">
+                        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400 text-3xl shadow-lg shadow-gold-500/10">
+                            <i class="fa-solid fa-clapperboard"></i>
+                        </div>
+                        <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-white mb-3">
+                            Pronto para descobrir o próximo campeão?
+                        </h2>
+                        <p class="text-gray-400 text-xs sm:text-sm max-w-lg mx-auto mb-8 leading-relaxed">
+                            Sorteie aleatoriamente um vencedor do Oscar de Melhor Filme (1927 - 2025) entre os títulos que você ainda não marcou como assistidos.
+                        </p>
+                        <button onclick="drawMovie()" class="px-8 py-4 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-400 text-black font-extrabold rounded-2xl text-base hover:shadow-xl hover:shadow-gold-500/30 hover:scale-105 active:scale-95 transition duration-200 flex items-center justify-center space-x-3 mx-auto">
+                            <i class="fa-solid fa-shuffle text-lg"></i>
+                            <span>SORTEAR FILME AGORA</span>
+                        </button>
+                    </div>
+
+                    <!-- Animating State -->
+                    <div id="draw-animating-state" class="hidden bg-dark-card border border-gold-500/50 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-dark-card via-transparent to-dark-card z-10 pointer-events-none"></div>
+                        <div id="roulette-title" class="roulette-spin font-cinzel text-2xl sm:text-3xl font-bold gold-gradient-text my-8">
+                            CONSULTANDO ARQUIVOS DA ACADEMIA...
+                        </div>
+                        <p class="text-gray-400 text-xs animate-pulse z-20 relative">Sorteando vencedor entre 1927 e 2025...</p>
+                    </div>
+
+                    <!-- Result State -->
+                    <div id="draw-result-state" class="hidden bg-dark-card border border-gray-800 rounded-3xl overflow-hidden gold-border-glow text-left transition-all">
+                        <div class="grid grid-cols-1 md:grid-cols-12">
+                            
+                            <!-- Movie Poster -->
+                            <div class="md:col-span-5 bg-black/60 relative min-h-[360px] flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-gray-800 group">
+                                <img id="result-poster" src="" alt="Pôster do filme" class="w-full h-full object-cover absolute inset-0 transition-opacity duration-300">
+                                <div class="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-gold-500/30 text-gold-400 text-xs font-bold font-cinzel z-10 shadow">
+                                    <i class="fa-solid fa-award mr-1"></i> Oscar <span id="result-year">2024</span>
+                                </div>
+                            </div>
+
+                            <!-- Movie Details -->
+                            <div class="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                                <div>
+                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                        <div class="flex items-center space-x-2">
+                                            <span id="result-genre" class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-800 text-gold-400 border border-gold-500/20">Drama</span>
+                                            <span id="result-director" class="text-xs text-gray-400"><i class="fa-solid fa-video mr-1 text-gray-500"></i> Dir. Christopher Nolan</span>
+                                        </div>
+                                        <a id="result-imdb-link" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1 bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-black border border-yellow-500/30 rounded-lg text-xs font-bold transition flex items-center space-x-1.5">
+                                            <i class="fa-brands fa-imdb text-base"></i>
+                                            <span>Ver no IMDb</span>
+                                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                        </a>
+                                    </div>
+
+                                    <h3 id="result-title-pt" class="font-cinzel text-2xl sm:text-3xl font-bold text-white leading-tight mb-1">
+                                        Oppenheimer
+                                    </h3>
+                                    <h4 id="result-title-orig" class="text-xs text-gold-400 italic font-medium mb-4">
+                                        Oppenheimer (2023)
+                                    </h4>
+
+                                    <p id="result-synopsis" class="text-gray-300 text-xs sm:text-sm leading-relaxed line-clamp-5">
+                                        A história do físico americano J. Robert Oppenheimer, seu papel no Projeto Manhattan e o desenvolvimento da bomba atômica.
+                                    </p>
+                                </div>
+
+                                <div class="pt-4 border-t border-gray-800/80 flex flex-col sm:flex-row gap-3">
+                                    <button onclick="markCurrentAsWatched()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-3 rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-900/20 active:scale-95">
+                                        <i class="fa-solid fa-check text-sm"></i>
+                                        <span>Marcar como Já Assistido</span>
+                                    </button>
+
+                                    <button onclick="skipMovie()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold px-4 py-3 rounded-xl text-xs transition flex items-center justify-center space-x-2 border border-gray-700 active:scale-95">
+                                        <i class="fa-solid fa-forward text-sm"></i>
+                                        <span>Assistir Mais Tarde / Pular</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="draw-empty-state" class="hidden bg-dark-card border border-gold-500/40 rounded-3xl p-8 sm:p-12 text-center gold-border-glow">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-tr from-gold-600 to-gold-light flex items-center justify-center text-black text-4xl shadow-2xl shadow-gold-500/40">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <h2 class="font-cinzel text-3xl font-bold gold-gradient-text mb-3">
+                            PARABÉNS! CINÉFILO SUPREMO!
+                        </h2>
+                        <p class="text-gray-300 text-sm max-w-lg mx-auto mb-8 leading-relaxed">
+                            Você assistiu a **todos** os 97 filmes vencedores do Oscar de Melhor Filme! Sua maratona épica da história do cinema foi concluída com sucesso.
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <button onclick="switchTab('assistidos')" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-gold-400 font-semibold rounded-xl text-xs border border-gold-500/30 transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Ver Minha Lista de Assistidos</span>
+                            </button>
+                            <button onclick="resetAllWatched(true)" class="px-6 py-3 bg-gold-500 hover:bg-gold-400 text-black font-bold rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-gold-500/20">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Reiniciar Todos no Pool</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ABA 2: FILMES ASSISTIDOS -->
+            <section id="tab-assistidos" class="tab-content hidden space-y-6">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-dark-card p-6 rounded-2xl border border-gray-800">
+                    <div>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-star text-gold-500"></i>
+                            <span>Filmes Assistidos</span>
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Gerencie os campeões do Oscar que você já assistiu. Ao remover, eles retornam ao pool de sorteio.
+                        </p>
+                    </div>
+
+                    <!-- Search Input & Sort -->
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                            <input type="text" id="watched-search" oninput="renderWatchedGrid()" placeholder="Buscar assistido..." class="w-full bg-dark-bg border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gold-500">
+                        </div>
+                        <select id="watched-sort" onchange="renderWatchedGrid()" class="bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                            <option value="year-desc">Ano Oscar (Mais Recente)</option>
+                            <option value="year-asc">Ano Oscar (Mais Antigo)</option>
+                            <option value="title-asc">Título (A - Z)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grid of Watched Movies -->
+                <div id="watched-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Populated via JavaScript -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="watched-empty" class="hidden text-center py-16 bg-dark-card/50 rounded-2xl border border-dashed border-gray-800">
+                    <i class="fa-regular fa-folder-open text-4xl text-gray-600 mb-3"></i>
+                    <h3 class="font-cinzel text-base font-semibold text-gray-400">Nenhum filme assistido encontrado</h3>
+                    <p class="text-xs text-gray-500 mt-1">Marque filmes como assistidos no Sorteio ou no Catálogo Geral.</p>
+                </div>
+            </section>
+
+            <!-- ABA 3: CATÁLOGO GERAL -->
+            <section id="tab-catalogo" class="tab-content hidden space-y-6">
+                
+                <div class="bg-dark-card p-6 rounded-2xl border border-gray-800 space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-film text-gold-500"></i>
+                                <span>Catálogo Completo do Oscar (1927 - 2025)</span>
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Todos os 97 vencedores do prêmio de Melhor Filme na história do cinema.
+                            </p>
+                        </div>
+
+                        <!-- Filter Status Tabs -->
+                        <div class="flex bg-dark-bg p-1 rounded-xl border border-gray-800 self-start md:self-auto text-xs">
+                            <button id="cat-filter-all" onclick="setCatalogFilter('all')" class="cat-filter-btn px-3 py-1.5 rounded-lg font-bold bg-gold-500 text-black">
+                                Todos (<span id="cat-count-all">97</span>)
+                            </button>
+                            <button id="cat-filter-pool" onclick="setCatalogFilter('pool')" class="cat-filter-btn px-3 py-1.5 rounded-lg font-medium text-gray-400 hover:text-white">
+                                No Pool (<span id="cat-count-pool">0</span>)
+                            </button>
+                            <button id="cat-filter-watched" onclick="setCatalogFilter('watched')" class="cat-filter-btn px-3 py-1.5 rounded-lg font-medium text-gray-400 hover:text-white">
+                                Assistidos (<span id="cat-count-watched">0</span>)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search, Decade, and Genre Filters -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2 text-xs">
+                        <div class="relative sm:col-span-2">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                            <input type="text" id="catalog-search" oninput="renderCatalogGrid()" placeholder="Buscar por título, diretor ou ano..." class="w-full bg-dark-bg border border-gray-700 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gold-500">
+                        </div>
+                        <div>
+                            <select id="catalog-decade-filter" onchange="renderCatalogGrid()" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                                <option value="all">Todas as Décadas</option>
+                                <option value="2020">Anos 2020</option>
+                                <option value="2010">Anos 2010</option>
+                                <option value="2000">Anos 2000</option>
+                                <option value="1990">Anos 1990</option>
+                                <option value="1980">Anos 1980</option>
+                                <option value="1970">Anos 1970</option>
+                                <option value="1960">Anos 1960</option>
+                                <option value="1950">Anos 1950</option>
+                                <option value="1940">Anos 1940</option>
+                                <option value="1930">Anos 1930/1920</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="catalog-genre-filter" onchange="renderCatalogGrid()" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                                <option value="all">Todos os Gêneros</option>
+                                <option value="Drama">Drama</option>
+                                <option value="Romance">Romance</option>
+                                <option value="Guerra">Guerra</option>
+                                <option value="Crime">Crime / Policial</option>
+                                <option value="Comédia">Comédia</option>
+                                <option value="Biografia">Biografia</option>
+                                <option value="Aventura">Aventura / Fantasia</option>
+                                <option value="Musical">Musical</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catalog Grid -->
+                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Populated via JavaScript -->
+                </div>
+            </section>
+
+            <!-- ABA 4: ESTATÍSTICAS -->
+            <section id="tab-estatisticas" class="tab-content hidden space-y-6">
+                
+                <div class="bg-dark-card p-6 rounded-2xl border border-gray-800">
+                    <h2 class="font-cinzel text-2xl font-bold text-white flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-chart-line text-gold-500"></i>
+                        <span>Estatísticas da Maratona Oscar</span>
+                    </h2>
+                    <p class="text-xs text-gray-400">Análise do seu progresso na história da premiação mais famosa do cinema.</p>
+                </div>
+
+                <!-- Metrics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
+                        <div class="flex justify-between items-center text-gray-400 text-xs mb-2">
+                            <span>Total de Campeões</span>
+                            <i class="fa-solid fa-film text-gold-500"></i>
+                        </div>
+                        <p id="stat-total-movies" class="text-3xl font-bold font-cinzel text-white">97</p>
+                        <p class="text-[11px] text-gray-500 mt-1">1927 a 2025</p>
+                    </div>
+
+                    <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
+                        <div class="flex justify-between items-center text-gray-400 text-xs mb-2">
+                            <span>Assistidos</span>
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                        </div>
+                        <p id="stat-watched-count" class="text-3xl font-bold font-cinzel text-emerald-400">0</p>
+                        <p class="text-[11px] text-gray-500 mt-1">Marcados como vistos</p>
+                    </div>
+
+                    <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
+                        <div class="flex justify-between items-center text-gray-400 text-xs mb-2">
+                            <span>Restantes no Pool</span>
+                            <i class="fa-solid fa-ticket text-gold-500"></i>
+                        </div>
+                        <p id="stat-pool-count" class="text-3xl font-bold font-cinzel text-gold-400">97</p>
+                        <p class="text-[11px] text-gray-500 mt-1">Disponíveis para sorteio</p>
+                    </div>
+
+                    <div class="bg-dark-card p-5 rounded-2xl border border-gray-800">
+                        <div class="flex justify-between items-center text-gray-400 text-xs mb-2">
+                            <span>Conclusão</span>
+                            <i class="fa-solid fa-percent text-purple-400"></i>
+                        </div>
+                        <p id="stat-percent" class="text-3xl font-bold font-cinzel text-purple-400">0%</p>
+                        <p class="text-[11px] text-gray-500 mt-1">Da história do Oscar</p>
+                    </div>
+                </div>
+
+                <!-- Decade Breakdown -->
+                <div class="bg-dark-card p-6 rounded-2xl border border-gray-800 space-y-4">
+                    <h3 class="font-cinzel font-bold text-base text-white">Progresso por Décadas</h3>
+                    <div id="decade-stats-container" class="space-y-3">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES GITHUB -->
+    <div id="github-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-card border border-gray-800 rounded-3xl max-w-lg w-full p-6 space-y-5 gold-border-glow relative text-xs">
+            <button onclick="toggleGithubModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-4">
+                <div class="p-3 bg-gold-500/10 rounded-2xl text-gold-400 border border-gold-500/20">
+                    <i class="fa-brands fa-github text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-cinzel text-lg font-bold text-white">Sincronização com GitHub</h3>
+                    <p class="text-[11px] text-gray-400">Salve seu progresso permanentemente no seu repositório</p>
+                </div>
+            </div>
+
+            <div class="space-y-3.5">
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-1">Usuário do GitHub</label>
+                    <input type="text" id="gh-username" placeholder="ex: seu-usuario" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-1">Nome do Repositório</label>
+                    <input type="text" id="gh-repo" placeholder="ex: cineoscar" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-1">Caminho do Arquivo JSON</label>
+                    <input type="text" id="gh-path" value="meus_assistidos.json" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-semibold mb-1">Personal Access Token (PAT)</label>
+                    <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-dark-bg border border-gray-700 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-gold-500">
+                    <p class="text-[10px] text-gray-500 mt-1">Crie em GitHub > Settings > Developer settings > Tokens (classic) com permissão 'repo'. Seu token fica salvo apenas no seu navegador.</p>
+                </div>
+
+                <div class="flex items-center justify-between bg-dark-bg p-3 rounded-xl border border-gray-800">
+                    <span class="text-gray-300 font-semibold">Salvar Automaticamente ao alterar</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="gh-autosync" class="sr-only peer">
+                        <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gold-500"></div>
+                    </label>
+                </div>
+
+                <div id="gh-sync-status" class="text-[11px] text-gray-400 text-center py-1 font-medium">
+                    Status: Não sincronizado
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button onclick="saveGithubSettings()" class="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition border border-gray-700">
+                        Salvar Credenciais
+                    </button>
+                    <button onclick="pullFromGithub()" class="py-2.5 px-3 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold rounded-xl border border-blue-500/30 transition" title="Baixar dados do GitHub">
+                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Carregar
+                    </button>
+                    <button onclick="pushToGithub()" class="py-2.5 px-3 bg-gold-500 hover:bg-gold-400 text-black font-bold rounded-xl transition shadow" title="Enviar para o GitHub">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Salvar no GitHub
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE BACKUP (IMPORTAR / EXPORTAR LOCAL) -->
+    <div id="backup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-dark-card border border-gray-800 rounded-3xl max-w-md w-full p-6 space-y-5 gold-border-glow relative text-xs">
+            <button onclick="toggleBackupModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 border-b border-gray-800 pb-4">
+                <div class="p-3 bg-gold-500/10 rounded-2xl text-gold-400 border border-gold-500/20">
+                    <i class="fa-solid fa-floppy-disk text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-cinzel text-lg font-bold text-white">Backup Local em Arquivo</h3>
+                    <p class="text-[11px] text-gray-400">Exporte ou importe seu arquivo JSON localmente</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div class="bg-dark-bg p-3.5 rounded-2xl border border-gray-800">
+                    <h4 class="font-semibold text-gray-200 mb-1">Exportar Backup</h4>
+                    <p class="text-gray-400 mb-3 text-[11px]">Baixe o arquivo JSON com seus IDs assistidos.</p>
+                    <button onclick="exportData()" class="w-full py-2 bg-gold-500 hover:bg-gold-400 text-black font-bold rounded-xl transition flex items-center justify-center space-x-2 shadow">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Exportar JSON (.json)</span>
+                    </button>
+                </div>
+
+                <div class="bg-dark-bg p-3.5 rounded-2xl border border-gray-800">
+                    <h4 class="font-semibold text-gray-200 mb-1">Importar Backup</h4>
+                    <p class="text-gray-400 mb-3 text-[11px]">Carregue um arquivo JSON salvo anteriormente.</p>
+                    <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importData(event)">
+                    <button onclick="document.getElementById('import-file-input').click()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold rounded-xl border border-gray-700 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Selecionar Arquivo JSON</span>
+                    </button>
+                </div>
+
+                <div class="border-t border-gray-800 pt-3">
+                    <button onclick="resetAllWatched(true)" class="w-full py-2 bg-red-950/40 hover:bg-red-900/60 text-red-400 font-semibold rounded-xl border border-red-800/40 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Limpar Todo o Progresso</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-gold-500 text-black font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transition-all duration-300 opacity-0 translate-y-10 pointer-events-none text-xs sm:text-sm">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-base"></i>
+        <span id="toast-message">Ação concluída com sucesso!</span>
+    </div>
+
+    <footer class="border-t border-gray-800/80 bg-dark-card/50 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 space-y-1.5">
+            <p class="font-cinzel text-gray-400 font-bold">CINEOSCAR &bull; Sorteador de Campeões do Oscar (1927 - 2025)</p>
+            <p>Hospedado no GitHub Pages &bull; Dados sincronizados via GitHub API ou salvos localmente</p>
+        </div>
+    </footer>
+
+    <script>
+        // COMPLETE DATABASE OF ALL 97 BEST PICTURE OSCAR WINNERS (1927 - 2025)
+        const OSCAR_MOVIES = [
+            {
+                id: "wings-1929",
+                year: 1929,
+                titlePt: "As Asas",
+                titleOrig: "Wings",
+                director: "William A. Wellman",
+                genre: "Guerra",
+                imdb: "https://www.imdb.com/title/tt0018578/",
+                synopsis: "Dois jovens pilotos de caça apaixonados pela mesma mulher lutam nos céus da Primeira Guerra Mundial.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wings_1927_poster.jpg"
+            },
+            {
+                id: "broadway-melody-1930",
+                year: 1930,
+                titlePt: "Melodia da Broadway",
+                titleOrig: "The Broadway Melody",
+                director: "Harry Beaumont",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0019729/",
+                synopsis: "Duas irmãs artistas da Broadway navegam por romances e desafios no mundo do espetáculo.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/ea/The_Broadway_Melody_poster.jpg"
+            },
+            {
+                id: "all-quiet-western-front-1931",
+                year: 1931,
+                titlePt: "Sem Novidade no Front",
+                titleOrig: "All Quiet on the Western Front",
+                director: "Lewis Milestone",
+                genre: "Guerra",
+                imdb: "https://www.imdb.com/title/tt0020629/",
+                synopsis: "Jovens soldados alemães encaram o desespero e o horror realista da Primeira Guerra Mundial.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f6/All_quiet_on_the_western_front_poster_1930.jpg"
+            },
+            {
+                id: "cimarron-1931",
+                year: 1931,
+                titlePt: "Cimarron",
+                titleOrig: "Cimarron",
+                director: "Wesley Ruggles",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0021748/",
+                synopsis: "Um leitor de jornal e sua esposa se mudam para o novo estado de Oklahoma durante a corrida do ouro do século XIX.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Cimarron_1931_poster.jpg"
+            },
+            {
+                id: "grand-hotel-1932",
+                year: 1932,
+                titlePt: "Grande Hotel",
+                titleOrig: "Grand Hotel",
+                director: "Edmund Goulding",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0022958/",
+                synopsis: "Várias vidas se entrelaçam durante uma estadia num luxuoso hotel de Berlim.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Grand_Hotel_%281932_poster%29.jpg"
+            },
+            {
+                id: "cavalcade-1933",
+                year: 1933,
+                titlePt: "Cavalcada",
+                titleOrig: "Cavalcade",
+                director: "Frank Lloyd",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0023876/",
+                synopsis: "A história de duas famílias inglesas durante os primeiros 30 anos do século XX.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Cavalcade_%281933_poster%29.jpg"
+            },
+            {
+                id: "it-happened-one-night-1935",
+                year: 1935,
+                titlePt: "Aconteceu Naquela Noite",
+                titleOrig: "It Happened One Night",
+                director: "Frank Capra",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0025316/",
+                synopsis: "Uma herdeira mimada em fuga e um repórter desempregado se envolvem numa jornada cômica inesquecível.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f0/It_Happened_One_Night_%281934_poster%29.jpg"
+            },
+            {
+                id: "mutiny-on-bounty-1936",
+                year: 1936,
+                titlePt: "O Grande Motim",
+                titleOrig: "Mutiny on the Bounty",
+                director: "Frank Lloyd",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0026752/",
+                synopsis: "A lendária história da revolta dos marinheiros liderados por Fletcher Christian contra o tirânico Capitão Bligh.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Mutiny_on_the_Bounty_poster.jpg"
+            },
+            {
+                id: "great-ziegfeld-1937",
+                year: 1937,
+                titlePt: "Ziegfeld: O Criador de Estrelas",
+                titleOrig: "The Great Ziegfeld",
+                director: "Robert Z. Leonard",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0027698/",
+                synopsis: "A cinebiografia espetacular do lendário produtor teatral Florenz Ziegfeld Jr.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/The_Great_Ziegfeld_poster.jpg"
+            },
+            {
+                id: "emile-zola-1938",
+                year: 1938,
+                titlePt: "A Vida de Émile Zola",
+                titleOrig: "The Life of Emile Zola",
+                director: "William Dieterle",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0029146/",
+                synopsis: "O célebre escritor francês Émile Zola arrisca sua carreira para defender um oficial judeu injustamente acusado.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Life_of_Emile_Zola_poster.jpg"
+            },
+            {
+                id: "you-cant-take-it-1939",
+                year: 1939,
+                titlePt: "Do Mundo Nada Se Leva",
+                titleOrig: "You Can't Take It with You",
+                director: "Frank Capra",
+                genre: "Comédia",
+                synopsis: "Um homem de uma família de banqueiros se apaixona por uma mulher de uma família excêntrica e libertária.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/a/a2/You_Can%27t_Take_It_with_You_%281938_poster%29.jpg"
+            },
+            {
+                id: "gone-with-the-wind-1940",
+                year: 1940,
+                titlePt: "E o Vento Levou",
+                titleOrig: "Gone with the Wind",
+                director: "Victor Fleming",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0031381/",
+                synopsis: "A saga de Scarlett O'Hara no sul dos Estados Unidos durante e após a Guerra Civil Americana.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/27/Poster_-_Gone_With_the_Wind_01.jpg"
+            },
+            {
+                id: "rebecca-1941",
+                year: 1941,
+                titlePt: "Rebecca, a Mulher Inesquecível",
+                titleOrig: "Rebecca",
+                director: "Alfred Hitchcock",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0032976/",
+                synopsis: "Uma jovem recém-casada se vê assombrada pela memória da falecida primeira esposa de seu marido abastado.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/16/Rebecca_1940_poster.jpg"
+            },
+            {
+                id: "how-green-valley-1942",
+                year: 1942,
+                titlePt: "Como Era Verde o Meu Vale",
+                titleOrig: "How Green Was My Valley",
+                director: "John Ford",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0033729/",
+                synopsis: "A vida de uma família de mineradores de carvão no País de Gales na virada do século.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/7/77/How_Green_Was_My_Valley_poster.jpg"
+            },
+            {
+                id: "mrs-miniver-1943",
+                year: 1943,
+                titlePt: "Rosa da Esperança",
+                titleOrig: "Mrs. Miniver",
+                director: "William Wyler",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0035093/",
+                synopsis: "Uma família inglesa tenta manter a normalidade durante os bombardeios da Segunda Guerra Mundial.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Mrs._Miniver_%281942_poster%29.jpg"
+            },
+            {
+                id: "casablanca-1944",
+                year: 1944,
+                titlePt: "Casablanca",
+                titleOrig: "Casablanca",
+                director: "Michael Curtiz",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0034583/",
+                synopsis: "Um cínico exilado americano em Casablanca precisa escolher entre o amor de sua vida e a luta contra o nazismo.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b3/CasablancaPoster-1942.jpg"
+            },
+            {
+                id: "going-my-way-1945",
+                year: 1945,
+                titlePt: "O Bom Pastor",
+                titleOrig: "Going My Way",
+                director: "Leo McCarey",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0036872/",
+                synopsis: "Um jovem e dinâmico padre traz novos caminhos e esperança para uma paróquia em dificuldades financeiras.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/Going_My_Way_poster.jpg"
+            },
+            {
+                id: "lost-weekend-1946",
+                year: 1946,
+                titlePt: "Farrapo Humano",
+                titleOrig: "The Lost Weekend",
+                director: "Billy Wilder",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0037884/",
+                synopsis: "Um escritor alcoólatra passa por um fim de semana devastador de alucinações e desespero.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/d/df/The_Lost_Weekend_poster.jpg"
+            },
+            {
+                id: "best-years-lives-1947",
+                year: 1947,
+                titlePt: "Os Melhores Anos de Nossas Vidas",
+                titleOrig: "The Best Years of Our Lives",
+                director: "William Wyler",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0036868/",
+                synopsis: "Três veteranos da Segunda Guerra Mundial retornam para casa e enfrentam o desafio de se reajustar à vida civil.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/f/fc/The_Best_Years_of_Our_Lives_poster.jpg"
+            },
+            {
+                id: "gentlemans-agreement-1948",
+                year: 1948,
+                titlePt: "A Luz É Para Todos",
+                titleOrig: "Gentleman's Agreement",
+                director: "Elia Kazan",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0039416/",
+                synopsis: "Um jornalista finge ser judeu para investigar e expor o antissemitismo velado na sociedade americana.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Gentleman%27s_Agreement_%281947_poster%29.jpg"
+            },
+            {
+                id: "hamlet-1949",
+                year: 1949,
+                titlePt: "Hamlet",
+                titleOrig: "Hamlet",
+                director: "Laurence Olivier",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0040416/",
+                synopsis: "O príncipe da Dinamarca busca vingar a morte de seu pai assassinando o próprio tio.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Hamlet_%281948_poster%29.jpg"
+            },
+            {
+                id: "all-kings-men-1950",
+                year: 1950,
+                titlePt: "A Grande Ilusão",
+                titleOrig: "All the King's Men",
+                director: "Robert Rossen",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0041113/",
+                synopsis: "A ascensão e corrupção de um político populista num estado do sul dos Estados Unidos.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/9/90/All_the_King%27s_Men_poster.jpg"
+            },
+            {
+                id: "all-about-eve-1951",
+                year: 1951,
+                titlePt: "A Eva",
+                titleOrig: "All About Eve",
+                director: "Joseph L. Mankiewicz",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0042192/",
+                synopsis: "Uma jovem fã ambiciosa se insinua na vida de uma grande estrela da Broadway para tomar seu lugar.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/a/a7/All_About_Eve_%281950_poster%29.jpg"
+            },
+            {
+                id: "american-in-paris-1952",
+                year: 1952,
+                titlePt: "Sinfonia de Paris",
+                titleOrig: "An American in Paris",
+                director: "Vincente Minnelli",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0043278/",
+                synopsis: "Um ex-soldado americano permanece em Paris para se tornar pintor e se apaixona por uma jovem francesa.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/An_American_in_Paris_poster.jpg"
+            },
+            {
+                id: "greatest-show-earth-1953",
+                year: 1953,
+                titlePt: "O Maior Espetáculo da Terra",
+                titleOrig: "The Greatest Show on Earth",
+                director: "Cecil B. DeMille",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0044672/",
+                synopsis: "Os dramas, traições e paixões nos bastidores da maior companhia de circo do mundo.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Greatest_Show_on_Earth_poster.jpg"
+            },
+            {
+                id: "from-here-eternity-1954",
+                year: 1954,
+                titlePt: "A Um Passo da Eternidade",
+                titleOrig: "From Here to Eternity",
+                director: "Fred Zinnemann",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0045793/",
+                synopsis: "Conflitos amorosos e disciplinais em uma base militar no Havaí nas vésperas do ataque a Pearl Harbor.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2a/From_Here_To_Eternity_poster.jpg"
+            },
+            {
+                id: "on-the-waterfront-1955",
+                year: 1955,
+                titlePt: "Sindicato de Ladrões",
+                titleOrig: "On the Waterfront",
+                director: "Elia Kazan",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0047296/",
+                synopsis: "Um ex-lutador de boxe enfrenta os chefes corruptos do sindicato dos portuários onde trabalha.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f6/On_The_Waterfront_poster.jpg"
+            },
+            {
+                id: "marty-1956",
+                year: 1956,
+                titlePt: "Marty",
+                titleOrig: "Marty",
+                director: "Delbert Mann",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0048356/",
+                synopsis: "Um açougueiro ítalo-americano solitário de 34 anos finalmente encontra o amor em uma professora tímida.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/87/Marty_poster.jpg"
+            },
+            {
+                id: "around-world-80-days-1957",
+                year: 1957,
+                titlePt: "A Volta ao Mundo em 80 Dias",
+                titleOrig: "Around the World in 80 Days",
+                director: "Michael Anderson",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0048960/",
+                synopsis: "O cavalheiro vitoriano Phileas Fogg aposta que pode dar a volta ao mundo em apenas 80 dias.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Around_the_World_in_80_Days_%281956_poster%29.jpg"
+            },
+            {
+                id: "bridge-river-kwai-1958",
+                year: 1958,
+                titlePt: "A Ponte do Rio Kwai",
+                titleOrig: "The Bridge on the River Kwai",
+                director: "David Lean",
+                genre: "Guerra",
+                imdb: "https://www.imdb.com/title/tt0050212/",
+                synopsis: "Prisioneiros britânicos são forçados a construir uma ponte ferroviária crucial para os japoneses.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/15/Bridge_on_the_River_Kwai_movie_poster.jpg"
+            },
+            {
+                id: "gigi-1959",
+                year: 1959,
+                titlePt: "Gigi",
+                titleOrig: "Gigi",
+                director: "Vincente Minnelli",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0051658/",
+                synopsis: "Na Paris da Belle Époque, um jovem milionário se apaixona por uma moça que está sendo treinada para ser cortesã.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/Gigi_1958_poster.jpg"
+            },
+            {
+                id: "ben-hur-1960",
+                year: 1960,
+                titlePt: "Ben-Hur",
+                titleOrig: "Ben-Hur",
+                director: "William Wyler",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0052618/",
+                synopsis: "Um nobre judeu é traído por seu amigo romano, escravizado e busca vingança em corridas de quadrigas.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/7/74/Ben_hur_1959_poster.jpg"
+            },
+            {
+                id: "the-apartment-1961",
+                year: 1961,
+                titlePt: "Se Meu Apartamento Falasse",
+                titleOrig: "The Apartment",
+                director: "Billy Wilder",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0053604/",
+                synopsis: "Um funcionário seguro empresta seu apartamento para executivos da empresa encontrarem suas amantes.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/The_Apartment_%281960_poster%29.jpg"
+            },
+            {
+                id: "west-side-story-1962",
+                year: 1962,
+                titlePt: "Amor, Sublime Amor",
+                titleOrig: "West Side Story",
+                director: "Robert Wise, Jerome Robbins",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0055614/",
+                synopsis: "Duas gangues de Nova York disputam território enquanto dois jovens de lados opostos se apaixonam.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/West_side_story_poster.jpg"
+            },
+            {
+                id: "lawrence-arabia-1963",
+                year: 1963,
+                titlePt: "Lawrence da Arábia",
+                titleOrig: "Lawrence of Arabia",
+                director: "David Lean",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0056172/",
+                synopsis: "A história do oficial britânico T.E. Lawrence liderando tribos árabes contra o Império Otomano.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Lawrence_of_arabia_ver3_xxlg.jpg"
+            },
+            {
+                id: "tom-jones-1964",
+                year: 1964,
+                titlePt: "As Aventuras de Tom Jones",
+                titleOrig: "Tom Jones",
+                director: "Tony Richardson",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0057590/",
+                synopsis: "As peripécias amorosas e escandalosas de um jovem conquistador na Inglaterra do século XVIII.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Tom_Jones_poster.jpg"
+            },
+            {
+                id: "my-fair-lady-1965",
+                year: 1965,
+                titlePt: "Minha Bela Dama",
+                titleOrig: "My Fair Lady",
+                director: "George Cukor",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0058385/",
+                synopsis: "Um elitista professor de fonética aposta que pode transformar uma florista de rua em uma dama da alta sociedade.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/2d/My_Fair_Lady_poster.jpg"
+            },
+            {
+                id: "sound-of-music-1966",
+                year: 1966,
+                titlePt: "A Noviça Rebelde",
+                titleOrig: "The Sound of Music",
+                director: "Robert Wise",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0059742/",
+                synopsis: "Uma noviça alegre é enviada como governanta para os sete filhos de um capitão austríaco viúvo.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c6/The_Sound_of_Music_%281965_poster%29.jpg"
+            },
+            {
+                id: "man-for-all-seasons-1967",
+                year: 1967,
+                titlePt: "O Homem Que Não Vendeu Sua Alma",
+                titleOrig: "A Man for All Seasons",
+                director: "Fred Zinnemann",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0060665/",
+                synopsis: "Sir Thomas More enfrenta o Rei Henrique VIII quando este busca quebrar o casamento com Catarina de Aragão.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/A_Man_for_All_Seasons_poster.jpg"
+            },
+            {
+                id: "in-heat-night-1968",
+                year: 1968,
+                titlePt: "No Calor da Noite",
+                titleOrig: "In the Heat of the Night",
+                director: "Norman Jewison",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0061811/",
+                synopsis: "Um detetive negro da Filadélfia é chamado para investigar um assassinato em uma cidade racista do Mississippi.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/In_the_Heat_of_the_Night_poster.jpg"
+            },
+            {
+                id: "oliver-1969",
+                year: 1969,
+                titlePt: "Oliver!",
+                titleOrig: "Oliver!",
+                director: "Carol Reed",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0063385/",
+                synopsis: "Um jovem órfão na Inglaterra vitoriana foge do orfanato e se junta a uma gangue de pivetes batedores de carteira.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/30/Oliver%21_poster.jpg"
+            },
+            {
+                id: "midnight-cowboy-1970",
+                year: 1970,
+                titlePt: "Perdidos na Noite",
+                titleOrig: "Midnight Cowboy",
+                director: "John Schlesinger",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0064665/",
+                synopsis: "Um jovem texano ingênuo tenta a sorte como michê em Nova York e faz amizade com um trapaceiro tuberculoso.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Midnight_Cowboy_poster.jpg"
+            },
+            {
+                id: "patton-1971",
+                year: 1971,
+                titlePt: "Patton: Rebelde ou Herói?",
+                titleOrig: "Patton",
+                director: "Franklin J. Schaffner",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0066206/",
+                synopsis: "A carreira militar do polêmico general americano George S. Patton durante a Segunda Guerra Mundial.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Patton_poster.jpg"
+            },
+            {
+                id: "french-connection-1972",
+                year: 1972,
+                titlePt: "Operação França",
+                titleOrig: "The French Connection",
+                director: "William Friedkin",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0067116/",
+                synopsis: "Dois detetives obstinados de Nova York tentam desmantelar um gigantesco esquema francês de contrabando de heroína.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/87/The_French_Connection_poster.jpg"
+            },
+            {
+                id: "godfather-1973",
+                year: 1973,
+                titlePt: "O Chefão / O Padrinho",
+                titleOrig: "The Godfather",
+                director: "Francis Ford Coppola",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0068646/",
+                synopsis: "O envelhecido patriarca de uma dinastia do crime organizado transfere o controle do seu império ao filho relutante.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Godfather_ver1.jpg"
+            },
+            {
+                id: "the-sting-1974",
+                year: 1974,
+                titlePt: "Golpe de Mestre",
+                titleOrig: "The Sting",
+                director: "George Roy Hill",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0070735/",
+                synopsis: "Dois trapaceiros profissionais nos anos 1930 planejam um grande golpe contra um perigoso chefe da máfia.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Sting_poster.jpg"
+            },
+            {
+                id: "godfather-2-1975",
+                year: 1975,
+                titlePt: "O Chefão II",
+                titleOrig: "The Godfather Part II",
+                director: "Francis Ford Coppola",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0071562/",
+                synopsis: "A ascensão do jovem Vito Corleone em Nova York intercalada com a consolidação do poder de Michael.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/0/03/Godfather_part_ii.jpg"
+            },
+            {
+                id: "cuckoos-nest-1976",
+                year: 1976,
+                titlePt: "Um Estranho no Ninho",
+                titleOrig: "One Flew Over the Cuckoo's Nest",
+                director: "Miloš Forman",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0073486/",
+                synopsis: "Um prisioneiro rebelde simula insanidade e lidera os pacientes de uma instituição psiquiátrica opressiva.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/36/One_Flew_Over_the_Cuckoo%27s_Nest_poster.jpg"
+            },
+            {
+                id: "rocky-1977",
+                year: 1977,
+                titlePt: "Rocky: Um Lutador",
+                titleOrig: "Rocky",
+                director: "John G. Avildsen",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0075148/",
+                synopsis: "Um cobrador e pugilista amador da Filadélfia recebe uma chance única de disputar o título mundial dos pesos-pesados.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/18/Rocky_poster.jpg"
+            },
+            {
+                id: "annie-hall-1978",
+                year: 1978,
+                titlePt: "Noivo Neurótico, Noiva Nervosa",
+                titleOrig: "Annie Hall",
+                director: "Woody Allen",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt0075686/",
+                synopsis: "Um comediante nova-iorquino reflete sobre as idas e vindas de seu relacionamento com uma cantora livre de espírito.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Annie_Hall_poster.jpg"
+            },
+            {
+                id: "deer-hunter-1979",
+                year: 1979,
+                titlePt: "O Franco Atirador",
+                titleOrig: "The Deer Hunter",
+                director: "Michael Cimino",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0077416/",
+                synopsis: "O impacto devastador da Guerra do Vietnã na vida de três amigos operários da Pensilvânia.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/5/52/Deer_Hunter_poster.jpg"
+            },
+            {
+                id: "kramer-vs-kramer-1980",
+                year: 1980,
+                titlePt: "Kramer vs. Kramer",
+                titleOrig: "Kramer vs. Kramer",
+                director: "Robert Benton",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0079417/",
+                synopsis: "Após ser abandonado pela esposa, um executivo aprende a cuidar do filho até a mãe retornar exigindo a guarda.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Kramer_vs_Kramer_poster.jpg"
+            },
+            {
+                id: "ordinary-people-1981",
+                year: 1981,
+                titlePt: "Gente Como A Gente",
+                titleOrig: "Ordinary People",
+                director: "Robert Redford",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0081283/",
+                synopsis: "Uma família de classe média alta enfrenta o luto e o trauma emocional após a morte acidental do filho mais velho.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Ordinary_People_poster.jpg"
+            },
+            {
+                id: "chariots-of-fire-1982",
+                year: 1982,
+                titlePt: "Carruagens de Fogo",
+                titleOrig: "Chariots of Fire",
+                director: "Hugh Hudson",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0082158/",
+                synopsis: "Dois atletas britânicos de origens distintas correm pelas Olimpíadas de 1924 por motivos pessoais e religiosos.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Chariots_of_Fire_poster.jpg"
+            },
+            {
+                id: "gandhi-1983",
+                year: 1983,
+                titlePt: "Gandhi",
+                titleOrig: "Gandhi",
+                director: "Richard Attenborough",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0083987/",
+                synopsis: "A vida de Mahatma Gandhi e sua resistência não-violenta contra o domínio britânico na Índia.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Gandhi_poster.jpg"
+            },
+            {
+                id: "terms-endearment-1984",
+                year: 1984,
+                titlePt: "Laços de Ternura",
+                titleOrig: "Terms of Endearment",
+                director: "James L. Brooks",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0086425/",
+                synopsis: "A complexa e emocionante relação de trinta anos entre uma mãe controladora e sua filha.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Terms_of_Endearment_poster.jpg"
+            },
+            {
+                id: "amadeus-1985",
+                year: 1985,
+                titlePt: "Amadeus",
+                titleOrig: "Amadeus",
+                director: "Miloš Forman",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0086879/",
+                synopsis: "A obsessão e inveja mortal do compositor Antonio Salieri em relação ao genial Wolfgang Amadeus Mozart.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/22/Amadeus_poster.jpg"
+            },
+            {
+                id: "out-of-africa-1986",
+                year: 1986,
+                titlePt: "Entre Dois Amores",
+                titleOrig: "Out of Africa",
+                director: "Sydney Pollack",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0089755/",
+                synopsis: "Uma baronesa dinamarquesa gerencia uma fazenda no Quênia e se apaixona por um caçador nômade.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Out_of_Africa_poster.jpg"
+            },
+            {
+                id: "platoon-1987",
+                year: 1987,
+                titlePt: "Platoon",
+                titleOrig: "Platoon",
+                director: "Oliver Stone",
+                genre: "Guerra",
+                imdb: "https://www.imdb.com/title/tt0091763/",
+                synopsis: "Um jovem recruta enfrenta a brutalidade moral e física no meio do conflito do Vietnã.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/9/90/Platoon_poster.jpg"
+            },
+            {
+                id: "last-emperor-1988",
+                year: 1988,
+                titlePt: "O Último Imperador",
+                titleOrig: "The Last Emperor",
+                director: "Bernardo Bertolucci",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0093389/",
+                synopsis: "A vida de Puyi, o último imperador da China, desde sua coroação na infância até sua reeducação política.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Last_Emperor_poster.jpg"
+            },
+            {
+                id: "rain-man-1989",
+                year: 1989,
+                titlePt: "Rain Man",
+                titleOrig: "Rain Man",
+                director: "Barry Levinson",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0095953/",
+                synopsis: "Um jovem egoísta descobre que tem um irmão mais velho autista sábio e viaja com ele pelo país.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Rain_man_poster.jpg"
+            },
+            {
+                id: "driving-miss-daisy-1990",
+                year: 1990,
+                titlePt: "Conduzindo Miss Daisy",
+                titleOrig: "Driving Miss Daisy",
+                director: "Bruce Beresford",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0097239/",
+                synopsis: "A amizade de 25 anos entre uma idosa senhora judia e seu motorista afro-americano no sul dos EUA.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Driving_miss_daisy_poster.jpg"
+            },
+            {
+                id: "dances-with-wolves-1991",
+                year: 1991,
+                titlePt: "Dança com Lobos",
+                titleOrig: "Dances with Wolves",
+                director: "Kevin Costner",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0099348/",
+                synopsis: "Um oficial da União na Guerra Civil isolado num posto remoto cria laços com uma tribo Sioux.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Dances_with_wolves_poster.jpg"
+            },
+            {
+                id: "silence-of-lambs-1992",
+                year: 1992,
+                titlePt: "O Silêncio dos Inocentes",
+                titleOrig: "The Silence of the Lambs",
+                director: "Jonathan Demme",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0102926/",
+                synopsis: "Uma estagiária do FBI consulta o psiquiatra e serial killer Hannibal Lecter para capturar outro assassino.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/86/The_Silence_of_the_Lambs_poster.jpg"
+            },
+            {
+                id: "unforgiven-1993",
+                year: 1993,
+                titlePt: "Os Imperdoáveis",
+                titleOrig: "Unforgiven",
+                director: "Clint Eastwood",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0105695/",
+                synopsis: "Um idoso pistoleiro aposentado aceita um último trabalho de recompensa ao lado de seu antigo parceiro.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Unforgiven_poster.jpg"
+            },
+            {
+                id: "schindlers-list-1994",
+                year: 1994,
+                titlePt: "A Lista de Schindler",
+                titleOrig: "Schindler's List",
+                director: "Steven Spielberg",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0108052/",
+                synopsis: "O empresário Oskar Schindler salva a vida de mais de mil refugiados judeus durante o Holocausto.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/3/38/Schindler%27s_List_movie.jpg"
+            },
+            {
+                id: "forrest-gump-1995",
+                year: 1995,
+                titlePt: "Forrest Gump: O Contador de Histórias",
+                titleOrig: "Forrest Gump",
+                director: "Robert Zemeckis",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0109830/",
+                synopsis: "Um homem simples do Alabama presencia e influencia involuntariamente grandes momentos históricos dos EUA.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/6/67/Forrest_Gump_poster.jpg"
+            },
+            {
+                id: "braveheart-1996",
+                year: 1996,
+                titlePt: "Coração Valente",
+                titleOrig: "Braveheart",
+                director: "Mel Gibson",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0112573/",
+                synopsis: "William Wallace lidera os escoceses numa revolta contra a opressão do rei inglês Eduardo I.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/5/55/Braveheart_poster.jpg"
+            },
+            {
+                id: "english-patient-1997",
+                year: 1997,
+                titlePt: "O Paciente Inglês",
+                titleOrig: "The English Patient",
+                director: "Anthony Minghella",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0116209/",
+                synopsis: "No fim da 2ª Guerra, uma enfermeira cuida de um homem terrivelmente queimado que relembra seu trágico romance.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_English_Patient_poster.jpg"
+            },
+            {
+                id: "titanic-1998",
+                year: 1998,
+                titlePt: "Titanic",
+                titleOrig: "Titanic",
+                director: "James Cameron",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0120338/",
+                synopsis: "Um jovem artista pobre e uma aristocrata se apaixonam a bordo do fatídico navio transatlântico.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/1/18/Titanic_poster.jpg"
+            },
+            {
+                id: "shakespeare-in-love-1999",
+                year: 1999,
+                titlePt: "Shakespeare Apaixonado",
+                titleOrig: "Shakespeare in Love",
+                director: "John Madden",
+                genre: "Romance",
+                imdb: "https://www.imdb.com/title/tt0138097/",
+                synopsis: "Um jovem William Shakespeare com bloqueio criativo encontra sua inspiração na nobre Viola de Lesseps.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Shakespeare_in_love_poster.jpg"
+            },
+            {
+                id: "american-beauty-2000",
+                year: 2000,
+                titlePt: "Beleza Americana",
+                titleOrig: "American Beauty",
+                director: "Sam Mendes",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0169547/",
+                synopsis: "Um pai de família em crise de meia-idade se apaixona pela melhor amiga adolescente da sua filha.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/American_beauty_poster.jpg"
+            },
+            {
+                id: "gladiator-2001",
+                year: 2001,
+                titlePt: "Gladiador",
+                titleOrig: "Gladiator",
+                director: "Ridley Scott",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0172495/",
+                synopsis: "Um ex-general romano traído busca vingança contra o imperador corrupto que assassinou sua família.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Gladiator_ver1.jpg"
+            },
+            {
+                id: "beautiful-mind-2002",
+                year: 2002,
+                titlePt: "Uma Mente Brilhante",
+                titleOrig: "A Beautiful Mind",
+                director: "Ron Howard",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt0268978/",
+                synopsis: "A história do gênio matemático John Nash lidando com a esquizofrenia e a conquista do Nobel.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b8/A_Beautiful_Mind_Poster.jpg"
+            },
+            {
+                id: "chicago-2003",
+                year: 2003,
+                titlePt: "Chicago",
+                titleOrig: "Chicago",
+                director: "Rob Marshall",
+                genre: "Musical",
+                imdb: "https://www.imdb.com/title/tt0299658/",
+                synopsis: "Duas assassinas na Chicago dos anos 1920 disputam a fama e os serviços do mesmo advogado sedutor.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Chicago_poster.jpg"
+            },
+            {
+                id: "lotr-return-king-2004",
+                year: 2004,
+                titlePt: "O Senhor dos Anéis: O Retorno do Rei",
+                titleOrig: "The Lord of the Rings: The Return of the King",
+                director: "Peter Jackson",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt0167260/",
+                synopsis: "A batalha final pela Terra-média acontece enquanto Frodo e Sam se aproximam da Montanha da Perdição.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b9/Lord_of_the_rings_return_of_the_king.jpg"
+            },
+            {
+                id: "million-dollar-baby-2005",
+                year: 2005,
+                titlePt: "Menina de Ouro",
+                titleOrig: "Million Dollar Baby",
+                director: "Clint Eastwood",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0405159/",
+                synopsis: "Um ranzinza treinador de boxe aceita treinar uma determinada mulher até o topo do boxe profissional.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Million_dollar_baby_poster.jpg"
+            },
+            {
+                id: "crash-2006",
+                year: 2006,
+                titlePt: "Crash: No Limite",
+                titleOrig: "Crash",
+                director: "Paul Haggis",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt0375679/",
+                synopsis: "Moradores de Los Angeles de diferentes origens raciais têm suas vidas colididas em 36 horas turbulentas.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Crash_poster.jpg"
+            },
+            {
+                id: "departed-2007",
+                year: 2007,
+                titlePt: "Os Infiltrados",
+                titleOrig: "The Departed",
+                director: "Martin Scorsese",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0407887/",
+                synopsis: "Um policial disfarçado na máfia e um criminoso infiltrado na polícia tentam se identificar mutuamente.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/5/50/Departed2006.jpg"
+            },
+            {
+                id: "no-country-old-men-2008",
+                year: 2008,
+                titlePt: "Onde os Fracos Não Têm Vez",
+                titleOrig: "No Country for Old Men",
+                director: "Joel & Ethan Coen",
+                genre: "Crime",
+                imdb: "https://www.imdb.com/title/tt0477348/",
+                synopsis: "Um caçador encontra uma mala de dinheiro de um negócio fracassado de drogas e é caçado por um sociopata.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8b/No_Country_for_Old_Men_poster.jpg"
+            },
+            {
+                id: "slumdog-millionaire-2009",
+                year: 2009,
+                titlePt: "Quem Quer Ser um Milionário?",
+                titleOrig: "Slumdog Millionaire",
+                director: "Danny Boyle",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt1010048/",
+                synopsis: "Um jovem das favelas de Mumbai relembra sua vida conturbada para explicar seu sucesso num jogo de TV.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Slumdog_millionaire_poster.jpg"
+            },
+            {
+                id: "hurt-locker-2010",
+                year: 2010,
+                titlePt: "Guerra Ao Ao Marcador / Guerra ao Terror",
+                titleOrig: "The Hurt Locker",
+                director: "Kathryn Bigelow",
+                genre: "Guerra",
+                imdb: "https://www.imdb.com/title/tt0887912/",
+                synopsis: "Um esquadrão anti-bombas no Iraque lida com o perigo constante e os conflitos psicológicos internos.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Hurt_Locker_poster.jpg"
+            },
+            {
+                id: "kings-speech-2011",
+                year: 2011,
+                titlePt: "O Discurso do Rei",
+                titleOrig: "The King's Speech",
+                director: "Tom Hooper",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt1504320/",
+                synopsis: "O Rei Jorge VI contrata um terapeuta de fala não convencional para superar sua gagueira antes do discurso da guerra.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_king%27s_speech_poster.jpg"
+            },
+            {
+                id: "the-artist-2012",
+                year: 2012,
+                titlePt: "O Artista",
+                titleOrig: "The Artist",
+                director: "Michel Hazanavicius",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt1655442/",
+                synopsis: "A decadência de uma estrela do cinema mudo enquanto uma jovem atriz decolava com a chegada do som.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Artist_poster.jpg"
+            },
+            {
+                id: "argo-2013",
+                year: 2013,
+                titlePt: "Argo",
+                titleOrig: "Argo",
+                director: "Ben Affleck",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt1024648/",
+                synopsis: "Agentes da CIA forjam a produção de um filme de ficção científica para resgatar diplomatas no Irã.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Argo_poster.jpg"
+            },
+            {
+                id: "12-years-slave-2014",
+                year: 2014,
+                titlePt: "12 Anos de Escravidão",
+                titleOrig: "12 Years a Slave",
+                director: "Steve McQueen",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt2024544/",
+                synopsis: "Solomon Northup, homem negro livre em Nova York, é sequestrado e vendido como escravo no sul dos EUA.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/82/12_Years_a_Slave_poster.jpg"
+            },
+            {
+                id: "birdman-2015",
+                year: 2015,
+                titlePt: "Birdman ou (A Inesperada Virtude da Ignorância)",
+                titleOrig: "Birdman",
+                director: "Alejandro G. Iñárritu",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt2562232/",
+                synopsis: "Um ator esquecido famoso por interpretar um super-herói tenta recuperar o prestígio dirigindo uma peça na Broadway.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/2/23/Birdman_poster.jpg"
+            },
+            {
+                id: "spotlight-2016",
+                year: 2016,
+                titlePt: "Spotlight: Segredos Revelados",
+                titleOrig: "Spotlight",
+                director: "Tom McCarthy",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt1895587/",
+                synopsis: "Jornalistas investigativos revelam abusos e acobertamentos sistêmicos na Igreja Católica em Boston.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Spotlight_film_poster.jpg"
+            },
+            {
+                id: "moonlight-2017",
+                year: 2017,
+                titlePt: "Moonlight: Sob a Luz do Luar",
+                titleOrig: "Moonlight",
+                director: "Barry Jenkins",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt4975722/",
+                synopsis: "Três momentos da vida de um jovem negro em Miami enfrentando sua identidade e sexualidade.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/84/Moonlight_%282016_film%29.png"
+            },
+            {
+                id: "shape-of-water-2018",
+                year: 2018,
+                titlePt: "A Forma da Água",
+                titleOrig: "The Shape of Water",
+                director: "Guillermo del Toro",
+                genre: "Aventura",
+                imdb: "https://www.imdb.com/title/tt5580390/",
+                synopsis: "Uma faxineira muda em um laboratório do governo estabelece uma conexão amorosa com uma criatura anfíbia.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/The_Shape_of_Water_poster.jpg"
+            },
+            {
+                id: "green-book-2019",
+                year: 2019,
+                titlePt: "Green Book: O Guia",
+                titleOrig: "Green Book",
+                director: "Peter Farrelly",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt6966692/",
+                synopsis: "Um segurança Ítalo-americano torna-se motorista de um pianista negro em turnê pelo sul segregado dos EUA.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Green_Book_poster.png"
+            },
+            {
+                id: "parasite-2020",
+                year: 2020,
+                titlePt: "Parasita",
+                titleOrig: "Gisaengchung / Parasite",
+                director: "Bong Joon-ho",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt6751668/",
+                synopsis: "Uma família desempregada se infiltra aos poucos na rotina de uma família rica com consequências drásticas.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/4/43/Parasite_%282019_film%29_poster.jpg"
+            },
+            {
+                id: "nomadland-2021",
+                year: 2021,
+                titlePt: "Nomadland",
+                titleOrig: "Nomadland",
+                director: "Chloé Zhao",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt9770150/",
+                synopsis: "Uma mulher perde tudo na Grande Recessão e embarca em uma jornada pelo oeste americano vivendo em sua van.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Nomadland_poster.png"
+            },
+            {
+                id: "coda-2022",
+                year: 2022,
+                titlePt: "No Ritmo do Coração",
+                titleOrig: "CODA",
+                director: "Sian Heder",
+                genre: "Drama",
+                imdb: "https://www.imdb.com/title/tt10366460/",
+                synopsis: "Única ouvinte em uma família de surdos, uma jovem se divide entre ajudar a família e seguir a paixão pela música.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/b/b8/CODA_film_poster.jpg"
+            },
+            {
+                id: "eeaao-2023",
+                year: 2023,
+                titlePt: "Tudo em Todo o Lugar ao Mesmo Tempo",
+                titleOrig: "Everything Everywhere All at Once",
+                director: "Daniel Kwan, Daniel Scheinert",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt6710474/",
+                synopsis: "Uma imigrante chinesa em crise se vê envolvida em uma aventura no multiverso para salvar a própria realidade.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/8/81/Everything_Everywhere_All_at_Once_poster.jpg"
+            },
+            {
+                id: "oppenheimer-2024",
+                year: 2024,
+                titlePt: "Oppenheimer",
+                titleOrig: "Oppenheimer",
+                director: "Christopher Nolan",
+                genre: "Biografia",
+                imdb: "https://www.imdb.com/title/tt15398776/",
+                synopsis: "A cinebiografia de J. Robert Oppenheimer, o cientista responsável pelo desenvolvimento da bomba atômica no Projeto Manhattan.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/0/07/Oppenheimer_poster.jpg"
+            },
+            {
+                id: "anora-2025",
+                year: 2025,
+                titlePt: "Anora",
+                titleOrig: "Anora",
+                director: "Sean Baker",
+                genre: "Comédia",
+                imdb: "https://www.imdb.com/title/tt29615112/",
+                synopsis: "Uma jovem dançarina erótica de Brooklyn se casa impulsivamente com o filho de um oligarca russo, provocando um caos familiar cômico e dramático.",
+                poster: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Anora_2024_poster.jpg/440px-Anora_2024_poster.jpg"
+            }
+        ];
+
+        let watchedIds = new Set();
+        let currentDrawnMovie = null;
+        let currentCatalogFilter = 'all';
+
+        // Local Storage Keys
+        const STORAGE_KEY = 'cineoscar_watched_ids_v2';
+        const GH_SETTINGS_KEY = 'cineoscar_gh_settings';
+
+        let ghSettings = {
+            username: '',
+            repo: '',
+            path: 'meus_assistidos.json',
+            token: '',
+            autosync: false,
+            sha: null
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedData();
+            loadGithubSettings();
+            updateAllCounters();
+            renderWatchedGrid();
+            renderCatalogGrid();
+            renderStats();
+
+            // Auto pull from Github on load if settings present
+            if (ghSettings.username && ghSettings.repo && ghSettings.token) {
+                pullFromGithub(true);
+            }
+        });
+
+        function loadSavedData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        watchedIds = new Set(parsed);
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao carregar localStorage", e);
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(watchedIds)));
+            } catch (e) {
+                console.error("Erro ao salvar localStorage", e);
+            }
+
+            if (ghSettings.autosync) {
+                pushToGithub(true);
+            }
+        }
+
+        function loadGithubSettings() {
+            try {
+                const saved = localStorage.getItem(GH_SETTINGS_KEY);
+                if (saved) {
+                    ghSettings = { ...ghSettings, ...JSON.parse(saved) };
+                    document.getElementById('gh-username').value = ghSettings.username || '';
+                    document.getElementById('gh-repo').value = ghSettings.repo || '';
+                    document.getElementById('gh-path').value = ghSettings.path || 'meus_assistidos.json';
+                    document.getElementById('gh-token').value = ghSettings.token || '';
+                    document.getElementById('gh-autosync').checked = !!ghSettings.autosync;
+                    updateGithubIndicator();
+                }
+            } catch (e) {
+                console.error("Erro ao carregar dados do GitHub", e);
+            }
+        }
+
+        function saveGithubSettings() {
+            ghSettings.username = document.getElementById('gh-username').value.trim();
+            ghSettings.repo = document.getElementById('gh-repo').value.trim();
+            ghSettings.path = document.getElementById('gh-path').value.trim() || 'meus_assistidos.json';
+            ghSettings.token = document.getElementById('gh-token').value.trim();
+            ghSettings.autosync = document.getElementById('gh-autosync').checked;
+
+            localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(ghSettings));
+            updateGithubIndicator();
+            showToast("Configurações do GitHub salvas com sucesso!");
+        }
+
+        function updateGithubIndicator() {
+            const ind = document.getElementById('github-sync-indicator');
+            if (ghSettings.username && ghSettings.repo && ghSettings.token) {
+                ind.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+            } else {
+                ind.className = "w-2.5 h-2.5 rounded-full bg-gray-500";
+            }
+        }
+
+        async function pullFromGithub(isSilent = false) {
+            if (!ghSettings.username || !ghSettings.repo || !ghSettings.token) {
+                if (!isSilent) showToast("Preencha e salve suas credenciais do GitHub primeiro!", "error");
+                return;
+            }
+
+            const url = `https://api.github.com/repos/${ghSettings.username}/${ghSettings.repo}/contents/${ghSettings.path}`;
+            const statusEl = document.getElementById('gh-sync-status');
+            statusEl.textContent = "Status: Conectando e baixando dados...";
+
+            try {
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${ghSettings.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (res.status === 404) {
+                    statusEl.textContent = "Status: Arquivo ainda não existe no GitHub (será criado ao salvar).";
+                    if (!isSilent) showToast("Arquivo não encontrado no GitHub. Clique em 'Salvar no GitHub' para criá-lo.");
+                    return;
+                }
+
+                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+
+                const data = await res.json();
+                ghSettings.sha = data.sha; // Save SHA for updating
+                
+                // Decode UTF-8 base64
+                const content = decodeURIComponent(escape(atob(data.content)));
+                const parsed = JSON.parse(content);
+
+                if (Array.isArray(parsed)) {
+                    watchedIds = new Set(parsed);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(watchedIds)));
+                    updateAllCounters();
+                    renderWatchedGrid();
+                    renderCatalogGrid();
+                    renderStats();
+
+                    statusEl.textContent = `Status: Sincronizado às ${new Date().toLocaleTimeString()}`;
+                    if (!isSilent) showToast("Progresso baixado do GitHub com sucesso!");
+                }
+            } catch (err) {
+                console.error("Erro no Pull GitHub:", err);
+                statusEl.textContent = "Status: Erro de sincronização com o GitHub";
+                if (!isSilent) showToast("Falha ao carregar dados do GitHub!", "error");
+            }
+        }
+
+        async function pushToGithub(isSilent = false) {
+            if (!ghSettings.username || !ghSettings.repo || !ghSettings.token) {
+                if (!isSilent) showToast("Configure as credenciais do GitHub primeiro!", "error");
+                return;
+            }
+
+            const url = `https://api.github.com/repos/${ghSettings.username}/${ghSettings.repo}/contents/${ghSettings.path}`;
+            const statusEl = document.getElementById('gh-sync-status');
+            statusEl.textContent = "Status: Enviando atualizações para o GitHub...";
+
+            try {
+                // Check current file SHA if missing
+                if (!ghSettings.sha) {
+                    const checkRes = await fetch(url, {
+                        headers: {
+                            'Authorization': `token ${ghSettings.token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if (checkRes.ok) {
+                        const checkData = await checkRes.json();
+                        ghSettings.sha = checkData.sha;
+                    }
+                }
+
+                const jsonStr = JSON.stringify(Array.from(watchedIds), null, 2);
+                const b64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+                const bodyData = {
+                    message: "Atualização de assistidos - CineOscar",
+                    content: b64Content
+                };
+                if (ghSettings.sha) {
+                    bodyData.sha = ghSettings.sha;
+                }
+
+                const putRes = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${ghSettings.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (!putRes.ok) throw new Error(`HTTP Error ${putRes.status}`);
+
+                const putData = await putRes.json();
+                ghSettings.sha = putData.content.sha;
+
+                statusEl.textContent = `Status: Salvo no GitHub às ${new Date().toLocaleTimeString()}`;
+                if (!isSilent) showToast("Progresso salvo no GitHub com sucesso!");
+            } catch (err) {
+                console.error("Erro no Push GitHub:", err);
+                statusEl.textContent = "Status: Erro ao enviar para o GitHub";
+                if (!isSilent) showToast("Erro ao salvar no GitHub!", "error");
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-gold-500', 'text-black', 'font-bold', 'shadow-md');
+                btn.classList.add('text-gray-400', 'hover:text-white', 'hover:bg-gray-800/70');
+            });
+
+            const targetContent = document.getElementById(`tab-${tabName}`);
+            const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+
+            if (targetContent && targetBtn) {
+                targetContent.classList.remove('hidden');
+                targetBtn.classList.add('bg-gold-500', 'text-black', 'font-bold', 'shadow-md');
+                targetBtn.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-gray-800/70');
+            }
+
+            if (tabName === 'assistidos') renderWatchedGrid();
+            if (tabName === 'catalogo') renderCatalogGrid();
+            if (tabName === 'estatisticas') renderStats();
+        }
+
+        function getAvailablePool() {
+            return OSCAR_MOVIES.filter(m => !watchedIds.has(m.id));
+        }
+
+        function drawMovie() {
+            const pool = getAvailablePool();
+
+            if (pool.length === 0) {
+                showEmptyPoolState();
+                return;
+            }
+
+            const idleState = document.getElementById('draw-idle-state');
+            const resultState = document.getElementById('draw-result-state');
+            const animatingState = document.getElementById('draw-animating-state');
+            const emptyState = document.getElementById('draw-empty-state');
+
+            idleState.classList.add('hidden');
+            resultState.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            animatingState.classList.remove('hidden');
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * pool.length);
+                currentDrawnMovie = pool[randomIndex];
+
+                displayDrawnMovie(currentDrawnMovie);
+
+                animatingState.classList.add('hidden');
+                resultState.classList.remove('hidden');
+            }, 750);
+        }
+
+        function displayDrawnMovie(movie) {
+            const posterImg = document.getElementById('result-poster');
+            posterImg.src = movie.poster;
+            posterImg.onerror = function() {
+                this.onerror = null;
+                this.src = `https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}`;
+            };
+
+            document.getElementById('result-year').textContent = movie.year;
+            document.getElementById('result-title-pt').textContent = movie.titlePt;
+            document.getElementById('result-title-orig').textContent = `${movie.titleOrig} (${movie.year})`;
+            document.getElementById('result-genre').textContent = movie.genre;
+            document.getElementById('result-director').textContent = `Dir. ${movie.director}`;
+            document.getElementById('result-synopsis').textContent = movie.synopsis;
+            
+            const imdbLink = document.getElementById('result-imdb-link');
+            imdbLink.href = movie.imdb;
+        }
+
+        function markCurrentAsWatched() {
+            if (!currentDrawnMovie) return;
+            
+            watchedIds.add(currentDrawnMovie.id);
+            saveData();
+            updateAllCounters();
+
+            showToast(`"${currentDrawnMovie.titlePt}" marcado como visto!`);
+
+            const pool = getAvailablePool();
+            if (pool.length === 0) {
+                showEmptyPoolState();
+            } else {
+                drawMovie();
+            }
+        }
+
+        function skipMovie() {
+            showToast("Sorteando o próximo filme...");
+            drawMovie();
+        }
+
+        function showEmptyPoolState() {
+            document.getElementById('draw-idle-state').classList.add('hidden');
+            document.getElementById('draw-animating-state').classList.add('hidden');
+            document.getElementById('draw-result-state').classList.add('hidden');
+            document.getElementById('draw-empty-state').classList.remove('hidden');
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function toggleMovieWatched(id) {
+            const movie = OSCAR_MOVIES.find(m => m.id === id);
+            if (!movie) return;
+
+            if (watchedIds.has(id)) {
+                watchedIds.delete(id);
+                showToast(`"${movie.titlePt}" voltou ao pool.`);
+            } else {
+                watchedIds.add(id);
+                showToast(`"${movie.titlePt}" marcado como assistido!`);
+            }
+
+            saveData();
+            updateAllCounters();
+            renderWatchedGrid();
+            renderCatalogGrid();
+            renderStats();
+
+            if (getAvailablePool().length > 0) {
+                document.getElementById('draw-empty-state').classList.add('hidden');
+                if (document.getElementById('draw-result-state').classList.contains('hidden')) {
+                    document.getElementById('draw-idle-state').classList.remove('hidden');
+                }
+            }
+        }
+
+        function updateAllCounters() {
+            const total = OSCAR_MOVIES.length;
+            const watchedCount = watchedIds.size;
+            const poolCount = total - watchedCount;
+            const percent = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
+
+            document.getElementById('header-progress-text').textContent = `${watchedCount} / ${total} (${percent}%)`;
+            document.getElementById('badge-watched-count').textContent = watchedCount;
+
+            document.getElementById('pool-count-text').textContent = `${poolCount} de ${total} filmes disponíveis para sorteio (${percent}% assistidos)`;
+            document.getElementById('pool-progress-bar').style.width = `${percent}%`;
+
+            document.getElementById('cat-count-all').textContent = total;
+            document.getElementById('cat-count-pool').textContent = poolCount;
+            document.getElementById('cat-count-watched').textContent = watchedCount;
+        }
+
+        function renderWatchedGrid() {
+            const container = document.getElementById('watched-grid');
+            const emptyEl = document.getElementById('watched-empty');
+            const searchVal = document.getElementById('watched-search').value.toLowerCase().trim();
+            const sortVal = document.getElementById('watched-sort').value;
+
+            let watchedList = OSCAR_MOVIES.filter(m => watchedIds.has(m.id));
+
+            if (searchVal) {
+                watchedList = watchedList.filter(m => 
+                    m.titlePt.toLowerCase().includes(searchVal) ||
+                    m.titleOrig.toLowerCase().includes(searchVal) ||
+                    m.director.toLowerCase().includes(searchVal) ||
+                    m.year.toString().includes(searchVal)
+                );
+            }
+
+            watchedList.sort((a, b) => {
+                if (sortVal === 'year-desc') return b.year - a.year;
+                if (sortVal === 'year-asc') return a.year - b.year;
+                if (sortVal === 'title-asc') return a.titlePt.localeCompare(b.titlePt);
+                return 0;
+            });
+
+            if (watchedList.length === 0) {
+                container.innerHTML = '';
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+
+            emptyEl.classList.add('hidden');
+
+            container.innerHTML = watchedList.map(movie => `
+                <div class="bg-dark-card border border-gray-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-gold-500/40 transition group">
+                    <div class="relative aspect-[2/3] overflow-hidden bg-black/60">
+                        <img src="${movie.poster}" alt="${movie.titlePt}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}'">
+                        <div class="absolute top-2 left-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-bold text-gold-400 border border-gold-500/20">
+                            Oscar ${movie.year}
+                        </div>
+                        <div class="absolute top-2 right-2 bg-emerald-600 text-white p-1 rounded-full text-xs shadow" title="Assistido">
+                            <i class="fa-solid fa-check w-4 h-4 flex items-center justify-center"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] uppercase font-bold text-gray-500">${movie.genre}</span>
+                                <a href="${movie.imdb}" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-yellow-300 text-xs font-semibold flex items-center space-x-1" title="Ver no IMDb">
+                                    <i class="fa-brands fa-imdb text-base"></i>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                </a>
+                            </div>
+                            <h3 class="font-cinzel font-bold text-sm text-white group-hover:text-gold-400 transition line-clamp-1">${movie.titlePt}</h3>
+                            <p class="text-xs text-gray-400 italic line-clamp-1 mb-1">${movie.titleOrig}</p>
+                            <p class="text-[11px] text-gray-400"><i class="fa-solid fa-video mr-1 text-gray-500"></i> ${movie.director}</p>
+                        </div>
+
+                        <button onclick="toggleMovieWatched('${movie.id}')" class="w-full py-2 bg-dark-bg hover:bg-red-950/40 text-gray-400 hover:text-red-400 border border-gray-800 hover:border-red-800/50 rounded-xl text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Devolver ao Pool</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setCatalogFilter(filterType) {
+            currentCatalogFilter = filterType;
+
+            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-gold-500', 'text-black', 'font-bold');
+                btn.classList.add('text-gray-400', 'hover:text-white');
+            });
+
+            const activeBtn = document.getElementById(`cat-filter-${filterType}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-gold-500', 'text-black', 'font-bold');
+                activeBtn.classList.remove('text-gray-400');
+            }
+
+            renderCatalogGrid();
+        }
+
+        function renderCatalogGrid() {
+            const container = document.getElementById('catalog-grid');
+            const searchVal = document.getElementById('catalog-search').value.toLowerCase().trim();
+            const genreVal = document.getElementById('catalog-genre-filter').value;
+            const decadeVal = document.getElementById('catalog-decade-filter').value;
+
+            let list = OSCAR_MOVIES;
+
+            // Filter by Status
+            if (currentCatalogFilter === 'pool') {
+                list = list.filter(m => !watchedIds.has(m.id));
+            } else if (currentCatalogFilter === 'watched') {
+                list = list.filter(m => watchedIds.has(m.id));
+            }
+
+            // Filter by Decade
+            if (decadeVal !== 'all') {
+                const decNum = parseInt(decadeVal);
+                if (decNum === 1930) {
+                    list = list.filter(m => m.year < 1940);
+                } else {
+                    list = list.filter(m => m.year >= decNum && m.year < decNum + 10);
+                }
+            }
+
+            // Filter by Genre
+            if (genreVal !== 'all') {
+                list = list.filter(m => m.genre === genreVal);
+            }
+
+            // Filter by Search Term
+            if (searchVal) {
+                list = list.filter(m => 
+                    m.titlePt.toLowerCase().includes(searchVal) ||
+                    m.titleOrig.toLowerCase().includes(searchVal) ||
+                    m.director.toLowerCase().includes(searchVal) ||
+                    m.year.toString().includes(searchVal)
+                );
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-film-slash text-3xl mb-2 block"></i>
+                        Nenhum filme encontrado com os filtros aplicados.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(movie => {
+                const isWatched = watchedIds.has(movie.id);
+
+                return `
+                    <div class="bg-dark-card border ${isWatched ? 'border-emerald-900/50' : 'border-gray-800'} rounded-2xl overflow-hidden flex flex-col justify-between hover:border-gold-500/40 transition group">
+                        <div class="relative aspect-[2/3] overflow-hidden bg-black/60">
+                            <img src="${movie.poster}" alt="${movie.titlePt}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://placehold.co/400x600/14171f/D4AF37?text=${encodeURIComponent(movie.titleOrig)}'">
+                            <div class="absolute top-2 left-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-bold text-gold-400 border border-gold-500/20">
+                                Oscar ${movie.year}
+                            </div>
+                            ${isWatched ? `
+                                <div class="absolute top-2 right-2 bg-emerald-600 text-white px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 shadow">
+                                    <i class="fa-solid fa-check text-xs"></i> Assistido
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] uppercase font-bold text-gray-500">${movie.genre}</span>
+                                    <a href="${movie.imdb}" target="_blank" rel="noopener noreferrer" class="text-yellow-400 hover:text-yellow-300 text-xs font-semibold flex items-center space-x-1" title="Ver no IMDb">
+                                        <i class="fa-brands fa-imdb text-base"></i>
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    </a>
+                                </div>
+                                <h3 class="font-cinzel font-bold text-sm text-white group-hover:text-gold-400 transition line-clamp-1">${movie.titlePt}</h3>
+                                <p class="text-xs text-gray-400 italic line-clamp-1 mb-1">${movie.titleOrig}</p>
+                                <p class="text-[11px] text-gray-400"><i class="fa-solid fa-video mr-1 text-gray-500"></i> ${movie.director}</p>
+                            </div>
+
+                            <button onclick="toggleMovieWatched('${movie.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 ${
+                                isWatched 
+                                ? 'bg-dark-bg hover:bg-red-950/40 text-gray-400 hover:text-red-400 border border-gray-800' 
+                                : 'bg-gold-500/10 hover:bg-gold-500 text-gold-400 hover:text-black border border-gold-500/30'
+                            }">
+                                <i class="fa-solid ${isWatched ? 'fa-rotate-left' : 'fa-check'}"></i>
+                                <span>${isWatched ? 'Remover dos Assistidos' : 'Marcar como Assistido'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStats() {
+            const total = OSCAR_MOVIES.length;
+            const watchedCount = watchedIds.size;
+            const poolCount = total - watchedCount;
+            const percent = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
+
+            document.getElementById('stat-total-movies').textContent = total;
+            document.getElementById('stat-watched-count').textContent = watchedCount;
+            document.getElementById('stat-pool-count').textContent = poolCount;
+            document.getElementById('stat-percent').textContent = `${percent}%`;
+
+            const decades = {};
+            OSCAR_MOVIES.forEach(m => {
+                let dec = Math.floor(m.year / 10) * 10;
+                if (dec < 1930) dec = 1930; // Group 1920s into 1930s
+                if (!decades[dec]) decades[dec] = { total: 0, watched: 0 };
+                decades[dec].total++;
+                if (watchedIds.has(m.id)) decades[dec].watched++;
+            });
+
+            const container = document.getElementById('decade-stats-container');
+            container.innerHTML = Object.keys(decades).sort((a,b) => b - a).map(dec => {
+                const d = decades[dec];
+                const decPercent = Math.round((d.watched / d.total) * 100);
+                const label = dec === "1930" ? "Anos 1920 / 1930" : `Anos ${dec}`;
+
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-gray-300">
+                            <span class="font-semibold">${label}</span>
+                            <span>${d.watched} de ${d.total} filmes (${decPercent}%)</span>
+                        </div>
+                        <div class="w-full bg-dark-bg h-2 rounded-full overflow-hidden border border-gray-800">
+                            <div class="bg-gradient-to-r from-gold-600 to-gold-400 h-full rounded-full transition-all duration-500" style="width: ${decPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Modals & Export/Import Controls
+        function toggleGithubModal(show) {
+            document.getElementById('github-modal').classList.toggle('hidden', !show);
+        }
+
+        function toggleBackupModal(show) {
+            document.getElementById('backup-modal').classList.toggle('hidden', !show);
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(Array.from(watchedIds), null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `cineoscar_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+
+            showToast("Backup exportado com sucesso!");
+            toggleBackupModal(false);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        watchedIds = new Set(imported);
+                        saveData();
+                        updateAllCounters();
+                        renderWatchedGrid();
+                        renderCatalogGrid();
+                        renderStats();
+                        showToast("Dados importados com sucesso!");
+                        toggleBackupModal(false);
+                    } else {
+                        showToast("Formato de arquivo inválido!", "error");
+                    }
+                } catch (err) {
+                    showToast("Erro ao ler arquivo JSON!", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAllWatched(confirmReq = false) {
+            if (confirmReq) {
+                if (!confirm("Tem certeza que deseja reiniciar todo o seu progresso? Todos os filmes voltarão ao pool.")) {
+                    return;
+                }
+            }
+
+            watchedIds.clear();
+            saveData();
+            updateAllCounters();
+            renderWatchedGrid();
+            renderCatalogGrid();
+            renderStats();
+
+            showToast("Pool de sorteio reiniciado!");
+            toggleBackupModal(false);
+
+            document.getElementById('draw-empty-state').classList.add('hidden');
+            document.getElementById('draw-result-state').classList.add('hidden');
+            document.getElementById('draw-idle-state').classList.remove('hidden');
+        }
+
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.textContent = msg;
+
+            if (type === "error") {
+                toast.classList.remove('bg-gold-500', 'text-black');
+                toast.classList.add('bg-red-600', 'text-white');
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-base";
+            } else {
+                toast.classList.remove('bg-red-600', 'text-white');
+                toast.classList.add('bg-gold-500', 'text-black');
+                toastIcon.className = "fa-solid fa-circle-check text-base";
+            }
+
+            toast.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
